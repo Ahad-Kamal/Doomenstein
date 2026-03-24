@@ -49,7 +49,7 @@ void Game::Startup()
 
 	m_screenCamera->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
 
-	g_bitmapFont = g_engine->m_render->CreateOrGetBitmapFont( "Data/Images/SquirrelFixedFont" );
+	g_bitmapFont = g_engine->m_render->CreateOrGetBitmapFont( "Data/Fonts/SquirrelFixedFont" );
 
 	g_engine->m_devConsole->PrintCommandsToConsole();
 	AddCommandsToDevConsole();
