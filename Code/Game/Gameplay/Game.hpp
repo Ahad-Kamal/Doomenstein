@@ -58,9 +58,12 @@ private:
 	void UpdateControllerInput();
 
 	void InitializeStartTriangleVerts();
+
 	void AddDebugObjects();
 	void DebugRenderEntities() const;
 	void DebugDrawWorldBounds() const;
+	void DebugAddDebugText() const;
+
 	void DeleteGarbageEntities();
 
 	void AddCommandsToDevConsole();

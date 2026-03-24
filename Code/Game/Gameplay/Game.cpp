@@ -64,16 +64,6 @@ void Game::Startup()
 	m_worldCamera->SetPosition( m_player->m_position );
 	m_worldCamera->SetOrientation( m_player->m_orientation );
 
-	m_cube1 = new Prop( Vec3( 2.f, 2.f, 0.f ), EulerAngles() );
-	m_cube2 = new Prop( Vec3( -2.f, -2.f, 0.f ), EulerAngles() );
-	CreateCube( m_cube1 );
-	CreateCube( m_cube2 );
-
-	m_sphere = new Prop( Vec3( 10.f, -5.f, 1.f ), EulerAngles() );
-	Texture* uvTest = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/TestUV.png" );
-	m_sphere->m_texture = uvTest;
-	AddVertsForSphere( m_sphere->m_vertexes, m_sphere->m_position, 1.f );
-
 	m_grid = new Prop( Vec3(), EulerAngles() );
 	CreateGrid();
 
@@ -235,24 +225,7 @@ void Game::UpdateEntities( float deltaSeconds )
 
 	m_player->Update( deltaSeconds );
 
-	m_cube1->m_orientation.m_pitchDegrees += deltaSeconds * 30.f;
-	m_cube1->m_orientation.m_rollDegrees += deltaSeconds * 30.f;
-
-	unsigned int shade = static_cast<unsigned int>( m_startAlpha );
-	m_cube2->m_color = Rgba8( shade, shade, shade, 255 );
-
-	m_sphere->m_orientation.m_yawDegrees += deltaSeconds * 45.f;
-
-	AABB2 positionBox = AABB2( 1.f, 784.f, 800.f, 799.f );
-	std::string positionText = Stringf( "Position: %.2f, %.2f, %.2f", m_player->m_position.x, m_player->m_position.y, m_player->m_position.z );
-	DebugAddScreenText( positionText, positionBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
-
-	AABB2 timeBox = AABB2( 800.f, 784.f, 1599.f, 799.f );
-	float totalSeconds = static_cast<float>( Clock::GetSystemClock().GetTotalSeconds() );
-	float framesPerSecond = static_cast<float>( Clock::GetSystemClock().GetFrameCount() ) / totalSeconds;
-	float timeScale = static_cast<float>( Clock::GetSystemClock().GetTimeScale() );
-	std::string timeText = Stringf( "Time: %.2f FPS: %.1f Scale: %.2f", totalSeconds, framesPerSecond, timeScale );
-	DebugAddScreenText( timeText, timeBox, 15.f, Vec2( 1.f, 0.f ), 0.f );
+	DebugAddDebugText();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -267,10 +240,6 @@ void Game::RenderEntities() const
 	g_engine->m_render->BeginCamera( *m_worldCamera );
 
 	g_engine->m_render->BindTexture( nullptr );
-	m_cube1->Render();
-	m_cube2->Render();
-
-	m_sphere->Render();
 
 	m_grid->Render();
 
@@ -319,17 +288,6 @@ void Game::ShakeCamera( float deltaSeconds )
 		m_isShaking = false;
 	}
 }
-
-//-----------------------------------------------------------------------------------------------
-//bool Game::DoEntitiesOverlap(Entity const& a, Entity const& b)
-//{
-//	float dx = b.m_position.x - a.m_position.x;
-//	float dy = b.m_position.y - a.m_position.y;
-//	float distanceSquared = ( dx * dx ) + ( dy * dy );
-//	float combinedRadii = a.m_physicsRadius + b.m_physicsRadius;
-//	float radiiSquared = combinedRadii * combinedRadii;
-//	return distanceSquared < radiiSquared;
-//}
 
 //-----------------------------------------------------------------------------------------------
 void Game::UpdateKeyboardInput()
@@ -469,6 +427,21 @@ void Game::DebugDrawWorldBounds() const
 	DebugDrawLine( Vec2( 0.f, WORLD_SIZE_Y ), Vec2( WORLD_SIZE_X, WORLD_SIZE_Y ), 5.f, Rgba8( 255, 0, 255 ) );
 	DebugDrawLine( Vec2( 0.f, 0.f ), Vec2( 0.f, WORLD_SIZE_Y ), 5.f, Rgba8( 255, 0, 255 ) );
 	DebugDrawLine( Vec2( WORLD_SIZE_X, 0.f ), Vec2( WORLD_SIZE_X, WORLD_SIZE_Y ), 5.f, Rgba8( 255, 0, 255 ) );
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::DebugAddDebugText() const
+{
+	AABB2 positionBox = AABB2( 1.f, 784.f, 800.f, 799.f );
+	std::string positionText = Stringf( "Position: %.2f, %.2f, %.2f", m_player->m_position.x, m_player->m_position.y, m_player->m_position.z );
+	DebugAddScreenText( positionText, positionBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
+
+	AABB2 timeBox = AABB2( 800.f, 784.f, 1599.f, 799.f );
+	float totalSeconds = static_cast<float>( Clock::GetSystemClock().GetTotalSeconds() );
+	float framesPerSecond = static_cast<float>( Clock::GetSystemClock().GetFrameCount() ) / totalSeconds;
+	float timeScale = static_cast<float>( Clock::GetSystemClock().GetTimeScale() );
+	std::string timeText = Stringf( "Time: %.2f FPS: %.1f Scale: %.2f", totalSeconds, framesPerSecond, timeScale );
+	DebugAddScreenText( timeText, timeBox, 15.f, Vec2( 1.f, 0.f ), 0.f );
 }
 
 //-----------------------------------------------------------------------------------------------
