@@ -243,6 +243,10 @@ void Game::RenderEntities() const
 
 	m_grid->Render();
 
+	m_cube1->Render();
+
+	m_cube2->Render();
+
 	g_engine->m_render->EndCamera( *m_worldCamera );
 }
 
@@ -410,12 +414,20 @@ void Game::AddDebugObjects()
 	zMatrix.AppendYRotation( 180.f );
 	std::string zAxisText = " z - up";
 	DebugAddWorldText( zAxisText, zMatrix, 1.f, Vec2( 0.5f, 0.5f ), -1.f, Rgba8::BLUE, Rgba8::BLUE );
+
+	m_cube1 = new Prop( Vec3( 5.f, -2.f, 3.f ), EulerAngles() );
+	AABB3 box = AABB3( Vec3( -0.5f, -0.5f, -0.5f ), Vec3( 0.5f, 0.5f, 0.5f ) );
+	AddVertsForCube( m_cube1->m_vertexes, box );
+
+	m_cube2 = new Prop( Vec3( 5.f, -4.f, 3.f ), EulerAngles() );
+	AddVertsForCube( m_cube2->m_vertexes, m_cube2->m_indexes, box );
+	m_cube2->m_isIndexed = true;
 }
 
 //-----------------------------------------------------------------------------------------------
 void Game::DebugRenderEntities() const
 {
-
+	
 }
 
 //-----------------------------------------------------------------------------------------------

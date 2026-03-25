@@ -31,6 +31,14 @@ void Prop::Render() const
 	g_engine->m_render->SetBlendStateIfChanged();
 	g_engine->m_render->BindTexture( m_texture );*/
 	g_engine->m_render->RenderSetup( m_texture, BlendMode::OPAQUE, GetModelToWorldTransform(), m_color );
-	g_engine->m_render->DrawVertexArray( m_vertexes );
+
+	if( !m_isIndexed )
+	{
+		g_engine->m_render->DrawVertexArray( m_vertexes );
+	}
+	else
+	{
+		g_engine->m_render->DrawVertexArray( m_vertexes, m_indexes );
+	}
 }
 
