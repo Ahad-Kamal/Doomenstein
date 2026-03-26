@@ -43,14 +43,14 @@ void TileDefinitions::InitializeTileDefs()
 		{
 			int ceilingSpriteIndex = GetSpriteIndexFromSpriteCoords( s_tileDefs[ elementIndex ].m_ceilingSpriteCoords );
 			const SpriteDefinition& ceilingSpriteDef = g_terrainSpriteSheet->GetSpriteDef( ceilingSpriteIndex );
-			s_tileDefs[ elementIndex ].m_floorUVs = ceilingSpriteDef.GetUVs();
+			s_tileDefs[ elementIndex ].m_ceilingUVs = ceilingSpriteDef.GetUVs();
 		}
 
 		if( s_tileDefs[ elementIndex ].m_wallSpriteCoords != IntVec2( -1, -1 ) )
 		{
 			int wallSpriteIndex = GetSpriteIndexFromSpriteCoords( s_tileDefs[ elementIndex ].m_wallSpriteCoords );
 			const SpriteDefinition& wallSpriteDef = g_terrainSpriteSheet->GetSpriteDef( wallSpriteIndex );
-			s_tileDefs[ elementIndex ].m_floorUVs = wallSpriteDef.GetUVs();
+			s_tileDefs[ elementIndex ].m_wallUVs = wallSpriteDef.GetUVs();
 		}
 
 		currentElement = currentElement->NextSiblingElement();
