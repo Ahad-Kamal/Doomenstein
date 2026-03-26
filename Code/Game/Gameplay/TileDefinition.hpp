@@ -12,6 +12,7 @@ class TileDefinitions
 {
 public:
 	static void InitializeTileDefs();
+
 	std::string GetName() const;
 	bool IsSolid() const;
 	Rgba8 GetMapImagePixelColor();
@@ -29,11 +30,14 @@ private:
 
 	std::string m_name;
 	Rgba8 m_mapImagePixelColor;
+
 	AABB2 m_floorUVs;
 	AABB2 m_ceilingUVs;
 	AABB2 m_wallUVs;
+
 	IntVec2 m_floorSpriteCoords;
 	IntVec2 m_ceilingSpriteCoords;
 	IntVec2 m_wallSpriteCoords;
+
 	bool m_isSolid = false;
 };
