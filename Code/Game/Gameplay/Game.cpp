@@ -40,6 +40,9 @@ void Game::Startup()
 {
 	m_gameClock = new Clock( Clock::GetSystemClock() );
 
+	Shader* diffuseShader = g_engine->m_render->CreateOrGetShader( "Data/Shaders/Diffuse", VertexType::VERTEX_PCUTBN );
+	//g_engine->m_render->BindShader( diffuseShader );
+
 	m_worldCamera = new Camera();
 	m_screenCamera = new Camera();
 
@@ -205,16 +208,17 @@ void Game::RenderAttractMode() const
 	g_engine->m_render->BindTexture( nullptr );
 	g_engine->m_render->DrawVertexArray( (int)textGoldDropShadowVerts.size(), textGoldDropShadowVerts.data() );
 
-	//// Draw Textured AABB2
-	//std::vector<Vertex> textureVerts;
-	//AABB2 textureBox = AABB2( 20.f, 100.f, 532.f, 612.f );
-	//AddVertsForAABB2D( textureVerts, textureBox, Rgba8( 255, 255, 255 ) );
-	//
-	//Texture* testTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Test_StbiFlippedAndOpenGL.png" );
-	//g_engine->m_render->BindTexture( testTexture );
-	//g_engine->m_render->DrawVertexArray( textureVerts );
-	//
-	//g_engine->m_render->BindTexture( nullptr );	
+	// Draw Textured AABB2
+	Image image = Image( "Data/Maps/TestMap.png" );
+	/*std::vector<Vertex> textureVerts;
+	AABB2 textureBox = AABB2( 20.f, 100.f, 532.f, 612.f );
+	AddVertsForAABB2D( textureVerts, textureBox, Rgba8( 255, 255, 255 ) );
+	
+	Texture* testTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Test_StbiFlippedAndOpenGL.png" );
+	g_engine->m_render->BindTexture( testTexture );
+	g_engine->m_render->DrawVertexArray( textureVerts );
+	
+	g_engine->m_render->BindTexture( nullptr );	*/
 }
 
 //-----------------------------------------------------------------------------------------------
