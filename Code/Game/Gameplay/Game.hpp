@@ -15,10 +15,12 @@ class Player;
 class Prop;
 class BitmapFont;
 class BillboardText;
+class SpriteSheet;
 
 //-----------------------------------------------------------------------------------------------
 extern Game* g_game;
 extern RandomNumberGenerator* g_rng;
+extern SpriteSheet* g_terrainSpriteSheet;
 extern BitmapFont* g_bitmapFont;
 
 //-----------------------------------------------------------------------------------------------

@@ -21,6 +21,7 @@
 //-----------------------------------------------------------------------------------------------
 Game* g_game = nullptr;
 RandomNumberGenerator* g_rng = nullptr;
+SpriteSheet* g_terrainSpriteSheet = nullptr;
 BitmapFont* g_bitmapFont = nullptr;
 
 //-----------------------------------------------------------------------------------------------
