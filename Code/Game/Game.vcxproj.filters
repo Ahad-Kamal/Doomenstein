@@ -40,6 +40,18 @@
     <ClCompile Include="Gameplay\Actors\Prop.cpp">
       <Filter>Gameplay\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="Gameplay\Actors\Actor.cpp">
+      <Filter>Gameplay\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay\MapDefinition.cpp">
+      <Filter>Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay\Tile.cpp">
+      <Filter>Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay\TileDefinition.cpp">
+      <Filter>Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\App.hpp">
@@ -68,6 +80,18 @@
     </ClInclude>
     <ClInclude Include="Gameplay\Actors\Prop.hpp">
       <Filter>Gameplay\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\Actors\Actor.hpp">
+      <Filter>Gameplay\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\MapDefinition.hpp">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\Tile.hpp">
+      <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\TileDefinition.hpp">
+      <Filter>Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

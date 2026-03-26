@@ -180,23 +180,31 @@
     <ClCompile Include="Framework\App.cpp" />
     <ClCompile Include="Framework\GameCommon.cpp" />
     <ClCompile Include="Framework\Main_Windows.cpp" />
+    <ClCompile Include="Gameplay\Actors\Actor.cpp" />
     <ClCompile Include="Gameplay\Actors\BillboardText.cpp" />
     <ClCompile Include="Gameplay\Actors\Player.cpp" />
     <ClCompile Include="Gameplay\Actors\Prop.cpp" />
     <ClCompile Include="Gameplay\Entity.cpp" />
     <ClCompile Include="Gameplay\Game.cpp" />
     <ClCompile Include="Gameplay\Map.cpp" />
+    <ClCompile Include="Gameplay\MapDefinition.cpp" />
+    <ClCompile Include="Gameplay\Tile.cpp" />
+    <ClCompile Include="Gameplay\TileDefinition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\App.hpp" />
     <ClInclude Include="Framework\EngineBuildPreferences.hpp" />
     <ClInclude Include="Framework\GameCommon.hpp" />
+    <ClInclude Include="Gameplay\Actors\Actor.hpp" />
     <ClInclude Include="Gameplay\Actors\BillboardText.hpp" />
     <ClInclude Include="Gameplay\Actors\Player.hpp" />
     <ClInclude Include="Gameplay\Actors\Prop.hpp" />
     <ClInclude Include="Gameplay\Entity.hpp" />
     <ClInclude Include="Gameplay\Game.hpp" />
     <ClInclude Include="Gameplay\Map.hpp" />
+    <ClInclude Include="Gameplay\MapDefinition.hpp" />
+    <ClInclude Include="Gameplay\Tile.hpp" />
+    <ClInclude Include="Gameplay\TileDefinition.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
