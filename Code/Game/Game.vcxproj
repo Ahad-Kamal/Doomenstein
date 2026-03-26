@@ -185,6 +185,7 @@
     <ClCompile Include="Gameplay\Entities\Prop.cpp" />
     <ClCompile Include="Gameplay\Entity.cpp" />
     <ClCompile Include="Gameplay\Game.cpp" />
+    <ClCompile Include="Gameplay\Map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\App.hpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Gameplay\Entities\Prop.hpp" />
     <ClInclude Include="Gameplay\Entity.hpp" />
     <ClInclude Include="Gameplay\Game.hpp" />
+    <ClInclude Include="Gameplay\Map.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

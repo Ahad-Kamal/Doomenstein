@@ -37,6 +37,9 @@
     <ClCompile Include="Gameplay\Entities\BillboardText.cpp">
       <Filter>Gameplay\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Gameplay\Map.cpp">
+      <Filter>Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\App.hpp">
@@ -62,6 +65,9 @@
     </ClInclude>
     <ClInclude Include="Gameplay\Entities\BillboardText.hpp">
       <Filter>Gameplay\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\Map.hpp">
+      <Filter>Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
