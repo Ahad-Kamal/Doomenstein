@@ -8,7 +8,7 @@
     <Filter Include="Gameplay">
       <UniqueIdentifier>{772bab81-5bde-4795-9d49-0d8f99662154}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Gameplay\Entities">
+    <Filter Include="Gameplay\Actors">
       <UniqueIdentifier>{27b29b5a-4fa1-4543-ba60-f18f0bd343b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -28,17 +28,17 @@
     <ClCompile Include="Gameplay\Game.cpp">
       <Filter>Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="Gameplay\Entities\Player.cpp">
-      <Filter>Gameplay\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Gameplay\Entities\Prop.cpp">
-      <Filter>Gameplay\Entities</Filter>
-    </ClCompile>
-    <ClCompile Include="Gameplay\Entities\BillboardText.cpp">
-      <Filter>Gameplay\Entities</Filter>
-    </ClCompile>
     <ClCompile Include="Gameplay\Map.cpp">
       <Filter>Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay\Actors\BillboardText.cpp">
+      <Filter>Gameplay\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay\Actors\Player.cpp">
+      <Filter>Gameplay\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Gameplay\Actors\Prop.cpp">
+      <Filter>Gameplay\Actors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,17 +57,17 @@
     <ClInclude Include="Gameplay\Game.hpp">
       <Filter>Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Gameplay\Entities\Player.hpp">
-      <Filter>Gameplay\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Gameplay\Entities\Prop.hpp">
-      <Filter>Gameplay\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="Gameplay\Entities\BillboardText.hpp">
-      <Filter>Gameplay\Entities</Filter>
-    </ClInclude>
     <ClInclude Include="Gameplay\Map.hpp">
       <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\Actors\BillboardText.hpp">
+      <Filter>Gameplay\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\Actors\Player.hpp">
+      <Filter>Gameplay\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\Actors\Prop.hpp">
+      <Filter>Gameplay\Actors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
