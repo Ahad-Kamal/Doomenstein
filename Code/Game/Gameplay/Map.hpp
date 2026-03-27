@@ -1,18 +1,17 @@
 #pragma once
 #include <vector>
-
+#include "Engine/Core/Vertex_PCUTBN.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
 class Game;
-class MapDefinition; // To-Do, make this
-class Tile; // To-Do, make this
-class Actor; // To-Do, make this
-class RaycastResult;
+class Actor;
+class MapDefinition;
+struct Tile;
+struct RaycastResult3D;
 struct AABB3;
 struct AABB2;
 struct Vec3;
-struct Vertex_PCUTBN;
 class Texture;
 class Shader;
 class VertexBuffer;
@@ -27,7 +26,7 @@ public:
 	void CreateTiles();
 	void CreateGeometry();
 	void AddGeometryForWall( AABB3 const& bounds, AABB2 const& UVs );
-	void AddGeometryForFlorr( AABB3 const& bounds, AABB2 const& UVs );
+	void AddGeometryForFloor( AABB3 const& bounds, AABB2 const& UVs );
 	void AddGeometryForCeiling( AABB3 const& bounds, AABB2 const& UVs );
 	void CreateBuffer();
 
@@ -43,10 +42,10 @@ public:
 
 	void Render();
 
-	RaycastResult RaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
-	RaycastResult RaycastWorldXY( Vec3 const& start, Vec3 const& direction, float distance ) const;
-	RaycastResult RaycastWorldZ( Vec3 const& start, Vec3 const& direction, float distance ) const;
-	RaycastResult RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
+	RaycastResult3D RaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
+	RaycastResult3D RaycastWorldXY( Vec3 const& start, Vec3 const& direction, float distance ) const;
+	RaycastResult3D RaycastWorldZ( Vec3 const& start, Vec3 const& direction, float distance ) const;
+	RaycastResult3D RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
 
 protected:
 	MapDefinition const* m_definition = nullptr;

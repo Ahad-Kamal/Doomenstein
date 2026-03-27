@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/Framework/GameCommon.hpp"
+#include "Game/Gameplay/Map.hpp"
 #include "Engine/Math/RandomNumberGenerator.hpp"
 #include "Engine/Math/EulerAngles.hpp"
 #include "Engine/Core/Vertex.hpp"
@@ -48,8 +49,9 @@ private:
 	void RenderAttractMode() const;
 
 	void UpdateEntities( float deltaSeconds );
-	void UpdateCameras( float deltaSeconds );
+	void UpdateMap();
 	void RenderEntities() const;
+	void RenderMap() const;
 
 	void ClampCamera( Vec2& minView, Vec2& maxView );
 	void ShakeCamera( float deltaSeconds );
@@ -75,19 +77,22 @@ private:
 	void CreateGrid();
 
 public:
-	Player*		m_player = nullptr;
-	Prop*		m_cube1 = nullptr;
-	Prop*		m_cube2 = nullptr;
-	Prop*		m_sphere = nullptr;
-	Prop*		m_grid = nullptr;
+	std::vector<Map>	m_maps;
+	Map*				m_currentMap;
 
-	Camera*		m_worldCamera;
-	Camera*		m_screenCamera;
+	Player*				m_player = nullptr;
+	Prop*				m_cube1 = nullptr;
+	Prop*				m_cube2 = nullptr;
+	Prop*				m_sphere = nullptr;
+	Prop*				m_grid = nullptr;
 
-	Clock*		m_gameClock;
+	Camera*				m_worldCamera;
+	Camera*				m_screenCamera;
 
-	GameState	m_currentState = GAME_STATE_INVALID;
-	GameState	m_nextState = GAME_STATE_ATTRACT;
+	Clock*				m_gameClock;
+
+	GameState			m_currentState = GAME_STATE_INVALID;
+	GameState			m_nextState = GAME_STATE_ATTRACT;
 
 
 private:

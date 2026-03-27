@@ -52,6 +52,8 @@ void Game::Startup()
 	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );
 	TileDefinitions::InitializeTileDefs();
 
+	m_currentMap = new Map( &MapDefinition::s_mapDefs[ 0 ] );
+
 	m_worldCamera = new Camera();
 	m_screenCamera = new Camera();
 
@@ -115,12 +117,13 @@ void Game::Render() const
 	}
 
 	RenderEntities();
+	RenderMap();
 
-	if ( m_debugDraw )
+	/*if ( m_debugDraw )
 	{
 		DebugRenderEntities();
 		DebugDrawWorldBounds();
-	}
+	}*/
 
 	if( g_engine->m_devConsole->IsOpen() )
 	{
@@ -242,9 +245,9 @@ void Game::UpdateEntities( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Game::UpdateCameras( [[maybe_unused]] float deltaSeconds )
+void Game::UpdateMap()
 {
-
+	m_currentMap->Update();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -261,6 +264,12 @@ void Game::RenderEntities() const
 	m_cube2->Render();
 
 	g_engine->m_render->EndCamera( *m_worldCamera );
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::RenderMap() const
+{
+	m_currentMap->Render();
 }
 
 //-----------------------------------------------------------------------------------------------
