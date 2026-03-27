@@ -67,22 +67,22 @@ bool TileDefinitions::IsSolid() const
 	return m_isSolid;
 }
 
-Rgba8 TileDefinitions::GetMapImagePixelColor()
+Rgba8 TileDefinitions::GetMapImagePixelColor() const
 {
 	return m_mapImagePixelColor;
 }
 
-AABB2 TileDefinitions::GetFloorUVs()
+AABB2 TileDefinitions::GetFloorUVs() const
 {
 	return m_floorUVs;
 }
 
-AABB2 TileDefinitions::GetCeilingUVs()
+AABB2 TileDefinitions::GetCeilingUVs() const
 {
 	return m_ceilingUVs;
 }
 
-AABB2 TileDefinitions::GetWallUVs()
+AABB2 TileDefinitions::GetWallUVs() const
 {
 	return m_wallUVs;
 }

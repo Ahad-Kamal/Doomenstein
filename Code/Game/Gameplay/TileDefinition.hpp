@@ -15,10 +15,10 @@ public:
 
 	std::string GetName() const;
 	bool IsSolid() const;
-	Rgba8 GetMapImagePixelColor();
-	AABB2 GetFloorUVs();
-	AABB2 GetCeilingUVs();
-	AABB2 GetWallUVs();
+	Rgba8 GetMapImagePixelColor() const;
+	AABB2 GetFloorUVs() const;
+	AABB2 GetCeilingUVs() const;
+	AABB2 GetWallUVs() const;
 
 	static int GetSpriteIndexFromSpriteCoords( IntVec2 coords );
 
