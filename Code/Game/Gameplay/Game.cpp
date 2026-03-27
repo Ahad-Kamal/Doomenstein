@@ -17,6 +17,7 @@
 #include "Engine/Renderer/Camera.hpp"
 #include "Engine/Renderer/BitmapFont.hpp"
 #include "Game/Gameplay/TileDefinition.hpp"
+#include "Game/Gameplay/MapDefinition.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -44,6 +45,8 @@ void Game::Startup()
 
 	Shader* diffuseShader = g_engine->m_render->CreateOrGetShader( "Data/Shaders/Diffuse", VertexType::VERTEX_PCUTBN );
 	//g_engine->m_render->BindShader( diffuseShader );
+
+	MapDefinition::InitializeMapDefs();
 
 	Texture* terrainTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Terrain_8x8.png" );
 	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );
