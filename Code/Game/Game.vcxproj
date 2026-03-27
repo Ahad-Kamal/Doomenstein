@@ -206,6 +206,13 @@
     <ClInclude Include="Gameplay\Tile.hpp" />
     <ClInclude Include="Gameplay\TileDefinition.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\ActorDefinitions.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\MapDefinitions.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\ProjectileActorDefinitions.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\TileDefinitions.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\WeaponDefinitions.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

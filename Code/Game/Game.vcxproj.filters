@@ -11,6 +11,9 @@
     <Filter Include="Gameplay\Actors">
       <UniqueIdentifier>{27b29b5a-4fa1-4543-ba60-f18f0bd343b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{c04bcb45-0fcd-45a3-9b4f-0df0dc2aea78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\App.cpp">
@@ -93,5 +96,22 @@
     <ClInclude Include="Gameplay\TileDefinition.hpp">
       <Filter>Gameplay</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\ActorDefinitions.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\MapDefinitions.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\ProjectileActorDefinitions.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\TileDefinitions.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\WeaponDefinitions.xml">
+      <Filter>Data</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
