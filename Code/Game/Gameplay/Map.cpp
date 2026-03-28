@@ -1,10 +1,12 @@
 #include "Game/Gameplay/Map.hpp"
 #include "Game/Gameplay/Tile.hpp"
 #include "Game/Gameplay/TileDefinition.hpp"
+#include "Game/Gameplay/Game.hpp"
 #include "Engine/Math/RaycastUtils.hpp"
 #include "Engine/Math/IntVec3.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/VertexUtils.hpp"
+#include "Engine/Renderer/Camera.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -15,13 +17,20 @@ Map::Map( MapDefinition* definition )
 	m_vertexBuffer = new VertexBuffer( g_engine->m_render->GetDevice(), 1, sizeof( Vertex_PCUTBN ) );
 	m_indexBuffer = new IndexBuffer( g_engine->m_render->GetDevice(), 1 );
 
+	m_vertexBuffer->Create();
+	m_indexBuffer->Create();
+
 	CreateGeometry();
 }
 
 //-----------------------------------------------------------------------------------------------
 Map::~Map()
 {
+	delete m_vertexBuffer;
+	m_vertexBuffer = nullptr;
 
+	delete m_indexBuffer;
+	m_indexBuffer = nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -33,7 +42,11 @@ void Map::CreateTiles()
 //-----------------------------------------------------------------------------------------------
 void Map::CreateGeometry()
 {
-	AddVertsForQuad3D( m_vertexes, m_indexes, Vec3( 0.f, 1.f, 0.f ), Vec3( 0.f, 0.f, 0.f ), Vec3( 1.f, 0.f, 0.f ), Vec3( 1.f, 1.f, 0.f ) );
+	TileDefinitions* tileDef = GetTileDefinition( "StoneFloor" );
+	AABB2 floorUVs = tileDef->GetFloorUVs();
+	AABB2 ceilingUVs = tileDef->GetCeilingUVs();
+	AddVertsForQuad3D( m_vertexes, m_indexes, Vec3( 0.f, 0.f, 0.f ), Vec3( 1.f, 0.f, 0.f ), Vec3( 1.f, 1.f, 0.f ), Vec3( 0.f, 1.f, 0.f ), Rgba8::WHITE, floorUVs );
+	AddVertsForQuad3D( m_vertexes, m_indexes, Vec3( 0.f, 0.f, 1.f ), Vec3( 0.f, 1.f, 1.f ), Vec3( 1.f, 1.f, 1.f ), Vec3( 1.f, 0.f, 1.f ), Rgba8::WHITE, ceilingUVs );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -80,6 +93,20 @@ Tile const* Map::GetTile( [[maybe_unused]] int x, [[maybe_unused]] int y ) const
 }
 
 //-----------------------------------------------------------------------------------------------
+TileDefinitions* Map::GetTileDefinition( std::string name )
+{
+	for( unsigned int tileDefIndex = 0; tileDefIndex < TileDefinitions::s_tileDefs.size(); tileDefIndex++ )
+	{
+		if( TileDefinitions::s_tileDefs[ tileDefIndex ].GetName() == name )
+		{
+			return &TileDefinitions::s_tileDefs[ tileDefIndex ];
+		}
+	}
+
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
 void Map::Update()
 {
 
@@ -112,7 +139,7 @@ void Map::CollideActorWithMap( Actor* actor )
 //-----------------------------------------------------------------------------------------------
 void Map::Render()
 {
-	g_engine->m_render->RenderSetup();
+	g_engine->m_render->RenderSetup( &g_terrainSpriteSheet->GetTexture() );
 	g_engine->m_render->DrawVertexArray( m_vertexes, m_indexes, m_vertexBuffer, m_indexBuffer );
 }
 

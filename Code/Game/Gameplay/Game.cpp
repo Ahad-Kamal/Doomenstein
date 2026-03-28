@@ -35,7 +35,8 @@ Game::Game()
 //-----------------------------------------------------------------------------------------------
 Game::~Game()
 {
-	
+	delete m_currentMap;
+	m_currentMap = nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -57,7 +58,6 @@ void Game::Startup()
 	m_worldCamera = new Camera();
 	m_screenCamera = new Camera();
 
-	//m_worldCamera->SetOrthoView( Vec2( -WORLD_CENTER_X, -WORLD_CENTER_Y ), Vec2( WORLD_CENTER_X, WORLD_CENTER_Y ) );
 	m_worldCamera->SetPerspectiveView( 2.f, 60.f, 0.1f, 1000.f );
 	m_worldCamera->SetCameraToRenderTransform( Mat44::DirectXCameraToRenderMatrix );
 
@@ -118,12 +118,6 @@ void Game::Render() const
 
 	RenderEntities();
 	RenderMap();
-
-	/*if ( m_debugDraw )
-	{
-		DebugRenderEntities();
-		DebugDrawWorldBounds();
-	}*/
 
 	if( g_engine->m_devConsole->IsOpen() )
 	{
@@ -195,8 +189,6 @@ void Game::UpdateAttractMode( [[maybe_unused]] float deltaSeconds )
 void Game::RenderAttractMode() const
 {
 	g_engine->m_render->BeginCamera( *m_screenCamera );
-
-	//g_engine->m_render->ClearScreen( m_clearColor );
 
 	// Draw Start Button
 	g_engine->m_render->SetModelConstants();

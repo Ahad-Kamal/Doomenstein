@@ -1,12 +1,14 @@
 #pragma once
-#include <vector>
 #include "Engine/Core/Vertex_PCUTBN.hpp"
+#include <vector>
+#include <string>
 
 
 //-----------------------------------------------------------------------------------------------
 class Game;
 class Actor;
 class MapDefinition;
+class TileDefinitions;
 struct Tile;
 struct RaycastResult3D;
 struct AABB3;
@@ -33,6 +35,7 @@ public:
 	bool IsPositionInBounds( Vec3 const& position ) const;
 	bool AreCoordsInBounds( int x, int y );
 	Tile const* GetTile( int x, int y ) const;
+	TileDefinitions* GetTileDefinition( std::string name );
 
 	void Update();
 	void CollideActors();
