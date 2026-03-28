@@ -11,6 +11,7 @@ class MapDefinition;
 class TileDefinitions;
 struct Tile;
 struct RaycastResult3D;
+struct IntVec2;
 struct AABB3;
 struct AABB2;
 struct Vec3;
@@ -35,7 +36,9 @@ public:
 	bool IsPositionInBounds( Vec3 const& position ) const;
 	bool AreCoordsInBounds( int x, int y );
 	Tile const* GetTile( int x, int y ) const;
-	TileDefinitions* GetTileDefinition( std::string name );
+	int	 GetTileIndexFromCoords( int x, int y ) const;
+	IntVec2 GetTileCoordsFromIndex( int index ) const;
+	TileDefinitions* GetTileDefinition( std::string name ) const;
 
 	void Update();
 	void CollideActors();
