@@ -8,6 +8,7 @@
 #include "Engine/Math/AABB3.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/VertexUtils.hpp"
+#include "Engine/Core/Image.hpp"
 #include "Engine/Renderer/Camera.hpp"
 
 
@@ -39,20 +40,41 @@ Map::~Map()
 //-----------------------------------------------------------------------------------------------
 void Map::CreateTiles()
 {
-	TileDefinitions* tileDef = GetTileDefinition( "BrickWall" );
-	Tile newTile = Tile( IntVec3(), tileDef );
-	m_tiles.push_back( newTile );
+	Image mapImage = *m_definition->GetImage();
+	unsigned int texelDataSize = mapImage.GetDimensions().x * mapImage.GetDimensions().y;
+	const unsigned char* texelData = reinterpret_cast<const unsigned char*>( mapImage.GetRawData() );
+
+	for( unsigned int texelIndex = 0; texelIndex < texelDataSize * 4; texelIndex += 4 )
+	{
+		Rgba8 texelColor = Rgba8( texelData[ texelIndex ], texelData[ texelIndex + 1 ], texelData[ texelIndex + 2 ], texelData[ texelIndex + 3 ] );
+
+		for( unsigned int tileDefIndex = 0; tileDefIndex < TileDefinitions::s_tileDefs.size(); tileDefIndex++ )
+		{
+			TileDefinitions& tileDef = TileDefinitions::s_tileDefs[ tileDefIndex ];
+			if( texelColor == tileDef.GetMapImagePixelColor() )
+			{
+				int tileNum = texelIndex / 4;
+				int coordX = tileNum % mapImage.GetDimensions().x;
+				int coordY = tileNum / mapImage.GetDimensions().x;
+
+				Tile newTile = Tile( IntVec3( coordX, coordY, 0 ), &tileDef );
+				m_tiles.push_back( newTile );
+			}
+		}
+	}
+
+	/*TileDefinitions* tileDef1 = GetTileDefinition( "StoneFloor" );
+	Tile newTile1 = Tile( IntVec3(), tileDef1 );
+	m_tiles.push_back( newTile1 );
+
+	TileDefinitions* tileDef2 = GetTileDefinition( "BrickWall" );
+	Tile newTile2 = Tile( IntVec3( 1, 0, 0 ), tileDef2 );
+	m_tiles.push_back( newTile2 );*/
 }
 
 //-----------------------------------------------------------------------------------------------
 void Map::CreateGeometry()
 {
-	/*TileDefinitions* tileDef = GetTileDefinition( "StoneFloor" );
-	AABB2 floorUVs = tileDef->GetFloorUVs();
-	AABB2 ceilingUVs = tileDef->GetCeilingUVs();
-	AddVertsForQuad3D( m_vertexes, m_indexes, Vec3( 0.f, 0.f, 0.f ), Vec3( 1.f, 0.f, 0.f ), Vec3( 1.f, 1.f, 0.f ), Vec3( 0.f, 1.f, 0.f ), Rgba8::WHITE, floorUVs );
-	AddVertsForQuad3D( m_vertexes, m_indexes, Vec3( 0.f, 0.f, 1.f ), Vec3( 0.f, 1.f, 1.f ), Vec3( 1.f, 1.f, 1.f ), Vec3( 1.f, 0.f, 1.f ), Rgba8::WHITE, ceilingUVs );*/
-	
 	for( unsigned int tileIndex = 0; tileIndex < m_tiles.size(); tileIndex++ )
 	{
 		Tile& tile = m_tiles[ tileIndex ];
