@@ -213,9 +213,6 @@
     <Xml Include="..\..\Run\Data\Definitions\TileDefinitions.xml" />
     <Xml Include="..\..\Run\Data\Definitions\WeaponDefinitions.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Run\Data\Shaders\Diffuse.hlsl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
