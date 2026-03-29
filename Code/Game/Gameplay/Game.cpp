@@ -1,8 +1,6 @@
 #include "Game/Gameplay/Game.hpp"
 #include "Game/Gameplay/Entity.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
-#include "Game/Gameplay/Actors/Prop.hpp"
-#include "Game/Gameplay/Actors/BillboardText.hpp"
 #include "Game/Framework/App.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/VertexUtils.hpp"
@@ -74,14 +72,11 @@ void Game::Startup()
 
 	Vec2 worldCenter( WORLD_SIZE_X * 0.5f, WORLD_SIZE_Y * 0.5f );
 
- 	m_player = new Player( Vec3( 3.f, -3.f, 0.75f ), EulerAngles( 90.f, 0.f, 0.f ) );
+ 	m_player = new Player( Vec3( 3.f, 3.f, 10.f ), EulerAngles( 45.f, 30.f, 0.f ) );
 	m_worldCamera->SetPosition( m_player->m_position );
 	m_worldCamera->SetOrientation( m_player->m_orientation );
 
-	m_grid = new Prop( Vec3(), EulerAngles() );
-	CreateGrid();
-
-	AddDebugObjects();
+	//AddDebugObjects();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -249,12 +244,6 @@ void Game::RenderEntities() const
 
 	g_engine->m_render->BindTexture( nullptr );
 
-	m_grid->Render();
-
-	m_cube1->Render();
-
-	m_cube2->Render();
-
 	g_engine->m_render->EndCamera( *m_worldCamera );
 }
 
@@ -402,43 +391,6 @@ void Game::InitializeStartTriangleVerts()
 }
 
 //-----------------------------------------------------------------------------------------------
-void Game::AddDebugObjects()
-{
-	// World Basis
-	DebugAddWorldBasis( Mat44(), -1.f );
-
-	// X axis text
-	Mat44 xMatrix = Mat44();
-	xMatrix.AppendTranslation3D( Vec3( 6.f, 0.f, 1.f ) );
-	xMatrix.AppendZRotation( -90.f );
-	std::string xAxisText = "x - forward";
-	DebugAddWorldText( xAxisText, xMatrix, 1.f, Vec2( 0.5f, 0.5f ), -1.f, Rgba8::RED, Rgba8::RED );
-
-	// Y axis text
-	Mat44 yMatrix = Mat44();
-	yMatrix.AppendTranslation3D( Vec3( 0.f, 4.f, 1.f ) );
-	yMatrix.AppendZRotation( 180.f );
-	std::string yAxisText = "y - left ";
-	DebugAddWorldText( yAxisText, yMatrix, 1.f, Vec2( 0.5f, 0.5f ), -1.f, Rgba8::GREEN, Rgba8::GREEN );
-
-	// Z axis text
-	Mat44 zMatrix = Mat44();
-	zMatrix.AppendTranslation3D( Vec3( 0.f, -1.f, 3.f ) );
-	zMatrix.AppendXRotation( 90.f );
-	zMatrix.AppendYRotation( 180.f );
-	std::string zAxisText = " z - up";
-	DebugAddWorldText( zAxisText, zMatrix, 1.f, Vec2( 0.5f, 0.5f ), -1.f, Rgba8::BLUE, Rgba8::BLUE );
-
-	m_cube1 = new Prop( Vec3( 5.f, -2.f, 3.f ), EulerAngles() );
-	AABB3 box = AABB3( Vec3( -0.5f, -0.5f, -0.5f ), Vec3( 0.5f, 0.5f, 0.5f ) );
-	AddVertsForCube( m_cube1->m_vertexes, box );
-
-	m_cube2 = new Prop( Vec3( 5.f, -4.f, 3.f ), EulerAngles() );
-	AddVertsForCube( m_cube2->m_vertexes, m_cube2->m_indexes, box );
-	m_cube2->m_isIndexed = true;
-}
-
-//-----------------------------------------------------------------------------------------------
 void Game::DebugRenderEntities() const
 {
 	
@@ -496,75 +448,4 @@ void Game::AddControlsToDevConsole()
 	g_engine->m_devConsole->AddLine( DevConsole::INFO_MINOR, " Pause: P" );
 	g_engine->m_devConsole->AddLine( DevConsole::INFO_MINOR, " Step Frame: O" );
 	g_engine->m_devConsole->AddLine( DevConsole::INFO_MINOR, " Slow motion: T" );
-}
-
-//-----------------------------------------------------------------------------------------------
-void Game::CreateCube( Prop* cube )
-{
-	// -Y Magenta Face
-	AddVertsForQuad3D( cube->m_vertexes, Vec3( -0.5f, -0.5f, -0.5f ), Vec3( 0.5f, -0.5f, -0.5f ), Vec3( 0.5f, -0.5f, 0.5f ), Vec3( -0.5f, -0.5f, 0.5f ), Rgba8::MAGENTA );
-	// +Y Green Face
-	AddVertsForQuad3D( cube->m_vertexes, Vec3( 0.5f, 0.5f, -0.5f ), Vec3( -0.5f, 0.5f, -0.5f ), Vec3( -0.5f, 0.5f, 0.5f ), Vec3( 0.5f, 0.5f, 0.5f ), Rgba8::GREEN );
-	// +Z Blue Face
-	AddVertsForQuad3D( cube->m_vertexes, Vec3( -0.5f, 0.5f, 0.5f ), Vec3( -0.5f, -0.5f, 0.5f ), Vec3( 0.5f, -0.5f, 0.5f ), Vec3( 0.5f, 0.5f, 0.5f ), Rgba8::BLUE );
-	// -Z Yellow Face
-	AddVertsForQuad3D( cube->m_vertexes, Vec3( 0.5f, 0.5f, -0.5f ), Vec3( 0.5f, -0.5f, -0.5f ), Vec3( -0.5f, -0.5f, -0.5f ), Vec3( -0.5f, 0.5f, -0.5f ), Rgba8::YELLOW );
-	// +X Red Face
-	AddVertsForQuad3D( cube->m_vertexes, Vec3( 0.5f, -0.5f, -0.5f ), Vec3( 0.5f, 0.5f, -0.5f ), Vec3( 0.5f, 0.5f, 0.5f ), Vec3( 0.5f, -0.5f, 0.5f ), Rgba8::RED );
-	// -X Cyan Face
-	AddVertsForQuad3D( cube->m_vertexes, Vec3( -0.5f, 0.5f, -0.5f ), Vec3( -0.5f, -0.5f, -0.5f ), Vec3( -0.5f, -0.5f, 0.5f ), Vec3( -0.5f, 0.5f, 0.5f ), Rgba8::CYAN );
-}
-
-//-----------------------------------------------------------------------------------------------
-void Game::CreateGrid()
-{
-	// X Lines
-	float yPos = -100.f;
-	for( int i = 0; i < 200; i++ )
-	{
-		if( yPos == 0.f )
-		{
-			AABB3 bounds = AABB3( -100.f, -0.1f, -0.1f, 100.f, 0.1f, 0.1f );
-			AddVertsForCube( m_grid->m_vertexes, bounds, Rgba8::RED );
-		}
-		else if( fmodf( yPos, 5.f ) == 0.f )
-		{
-			AABB3 bounds = AABB3( -100.f, -0.05f, -0.05f, 100.f, 0.05f, 0.05f );
-			bounds.Translate( Vec3( 0.f, yPos, 0.f ) );
-			AddVertsForCube( m_grid->m_vertexes, bounds, Rgba8( 150, 0, 0 ) );
-		}
-		else
-		{
-			AABB3 bounds = AABB3( -100.f, -0.025f, -0.025f, 100.f, 0.025f, 0.025f );
-			bounds.Translate( Vec3( 0.f, yPos, 0.f ) );
-			AddVertsForCube( m_grid->m_vertexes, bounds, Rgba8::DARK_GREY );
-		}
-		
-		yPos += 1.f;
-	}
-
-	// Green Lines
-	float xPos = -100.f;
-	for( int j = 0; j < 200; j++ )
-	{
-		if( xPos == 0.f )
-		{
-			AABB3 bounds = AABB3( -0.1f, -100.f, -0.1f, 0.1f, 100.f, 0.1f );
-			AddVertsForCube( m_grid->m_vertexes, bounds, Rgba8::GREEN );
-		}
-		else if( fmodf( xPos, 5.f ) == 0.f )
-		{
-			AABB3 bounds = AABB3(-0.05f, -100.f, -0.05f, 0.05f, 100.f, 0.05f );
-			bounds.Translate( Vec3( xPos, 0.f, 0.f ) );
-			AddVertsForCube( m_grid->m_vertexes, bounds, Rgba8( 0, 150, 0 ) );
-		}
-		else
-		{
-			AABB3 bounds = AABB3( -0.025f, -100.f, -0.025f, 0.025f, 100.f, 0.025f );
-			bounds.Translate( Vec3( xPos, 0.f, 0.f ) );
-			AddVertsForCube( m_grid->m_vertexes, bounds, Rgba8::DARK_GREY );
-		}
-
-		xPos += 1.f;
-	}
 }

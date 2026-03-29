@@ -62,14 +62,6 @@ void Map::CreateTiles()
 			}
 		}
 	}
-
-	/*TileDefinitions* tileDef1 = GetTileDefinition( "StoneFloor" );
-	Tile newTile1 = Tile( IntVec3(), tileDef1 );
-	m_tiles.push_back( newTile1 );
-
-	TileDefinitions* tileDef2 = GetTileDefinition( "BrickWall" );
-	Tile newTile2 = Tile( IntVec3( 1, 0, 0 ), tileDef2 );
-	m_tiles.push_back( newTile2 );*/
 }
 
 //-----------------------------------------------------------------------------------------------

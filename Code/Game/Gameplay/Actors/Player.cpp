@@ -9,10 +9,9 @@
 
 //-----------------------------------------------------------------------------------------------
 Player::Player( Vec3 const& startingPosition, EulerAngles orientation )
-	:	Entity( g_game, startingPosition )
+	: m_position( startingPosition )
+	, m_orientation( orientation )
 {
-	m_orientation = orientation;
-	m_velocity = startingPosition;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -207,5 +206,14 @@ void Player::CameraControlsController( float deltaSeconds )
 		m_velocity = Vec3();
 		m_orientation = EulerAngles();
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+Mat44 Player::GetModelToWorldTransform() const
+{
+	Mat44 modelMatrix;
+	modelMatrix.AppendTranslation3D( m_position );
+	modelMatrix.Append( m_orientation.GetAsMatrix_IFwd_JLeft_KUp() );
+	return modelMatrix;
 }
 

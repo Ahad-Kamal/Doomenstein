@@ -13,9 +13,7 @@ class Camera;
 class Entity;
 class Clock;
 class Player;
-class Prop;
 class BitmapFont;
-class BillboardText;
 class SpriteSheet;
 
 //-----------------------------------------------------------------------------------------------
@@ -56,14 +54,11 @@ private:
 	void ClampCamera( Vec2& minView, Vec2& maxView );
 	void ShakeCamera( float deltaSeconds );
 
-	//bool DoEntitiesOverlap( Entity const& a, Entity const& b);
-
 	void UpdateKeyboardInput();
 	void UpdateControllerInput();
 
 	void InitializeStartTriangleVerts();
 
-	void AddDebugObjects();
 	void DebugRenderEntities() const;
 	void DebugDrawWorldBounds() const;
 	void DebugAddDebugText() const;
@@ -73,18 +68,11 @@ private:
 	void AddCommandsToDevConsole();
 	void AddControlsToDevConsole();
 
-	void CreateCube( Prop* cube );
-	void CreateGrid();
-
 public:
 	std::vector<Map>	m_maps;
 	Map*				m_currentMap;
 
 	Player*				m_player = nullptr;
-	Prop*				m_cube1 = nullptr;
-	Prop*				m_cube2 = nullptr;
-	Prop*				m_sphere = nullptr;
-	Prop*				m_grid = nullptr;
 
 	Camera*				m_worldCamera;
 	Camera*				m_screenCamera;

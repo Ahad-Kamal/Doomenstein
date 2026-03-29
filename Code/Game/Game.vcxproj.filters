@@ -34,13 +34,7 @@
     <ClCompile Include="Gameplay\Map.cpp">
       <Filter>Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="Gameplay\Actors\BillboardText.cpp">
-      <Filter>Gameplay\Actors</Filter>
-    </ClCompile>
     <ClCompile Include="Gameplay\Actors\Player.cpp">
-      <Filter>Gameplay\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Gameplay\Actors\Prop.cpp">
       <Filter>Gameplay\Actors</Filter>
     </ClCompile>
     <ClCompile Include="Gameplay\Actors\Actor.cpp">
@@ -75,13 +69,7 @@
     <ClInclude Include="Gameplay\Map.hpp">
       <Filter>Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Gameplay\Actors\BillboardText.hpp">
-      <Filter>Gameplay\Actors</Filter>
-    </ClInclude>
     <ClInclude Include="Gameplay\Actors\Player.hpp">
-      <Filter>Gameplay\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Gameplay\Actors\Prop.hpp">
       <Filter>Gameplay\Actors</Filter>
     </ClInclude>
     <ClInclude Include="Gameplay\Actors\Actor.hpp">
