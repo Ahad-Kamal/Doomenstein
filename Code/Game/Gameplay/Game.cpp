@@ -44,7 +44,6 @@ void Game::Startup()
 
 	Shader* diffuseShader = g_engine->m_render->CreateOrGetShader( "Data/Shaders/Diffuse", VertexType::VERTEX_PCUTBN );
 	g_engine->m_render->BindShader( diffuseShader );
-	g_engine->m_render->SetLightConstants( Vec3( 2.f, 1.f, -1.f ), 0.85f, 0.35f );
 
 	MapDefinition::InitializeMapDefs();
 
@@ -108,16 +107,19 @@ void Game::Render() const
 {
 	if( m_currentState == GAME_STATE_ATTRACT )
 	{
+		g_engine->m_render->SetLightConstants( Vec3(), 0.f, 1.f );
 		RenderAttractMode();
 		return;
 	}
 
+	g_engine->m_render->SetLightConstants( Vec3( 2.f, 1.f, -1.f ), 0.85f, 0.35f );
 	RenderEntities();
 	RenderMap();
 
 	if( g_engine->m_devConsole->IsOpen() )
 	{
 		g_engine->m_render->BeginCamera( *m_screenCamera );
+		g_engine->m_render->SetLightConstants( Vec3(), 0.f, 1.f );
 		AABB2 screenBounds = AABB2( m_screenCamera->GetOrthoBottomLeft(), m_screenCamera->GetOrthoTopRight() );
 		g_engine->m_devConsole->Render( screenBounds );
 	}
