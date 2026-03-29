@@ -43,7 +43,8 @@ void Game::Startup()
 	m_gameClock = new Clock( Clock::GetSystemClock() );
 
 	Shader* diffuseShader = g_engine->m_render->CreateOrGetShader( "Data/Shaders/Diffuse", VertexType::VERTEX_PCUTBN );
-	//g_engine->m_render->BindShader( diffuseShader );
+	g_engine->m_render->BindShader( diffuseShader );
+	g_engine->m_render->SetLightConstants( Vec3( 2.f, 1.f, -1.f ), 0.85f, 0.35f );
 
 	MapDefinition::InitializeMapDefs();
 
