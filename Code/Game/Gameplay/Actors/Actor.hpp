@@ -21,6 +21,8 @@ public:
 	void Update( float deltaSeconds );
 	void Render() const;
 
+	bool IsAlive() const;
+
 	IntVec2 GetCoordsOfCurrentTile();
 	Mat44 GetModelToWorldTransform() const;
 
@@ -33,4 +35,6 @@ public:
 	float		m_physicsRadius;
 	float		m_cosmeticRadius;
 	bool		m_isStatic;
+	bool		m_isDead = false;
+	bool		m_isGarbage = false;
 };

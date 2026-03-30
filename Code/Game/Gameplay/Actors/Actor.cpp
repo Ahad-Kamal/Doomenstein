@@ -84,6 +84,17 @@ void Actor::Render() const
 }
 
 //-----------------------------------------------------------------------------------------------
+bool Actor::IsAlive() const
+{
+	if( this == nullptr )
+	{
+		return false;
+	}
+
+	return !m_isDead;
+}
+
+//-----------------------------------------------------------------------------------------------
 IntVec2 Actor::GetCoordsOfCurrentTile()
 {
 	return IntVec2( RoundDownToInt( m_position.x ), RoundDownToInt( m_position.y ) );

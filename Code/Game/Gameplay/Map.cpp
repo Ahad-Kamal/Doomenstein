@@ -198,7 +198,7 @@ void Map::Update()
 //-----------------------------------------------------------------------------------------------
 void Map::SpawnActors()
 {
-	m_testActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f, false, Rgba8( 0, 0, 200 ) );
+	m_testActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f,  false, Rgba8( 0, 0, 200 ) );
 	m_actors.push_back( m_testActor );
 
 	Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
@@ -209,18 +209,55 @@ void Map::SpawnActors()
 
 	Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
 	m_actors.push_back( staticActor3 );
+
+	Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 0, 200 ) );
+	m_actors.push_back( nonStaticActor );
 }
 
 //-----------------------------------------------------------------------------------------------
 void Map::CollideActors()
 {
-
+	for( unsigned int actorAIndex = 0; actorAIndex < m_actors.size(); actorAIndex++ )
+	{
+		Actor*& actorA = m_actors[ actorAIndex ];
+		if( actorA->IsAlive() )
+		{
+			for( unsigned int actorBIndex = 0; actorBIndex < m_actors.size(); actorBIndex++ )
+			{
+				Actor*& actorB = m_actors[ actorBIndex ];
+				if( actorB->IsAlive() )
+				{
+					CollideActors( actorA, actorB );
+				}
+			}
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
 void Map::CollideActors( Actor* actorA, Actor* actorB )
 {
+	if( actorA == actorB )
+	{
+		return;
+	}
 
+	// To-Do: Change to use m_doesPushEntities & m_isPushedByEntities? See Libra for example.
+	// A and B push each other
+	if( !actorA->m_isStatic && !actorB->m_isStatic )
+	{
+		PushCylindersOutOfEachOther( actorA->m_position, actorA->m_physicsHeight, actorA->m_physicsRadius, actorB->m_position, actorB->m_physicsHeight, actorB->m_physicsRadius );
+	}
+	// A pushes B
+	else if( actorA->m_isStatic && !actorB->m_isStatic )
+	{
+		
+	}
+	// B pushes A
+	else if( !actorA->m_isStatic && actorB->m_isStatic )
+	{
+
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -229,7 +266,7 @@ void Map::CollideActorsWithMap()
 	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
 	{
 		Actor*& actor = m_actors[ actorIndex ];
-		if( actor && !actor->m_isStatic )
+		if( actor->IsAlive() )
 		{
 			CollideActorWithMap( actor );
 		}
@@ -239,6 +276,11 @@ void Map::CollideActorsWithMap()
 //-----------------------------------------------------------------------------------------------
 void Map::CollideActorWithMap( Actor* actor )
 {
+	if( actor->m_isStatic )
+	{
+		return;
+	}
+
 	IntVec2 coords = actor->GetCoordsOfCurrentTile();
 	IntVec2 mapDimensions = m_definition->GetImage()->GetDimensions();
 
@@ -252,7 +294,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	if( northTile.IsTileSolid() )
 	{
 		AABB2 tileBox = northTile.CreateAABB2FromCoords();
-		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+		PushCylinderOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
 
 	// Tile East of Actor
@@ -260,7 +302,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	if( eastTile.IsTileSolid() )
 	{
 		AABB2 tileBox = eastTile.CreateAABB2FromCoords();
-		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+		PushCylinderOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
 
 	// Tile South of Actor
@@ -268,7 +310,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	if( southTile.IsTileSolid() )
 	{
 		AABB2 tileBox = southTile.CreateAABB2FromCoords();
-		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+		PushCylinderOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
 
 	// Tile West of Actor
@@ -276,7 +318,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	if( westTile.IsTileSolid() )
 	{
 		AABB2 tileBox = westTile.CreateAABB2FromCoords();
-		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+		PushCylinderOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
 
 
@@ -285,7 +327,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	if( northEastTile.IsTileSolid() )
 	{
 		AABB2 tileBox = northEastTile.CreateAABB2FromCoords();
-		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+		PushCylinderOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
 
 	// Tile Southeast of Actor
@@ -293,7 +335,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	if( southEastTile.IsTileSolid() )
 	{
 		AABB2 tileBox = southEastTile.CreateAABB2FromCoords();
-		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+		PushCylinderOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
 
 	// Tile Southwest of Actor
@@ -301,7 +343,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	if( southWestTile.IsTileSolid() )
 	{
 		AABB2 tileBox = southWestTile.CreateAABB2FromCoords();
-		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+		PushCylinderOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
 
 	// Tile Northwest of Actor
@@ -309,7 +351,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	if( northWestTile.IsTileSolid() )
 	{
 		AABB2 tileBox = northWestTile.CreateAABB2FromCoords();
-		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+		PushCylinderOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
 
 	// Tile(?) Above Actor
