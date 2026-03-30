@@ -8,7 +8,7 @@
 
 
 //-----------------------------------------------------------------------------------------------
-Player::Player( Vec3 const& startingPosition, EulerAngles orientation )
+Player::Player( Vec3 const& startingPosition, EulerAngles const& orientation )
 	: m_position( startingPosition )
 	, m_orientation( orientation )
 {
@@ -46,11 +46,11 @@ void Player::Render() const
 void Player::CameraControlsKeyboard( float deltaSeconds )
 {
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
-	float speedFactor = 500.f;
+	float speedFactor = 150.f;
 
 	if( g_engine->m_input->IsKeyDown( KEYCODE_SHIFT ) )
 	{
-		speedFactor *= 10.f;
+		speedFactor *= 15.f;
 	}
 
 	m_velocity = Vec3();
@@ -95,13 +95,13 @@ void Player::CameraControlsKeyboard( float deltaSeconds )
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.125f;
+		m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
 	}
 
 	// Pitch
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		m_orientation.m_pitchDegrees += g_engine->m_input->m_cursorState.m_cursorClientDelta.y * 0.125f;
+		m_orientation.m_pitchDegrees += g_engine->m_input->m_cursorState.m_cursorClientDelta.y * 0.075f;
 		m_orientation.m_pitchDegrees = GetClamped( m_orientation.m_pitchDegrees, -85.f, 85.f );
 	}
 

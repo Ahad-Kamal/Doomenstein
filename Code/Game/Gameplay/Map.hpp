@@ -41,6 +41,7 @@ public:
 	TileDefinitions* GetTileDefinition( std::string name ) const;
 
 	void Update();
+	void SpawnActors();
 	void CollideActors();
 	void CollideActors( Actor* actorA, Actor* actorB );
 	void CollideActorsWithMap();
@@ -56,6 +57,7 @@ public:
 protected:
 	MapDefinition const* m_definition = nullptr;
 	std::vector<Tile> m_tiles;
+	std::vector<Actor*> m_actors;
 
 	std::vector<Vertex_PCUTBN> m_vertexes;
 	std::vector<unsigned int> m_indexes;

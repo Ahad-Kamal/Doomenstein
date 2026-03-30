@@ -1,15 +1,17 @@
 #pragma once
-#include "Game/Gameplay/Entity.hpp"
+#include "Engine/Math/Vec3.hpp"
+#include "Engine/Math/EulerAngles.hpp"
+#include "Engine/Core/Rgba8.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
-struct EulerAngles;
+struct Mat44;
 
 //-----------------------------------------------------------------------------------------------
 class Player
 {
 public:
-	Player( Vec3 const& startingPosition, EulerAngles orientation );
+	Player( Vec3 const& startingPosition, EulerAngles const& orientation );
 	~Player();
 
 	void Update( float deltaSeconds );
@@ -21,7 +23,6 @@ public:
 	Mat44 GetModelToWorldTransform() const;
 
 public:
-	Game*	m_game = nullptr;
 	Vec3	m_position;
 	Vec3	m_velocity;
 	EulerAngles m_orientation;

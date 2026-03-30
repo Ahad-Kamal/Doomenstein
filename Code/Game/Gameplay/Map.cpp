@@ -3,6 +3,7 @@
 #include "Game/Gameplay/Tile.hpp"
 #include "Game/Gameplay/TileDefinition.hpp"
 #include "Game/Gameplay/Game.hpp"
+#include "Game/Gameplay/Actors/Actor.hpp"
 #include "Engine/Math/RaycastUtils.hpp"
 #include "Engine/Math/IntVec3.hpp"
 #include "Engine/Math/AABB3.hpp"
@@ -25,6 +26,7 @@ Map::Map( MapDefinition* definition )
 
 	CreateTiles();
 	CreateGeometry();
+	SpawnActors();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -179,6 +181,22 @@ void Map::Update()
 }
 
 //-----------------------------------------------------------------------------------------------
+void Map::SpawnActors()
+{
+	Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+	m_actors.push_back( staticActor1 );
+
+	Actor* staticActor2 = new Actor( Vec3( 8.5f, 8.5f, 0.125f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+	m_actors.push_back( staticActor2 );
+
+	Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+	m_actors.push_back( staticActor3 );
+
+	Actor* nonstaticActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f, false, Rgba8( 0, 0, 200 ) );
+	m_actors.push_back( nonstaticActor );
+}
+
+//-----------------------------------------------------------------------------------------------
 void Map::CollideActors()
 {
 
@@ -193,7 +211,10 @@ void Map::CollideActors( Actor* actorA, Actor* actorB )
 //-----------------------------------------------------------------------------------------------
 void Map::CollideActorsWithMap()
 {
-
+	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
+	{
+		CollideActorWithMap( m_actors[ actorIndex ] );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -207,6 +228,12 @@ void Map::Render()
 {
 	g_engine->m_render->RenderSetup( &g_terrainSpriteSheet->GetTexture() );
 	g_engine->m_render->DrawVertexArray( m_vertexes, m_indexes, m_vertexBuffer, m_indexBuffer );
+
+	g_engine->m_render->SetLightConstants( Vec3(), 0.f, 1.f );
+	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
+	{
+		m_actors[ actorIndex ]->Render();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -72,7 +72,7 @@ void Game::Startup()
 
 	Vec2 worldCenter( WORLD_SIZE_X * 0.5f, WORLD_SIZE_Y * 0.5f );
 
- 	m_player = new Player( Vec3( 3.f, 3.f, 10.f ), EulerAngles( 45.f, 30.f, 0.f ) );
+ 	m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles() );
 	m_worldCamera->SetPosition( m_player->m_position );
 	m_worldCamera->SetOrientation( m_player->m_orientation );
 
@@ -113,7 +113,6 @@ void Game::Render() const
 	}
 
 	g_engine->m_render->SetLightConstants( Vec3( 2.f, 1.f, -1.f ), 0.85f, 0.35f );
-	RenderEntities();
 	RenderMap();
 
 	if( g_engine->m_devConsole->IsOpen() )
