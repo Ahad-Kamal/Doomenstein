@@ -45,6 +45,31 @@ void Player::Render() const
 //-----------------------------------------------------------------------------------------------
 void Player::CameraControlsKeyboard( float deltaSeconds )
 {
+	// Yaw
+	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
+	{
+		m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
+	}
+
+	// Pitch
+	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
+	{
+		m_orientation.m_pitchDegrees += g_engine->m_input->m_cursorState.m_cursorClientDelta.y * 0.075f;
+		m_orientation.m_pitchDegrees = GetClamped( m_orientation.m_pitchDegrees, -85.f, 85.f );
+	}
+
+	// Roll
+	if( g_engine->m_input->IsKeyDown( 'E' ) )
+	{
+		m_orientation.m_rollDegrees += 90.f * deltaSeconds;
+		m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
+	}
+	if( g_engine->m_input->IsKeyDown( 'Q' ) )
+	{
+		m_orientation.m_rollDegrees -= 90.f * deltaSeconds;
+		m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
+	}
+
 	// Note: remove later
 	if( g_game->m_currentMap->m_isTestActor )
 	{
@@ -99,31 +124,7 @@ void Player::CameraControlsKeyboard( float deltaSeconds )
 		m_velocity.z -= deltaSeconds * speedFactor;
 	}
 
-	// Yaw
-	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
-	{
-		m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
-	}
-
-	// Pitch
-	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
-	{
-		m_orientation.m_pitchDegrees += g_engine->m_input->m_cursorState.m_cursorClientDelta.y * 0.075f;
-		m_orientation.m_pitchDegrees = GetClamped( m_orientation.m_pitchDegrees, -85.f, 85.f );
-	}
-
-	// Roll
-	if( g_engine->m_input->IsKeyDown( 'E' ) )
-	{
-		m_orientation.m_rollDegrees += 90.f * deltaSeconds;
-		m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
-	}
-	if( g_engine->m_input->IsKeyDown( 'Q' ) )
-	{
-		m_orientation.m_rollDegrees -= 90.f * deltaSeconds;
-		m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
-	}
-
+	// To-Do: remove later?
 	// Reset
 	if( g_engine->m_input->WasKeyJustPressed( 'H' ) )
 	{
@@ -136,22 +137,7 @@ void Player::CameraControlsKeyboard( float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Player::CameraControlsController( float deltaSeconds )
 {
-	// Note: remove later
-	if( g_game->m_currentMap->m_isTestActor )
-	{
-		m_velocity = Vec3();
-		return;
-	}
-
 	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
-	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
-	float speedFactor = 1.f;
-
-	if( controller.GetButton( XboxButtonID::A ).m_isPressed )
-	{
-		speedFactor *= 15.f;
-	}
-
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
@@ -175,6 +161,21 @@ void Player::CameraControlsController( float deltaSeconds )
 	{
 		m_orientation.m_rollDegrees -= 90.f * deltaSeconds;
 		m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
+	}
+
+	// Note: remove later
+	if( g_game->m_currentMap->m_isTestActor )
+	{
+		m_velocity = Vec3();
+		return;
+	}
+
+	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
+	float speedFactor = 1.f;
+
+	if( controller.GetButton( XboxButtonID::A ).m_isPressed )
+	{
+		speedFactor *= 15.f;
 	}
 
 	// Up and Down
@@ -214,6 +215,8 @@ void Player::CameraControlsController( float deltaSeconds )
 		m_velocity.z -= forwardVector.z * deltaSeconds * speedFactor;
 	}
 
+	// To-Do: remove later?
+	// Reset
 	if( controller.GetButton( XboxButtonID::START ).m_isPressed && ! controller.GetButton( XboxButtonID::START ).m_wasPressedLastFrame )
 	{
 		m_position = Vec3();
