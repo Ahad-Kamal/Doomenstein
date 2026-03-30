@@ -313,4 +313,14 @@ void Map::KeyboardControls( float deltaSeconds )
 		m_testActor->m_position.x -= forwardVector.x * deltaSeconds * speedFactor;
 		m_testActor->m_position.y -= forwardVector.y * deltaSeconds * speedFactor;
 	}
+
+	// Up and Down
+	if( g_engine->m_input->IsKeyDown( 'Z' ) )
+	{
+		m_testActor->m_position.z += deltaSeconds * speedFactor;
+	}
+	if( g_engine->m_input->IsKeyDown( 'C' ) )
+	{
+		m_testActor->m_position.z -= deltaSeconds * speedFactor;
+	}
 }
