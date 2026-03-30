@@ -95,6 +95,7 @@ void Game::Update()
 	}
 
 	UpdateEntities( deltaSeconds );
+	UpdateMap();
 
 	DeleteGarbageEntities();
 

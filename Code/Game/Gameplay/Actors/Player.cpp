@@ -24,7 +24,7 @@ Player::~Player()
 void Player::Update( [[maybe_unused]] float deltaSeconds )
 {
 	float systemDeltaSeconds = static_cast<float>( Clock::GetSystemClock().GetDeltaSeconds() );
-	m_position += m_velocity * systemDeltaSeconds;
+	m_position += m_velocity;
 
 	if( g_game->m_currentState == GAME_STATE_PLAY )
 	{
@@ -45,8 +45,15 @@ void Player::Render() const
 //-----------------------------------------------------------------------------------------------
 void Player::CameraControlsKeyboard( float deltaSeconds )
 {
+	// Note: remove later
+	if( g_game->m_currentMap->m_isTestActor )
+	{
+		m_velocity = Vec3();
+		return;
+	}
+
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
-	float speedFactor = 150.f;
+	float speedFactor = 1.f;
 
 	if( g_engine->m_input->IsKeyDown( KEYCODE_SHIFT ) )
 	{
@@ -129,13 +136,20 @@ void Player::CameraControlsKeyboard( float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Player::CameraControlsController( float deltaSeconds )
 {
+	// Note: remove later
+	if( g_game->m_currentMap->m_isTestActor )
+	{
+		m_velocity = Vec3();
+		return;
+	}
+
 	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
-	float speedFactor = 2.f;
+	float speedFactor = 1.f;
 
 	if( controller.GetButton( XboxButtonID::A ).m_isPressed )
 	{
-		speedFactor *= 10.f;
+		speedFactor *= 15.f;
 	}
 
 	// Yaw

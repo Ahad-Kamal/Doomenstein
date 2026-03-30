@@ -54,6 +54,8 @@ public:
 	RaycastResult3D RaycastWorldZ( Vec3 const& start, Vec3 const& direction, float distance ) const;
 	RaycastResult3D RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
 
+	void KeyboardControls( float deltaSeconds );
+
 protected:
 	MapDefinition const* m_definition = nullptr;
 	std::vector<Tile> m_tiles;
@@ -65,4 +67,9 @@ protected:
 	Shader* m_shader = nullptr;
 	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer;
+
+// Note: remove later
+public:
+	Actor* m_testActor = nullptr;
+	bool m_isTestActor = false;
 };

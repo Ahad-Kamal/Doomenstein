@@ -4,12 +4,14 @@
 #include "Game/Gameplay/TileDefinition.hpp"
 #include "Game/Gameplay/Game.hpp"
 #include "Game/Gameplay/Actors/Actor.hpp"
+#include "Game/Gameplay/Actors/Player.hpp"
 #include "Engine/Math/RaycastUtils.hpp"
 #include "Engine/Math/IntVec3.hpp"
 #include "Engine/Math/AABB3.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/VertexUtils.hpp"
 #include "Engine/Core/Image.hpp"
+#include "Engine/Core/Clock.hpp"
 #include "Engine/Renderer/Camera.hpp"
 
 
@@ -177,7 +179,8 @@ TileDefinitions* Map::GetTileDefinition( std::string name ) const
 //-----------------------------------------------------------------------------------------------
 void Map::Update()
 {
-
+	float deltaSeconds = static_cast<float>( g_game->m_gameClock->GetDeltaSeconds() );
+	KeyboardControls( deltaSeconds );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -192,8 +195,8 @@ void Map::SpawnActors()
 	Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
 	m_actors.push_back( staticActor3 );
 
-	Actor* nonstaticActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f, false, Rgba8( 0, 0, 200 ) );
-	m_actors.push_back( nonstaticActor );
+	m_testActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f, false, Rgba8( 0, 0, 200 ) );
+	m_actors.push_back( m_testActor );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -220,7 +223,7 @@ void Map::CollideActorsWithMap()
 //-----------------------------------------------------------------------------------------------
 void Map::CollideActorWithMap( Actor* actor )
 {
-
+	
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -258,4 +261,56 @@ RaycastResult3D Map::RaycastWorldZ( [[maybe_unused]] Vec3 const& start, [[maybe_
 RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[maybe_unused]] Vec3 const& direction, [[maybe_unused]] float distance, [[maybe_unused]] Actor* owner /*= nullptr */ ) const
 {
 	return RaycastResult3D();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::KeyboardControls( float deltaSeconds )
+{
+	if( g_game->m_currentState != GAME_STATE_PLAY )
+	{
+		return;
+	}
+
+	// Note: remove later
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F1 ) )
+	{
+		m_isTestActor = !m_isTestActor;
+	}
+
+	if( !m_isTestActor )
+	{
+		return;
+	}
+
+	Vec3 forwardVector = g_game->m_player->m_orientation.GetForwardDir_IFwd_JLeft_KUp();
+	float speedFactor = 1.f;
+	if( g_engine->m_input->IsKeyDown( KEYCODE_SHIFT ) )
+	{
+		speedFactor *= 15.f;
+	}
+
+	// Left and Right
+	if( g_engine->m_input->IsKeyDown( 'A' ) )
+	{
+		m_testActor->m_position.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		m_testActor->m_position.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+
+	}
+	if( g_engine->m_input->IsKeyDown( 'D' ) )
+	{
+		m_testActor->m_position.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		m_testActor->m_position.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+	}
+
+	// Forward and Back
+	if( g_engine->m_input->IsKeyDown( 'W' ) )
+	{
+		m_testActor->m_position.x += forwardVector.x * deltaSeconds * speedFactor;
+		m_testActor->m_position.y += forwardVector.y * deltaSeconds * speedFactor;
+	}
+	if( g_engine->m_input->IsKeyDown( 'S' ) )
+	{
+		m_testActor->m_position.x -= forwardVector.x * deltaSeconds * speedFactor;
+		m_testActor->m_position.y -= forwardVector.y * deltaSeconds * speedFactor;
+	}
 }
