@@ -90,11 +90,11 @@ void Player::CameraControlsKeyboard( float deltaSeconds )
 	}
 
 	// Up and Down
-	if( g_engine->m_input->IsKeyDown( 'C' ) )
+	if( g_engine->m_input->IsKeyDown( 'Z' ) )
 	{
 		m_velocity.z += deltaSeconds * speedFactor;
 	}
-	if( g_engine->m_input->IsKeyDown( 'Z' ) )
+	if( g_engine->m_input->IsKeyDown( 'C' ) )
 	{
 		m_velocity.z -= deltaSeconds * speedFactor;
 	}
