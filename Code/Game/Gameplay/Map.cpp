@@ -210,7 +210,7 @@ void Map::SpawnActors()
 	Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
 	m_actors.push_back( staticActor3 );
 
-	Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 0, 200 ) );
+	Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 200, 0 ) );
 	m_actors.push_back( nonStaticActor );
 }
 
@@ -251,12 +251,12 @@ void Map::CollideActors( Actor* actorA, Actor* actorB )
 	// A pushes B
 	else if( actorA->m_isStatic && !actorB->m_isStatic )
 	{
-		
+		PushCylinderOutOfFixedCylinder( actorB->m_position, actorB->m_physicsHeight, actorB->m_physicsRadius, actorA->m_position, actorA->m_physicsHeight, actorA->m_physicsRadius );
 	}
 	// B pushes A
 	else if( !actorA->m_isStatic && actorB->m_isStatic )
 	{
-
+		PushCylinderOutOfFixedCylinder( actorA->m_position, actorA->m_physicsHeight, actorA->m_physicsRadius, actorB->m_position, actorB->m_physicsHeight, actorB->m_physicsRadius );
 	}
 }
 
