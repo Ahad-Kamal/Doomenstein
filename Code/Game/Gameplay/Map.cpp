@@ -311,6 +311,18 @@ void Map::CollideActorWithMap( Actor* actor )
 		AABB2 tileBox = northWestTile.CreateAABB2FromCoords();
 		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
 	}
+
+	// Tile(?) Above Actor
+	if( actor->m_position.z > ( 1.f - actor->m_cosmeticHeight ) )
+	{
+		actor->m_position.z = 1.f - actor->m_cosmeticHeight;
+	}
+
+	// Tile(?) Below Actor<
+	if( actor->m_position.z < 0.f )
+	{
+		actor->m_position.z = 0.f;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
