@@ -5,7 +5,9 @@
 #include "Game/Gameplay/Game.hpp"
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
+#include "Game/Framework/GameCommon.hpp"
 #include "Engine/Math/RaycastUtils.hpp"
+#include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/IntVec3.hpp"
 #include "Engine/Math/AABB3.hpp"
 #include "Engine/Core/Engine.hpp"
@@ -13,6 +15,7 @@
 #include "Engine/Core/Image.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Renderer/Camera.hpp"
+#include "Engine/Math/MathUtils.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -157,6 +160,12 @@ int Map::GetTileIndexFromCoords( int x, int y ) const
 }
 
 //-----------------------------------------------------------------------------------------------
+int Map::GetTileIndexFromCoords( IntVec2 coords ) const
+{
+	return ( coords.y * m_definition->GetImage()->GetDimensions().x ) + coords.x;
+}
+
+//-----------------------------------------------------------------------------------------------
 IntVec2 Map::GetTileCoordsFromIndex( int index ) const
 {
 	return m_tiles[ index ].m_coords;
@@ -181,11 +190,17 @@ void Map::Update()
 {
 	float deltaSeconds = static_cast<float>( g_game->m_gameClock->GetDeltaSeconds() );
 	KeyboardControls( deltaSeconds );
+
+	CollideActors();
+	CollideActorsWithMap();
 }
 
 //-----------------------------------------------------------------------------------------------
 void Map::SpawnActors()
 {
+	m_testActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f, false, Rgba8( 0, 0, 200 ) );
+	m_actors.push_back( m_testActor );
+
 	Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
 	m_actors.push_back( staticActor1 );
 
@@ -194,9 +209,6 @@ void Map::SpawnActors()
 
 	Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
 	m_actors.push_back( staticActor3 );
-
-	m_testActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f, false, Rgba8( 0, 0, 200 ) );
-	m_actors.push_back( m_testActor );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -216,14 +228,89 @@ void Map::CollideActorsWithMap()
 {
 	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
 	{
-		CollideActorWithMap( m_actors[ actorIndex ] );
+		Actor*& actor = m_actors[ actorIndex ];
+		if( actor && !actor->m_isStatic )
+		{
+			CollideActorWithMap( actor );
+		}
 	}
 }
 
 //-----------------------------------------------------------------------------------------------
 void Map::CollideActorWithMap( Actor* actor )
 {
-	
+	IntVec2 coords = actor->GetCoordsOfCurrentTile();
+	IntVec2 mapDimensions = m_definition->GetImage()->GetDimensions();
+
+	if( coords.x <= 0 || coords.x >= mapDimensions.x - 1 || coords.y <= 0 || coords.y >= mapDimensions.y - 1 )
+	{
+		return;
+	}
+
+	// Tile North of Actor
+	Tile northTile = Tile( m_tiles[ GetTileIndexFromCoords( coords + NORTH ) ] );
+	if( northTile.IsTileSolid() )
+	{
+		AABB2 tileBox = northTile.CreateAABB2FromCoords();
+		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+	}
+
+	// Tile East of Actor
+	Tile eastTile = Tile( m_tiles[ GetTileIndexFromCoords( coords + EAST ) ] );
+	if( eastTile.IsTileSolid() )
+	{
+		AABB2 tileBox = eastTile.CreateAABB2FromCoords();
+		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+	}
+
+	// Tile South of Actor
+	Tile southTile = Tile( m_tiles[ GetTileIndexFromCoords( coords + SOUTH ) ] );
+	if( southTile.IsTileSolid() )
+	{
+		AABB2 tileBox = southTile.CreateAABB2FromCoords();
+		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+	}
+
+	// Tile West of Actor
+	Tile westTile = Tile( m_tiles[ GetTileIndexFromCoords( coords + WEST ) ] );
+	if( westTile.IsTileSolid() )
+	{
+		AABB2 tileBox = westTile.CreateAABB2FromCoords();
+		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+	}
+
+
+	// Tile Northeast of Actor
+	Tile northEastTile = Tile( m_tiles[ GetTileIndexFromCoords( coords + NORTH + EAST ) ] );
+	if( northEastTile.IsTileSolid() )
+	{
+		AABB2 tileBox = northEastTile.CreateAABB2FromCoords();
+		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+	}
+
+	// Tile Southeast of Actor
+	Tile southEastTile = Tile( m_tiles[ GetTileIndexFromCoords( coords + SOUTH + EAST ) ] );
+	if( southEastTile.IsTileSolid() )
+	{
+		AABB2 tileBox = southEastTile.CreateAABB2FromCoords();
+		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+	}
+
+	// Tile Southwest of Actor
+	Tile southWestTile = Tile( m_tiles[ GetTileIndexFromCoords( coords + SOUTH + WEST ) ] );
+	if( southWestTile.IsTileSolid() )
+	{
+		AABB2 tileBox = southWestTile.CreateAABB2FromCoords();
+		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+	}
+
+	// Tile Northwest of Actor
+	Tile northWestTile = Tile( m_tiles[ GetTileIndexFromCoords( coords + NORTH + WEST ) ] );
+	if( northWestTile.IsTileSolid() )
+	{
+		AABB2 tileBox = northWestTile.CreateAABB2FromCoords();
+		PushDiscOutOfFixedAABB2D( actor->m_position, actor->m_physicsRadius, tileBox );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Audio/AudioSystem.hpp"
+#include "Engine/Math/IntVec2.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -30,6 +31,12 @@ constexpr float WORLD_CENTER_Z = WORLD_SIZE_Z / 2.f;
 constexpr float SCREEN_CENTER_X = SCREEN_SIZE_X / 2.f;
 constexpr float SCREEN_CENTER_Y = SCREEN_SIZE_Y / 2.f;
 constexpr float DEBUG_LINE_THICKNESS = 0.2f;
+
+//-----------------------------------------------------------------------------------------------
+const IntVec2 NORTH = IntVec2( 0, 1 );
+const IntVec2 EAST = IntVec2( 1, 0 );
+const IntVec2 SOUTH = IntVec2( 0, -1 );
+const IntVec2 WEST = IntVec2( -1, 0 );
 
 //-----------------------------------------------------------------------------------------------
 extern SoundID audio_music;

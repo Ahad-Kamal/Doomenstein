@@ -4,6 +4,7 @@
 //#include "Engine/Core/Vertex_PCUTBN.hpp"
 #include "Engine/Core/VertexUtils.hpp"
 #include "Engine/Math/Mat44.hpp"
+#include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include <vector>
 
@@ -80,6 +81,12 @@ void Actor::Render() const
 
 	g_engine->m_render->SetRasterizerState( RasterizerMode::SOLID_CULL_BACK );
 	g_engine->m_render->SetRasterizerStateIfChanged();
+}
+
+//-----------------------------------------------------------------------------------------------
+IntVec2 Actor::GetCoordsOfCurrentTile()
+{
+	return IntVec2( RoundDownToInt( m_position.x ), RoundDownToInt( m_position.y ) );
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 
 
 //-----------------------------------------------------------------------------------------------
+struct AABB2;
 struct AABB3;
 class TileDefinitions;
 
@@ -18,6 +19,7 @@ public:
 	Tile( IntVec3 coordinates, TileDefinitions const* tileDef );
 	~Tile() = default;
 
+	AABB2 CreateAABB2FromCoords();
 	AABB3 CreateAABB3FromCoords();
 	bool IsTileSolid();
 };

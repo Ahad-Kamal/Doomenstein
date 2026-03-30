@@ -37,6 +37,7 @@ public:
 	bool AreCoordsInBounds( int x, int y );
 	Tile const* GetTile( int x, int y ) const;
 	int	 GetTileIndexFromCoords( int x, int y ) const;
+	int	 GetTileIndexFromCoords( IntVec2 coords ) const;
 	IntVec2 GetTileCoordsFromIndex( int index ) const;
 	TileDefinitions* GetTileDefinition( std::string name ) const;
 

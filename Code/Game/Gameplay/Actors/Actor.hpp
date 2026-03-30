@@ -5,6 +5,7 @@
 
 //-----------------------------------------------------------------------------------------------
 struct Mat44;
+struct IntVec2;
 
 //-----------------------------------------------------------------------------------------------
 class Actor
@@ -20,6 +21,7 @@ public:
 	void Update( float deltaSeconds );
 	void Render() const;
 
+	IntVec2 GetCoordsOfCurrentTile();
 	Mat44 GetModelToWorldTransform() const;
 
 public:
