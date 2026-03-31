@@ -497,6 +497,7 @@ RaycastResult3D Map::RaycastWorldXY( Vec3 const& start, Vec3 const& direction, f
 		raycast.m_didImpact = true;
 		raycast.m_implactDist = 0.f;
 		raycast.m_impactPos = start;
+		raycast.m_impactNormal = direction * -1.f;
 		return raycast;
 	}
 
@@ -614,6 +615,7 @@ RaycastResult3D Map::RaycastWorldZ( [[maybe_unused]] Vec3 const& start, [[maybe_
 		raycast.m_didImpact = true;
 		raycast.m_implactDist = 0.f;
 		raycast.m_impactPos = start;
+		raycast.m_impactNormal = direction * -1.f;
 		return raycast;
 	}
 
