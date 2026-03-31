@@ -113,7 +113,8 @@ void Game::Render() const
 		return;
 	}
 
-	g_engine->m_render->SetLightConstants( Vec3( 2.f, 1.f, -1.f ), 0.85f, 0.35f );
+	Vec3 normalizedLighting = Vec3( 2.f, 1.f, -1.f ).GetNormalized();
+	g_engine->m_render->SetLightConstants( normalizedLighting, 0.85f, 0.35f );
 	RenderMap();
 
 	if( g_engine->m_devConsole->IsOpen() )

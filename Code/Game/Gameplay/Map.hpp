@@ -34,7 +34,9 @@ public:
 	void CreateBuffer();
 
 	bool IsPositionInBounds( Vec3 const& position ) const;
-	bool AreCoordsInBounds( int x, int y );
+	bool AreCoordsInBounds( int x, int y ) const;
+	bool IsPointInSolid( IntVec2 const& position ) const;
+	bool IsPointInSolid( Vec3 const& position ) const;
 	Tile const* GetTile( int x, int y ) const;
 	int	 GetTileIndexFromCoords( int x, int y ) const;
 	int	 GetTileIndexFromCoords( IntVec2 coords ) const;
@@ -56,6 +58,7 @@ public:
 	RaycastResult3D RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
 
 	void KeyboardControls( float deltaSeconds );
+	void MouseControls();
 
 protected:
 	MapDefinition const* m_definition = nullptr;

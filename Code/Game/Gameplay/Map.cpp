@@ -10,12 +10,13 @@
 #include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/IntVec3.hpp"
 #include "Engine/Math/AABB3.hpp"
+#include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/VertexUtils.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Core/Clock.hpp"
+#include "Engine/Core/DebugRender.hpp"
 #include "Engine/Renderer/Camera.hpp"
-#include "Engine/Math/MathUtils.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -23,12 +24,8 @@ Map::Map( MapDefinition* definition )
 	: m_definition( definition )
 {
 	m_texture = nullptr;
-	m_vertexBuffer = new VertexBuffer( g_engine->m_render->GetDevice(), 1, sizeof( Vertex_PCUTBN ) );
-	m_indexBuffer = new IndexBuffer( g_engine->m_render->GetDevice(), 1 );
-
-	m_vertexBuffer->Create();
-	m_indexBuffer->Create();
-
+	
+	CreateBuffer();
 	CreateTiles();
 	CreateGeometry();
 	SpawnActors();
@@ -132,19 +129,54 @@ void Map::AddGeometryForCeiling( AABB3 const& bounds, AABB2 const& UVs )
 //-----------------------------------------------------------------------------------------------
 void Map::CreateBuffer()
 {
+	m_vertexBuffer = new VertexBuffer( g_engine->m_render->GetDevice(), 1, sizeof( Vertex_PCUTBN ) );
+	m_indexBuffer = new IndexBuffer( g_engine->m_render->GetDevice(), 1 );
 
+	m_vertexBuffer->Create();
+	m_indexBuffer->Create();
 }
 
 //-----------------------------------------------------------------------------------------------
 bool Map::IsPositionInBounds( [[maybe_unused]] Vec3 const& position ) const
 {
+	IntVec2 boundsXY = m_definition->GetImage()->GetDimensions();
+
+	if( position.x >= 0.f && position.x <= static_cast<float>( boundsXY.x ) && 
+		position.y >= 0.f && position.y <= static_cast<float>( boundsXY.y ) && 
+		position.z >= 0.f && position.z <= 1.f )
+	{
+		return true;
+	}
+
 	return false;
 }
 
 //-----------------------------------------------------------------------------------------------
-bool Map::AreCoordsInBounds( [[maybe_unused]] int x, [[maybe_unused]] int y )
+bool Map::AreCoordsInBounds( [[maybe_unused]] int x, [[maybe_unused]] int y ) const
 {
+	IntVec2 boundsXY = m_definition->GetImage()->GetDimensions();
+
+	if( x >= 0.f && x <= static_cast<float>( boundsXY.x ) && y >= 0.f && y <= static_cast<float>( boundsXY.y ) )
+	{
+		return true;
+	}
+
 	return false;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool Map::IsPointInSolid( IntVec2 const& position ) const
+{
+	int tileIndex = GetTileIndexFromCoords( position );
+	return m_tiles[ tileIndex ].m_tileDef->IsSolid();
+}
+
+//-----------------------------------------------------------------------------------------------
+bool Map::IsPointInSolid( Vec3 const& position ) const
+{
+	IntVec2 coords = IntVec2( RoundDownToInt( position.x ), RoundDownToInt( position.y ) );
+	int tileIndex = GetTileIndexFromCoords( coords );
+	return m_tiles[ tileIndex ].m_tileDef->IsSolid();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -190,6 +222,7 @@ void Map::Update()
 {
 	float deltaSeconds = static_cast<float>( g_game->m_gameClock->GetDeltaSeconds() );
 	KeyboardControls( deltaSeconds );
+	MouseControls();
 
 	CollideActors();
 	CollideActorsWithMap();
@@ -381,15 +414,158 @@ void Map::Render()
 }
 
 //-----------------------------------------------------------------------------------------------
-RaycastResult3D Map::RaycastAll( [[maybe_unused]] Vec3 const& start, [[maybe_unused]] Vec3 const& direction, [[maybe_unused]] float distance, [[maybe_unused]] Actor* owner /*= nullptr */ ) const
+RaycastResult3D Map::RaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner /*= nullptr */ ) const
 {
-	return RaycastResult3D();
+	RaycastResult3D raycastResult = RaycastResult3D();
+	RaycastResult3D raycastResultXY = RaycastWorldXY( start, direction, distance );
+	RaycastResult3D raycastResultZ = RaycastWorldZ( start, direction, distance );
+	RaycastResult3D raycastResultWorld = RaycastWorldActors( start, direction, distance, owner );
+
+	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultWorld.m_didImpact )
+	{
+		return raycastResult;
+	}
+	if( raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultWorld.m_didImpact )
+	{
+		return raycastResultXY;
+	}
+	if( !raycastResultXY.m_didImpact && raycastResultZ.m_didImpact && !raycastResultWorld.m_didImpact )
+	{
+		return raycastResultZ;
+	}
+	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && raycastResultWorld.m_didImpact )
+	{
+		return raycastResultWorld;
+	}
+
+	if( raycastResultXY.m_didImpact && raycastResultZ.m_didImpact )
+	{
+		if( raycastResultXY.m_implactDist < raycastResultZ.m_implactDist )
+		{
+			raycastResult = raycastResultXY;
+		}
+		else
+		{
+			raycastResult = raycastResultZ;
+		}
+	}
+	if( raycastResultXY.m_didImpact && raycastResultWorld.m_didImpact )
+	{
+		if( raycastResultXY.m_implactDist < raycastResultWorld.m_implactDist )
+		{
+			raycastResult = raycastResultXY;
+		}
+		else
+		{
+			raycastResult = raycastResultWorld;
+		}
+	}
+	if( raycastResultZ.m_didImpact < raycastResultWorld.m_didImpact )
+	{
+		if( raycastResultZ.m_implactDist < raycastResultWorld.m_implactDist )
+		{
+			raycastResult = raycastResultZ;
+		}
+		else
+		{
+			raycastResult = raycastResultWorld;
+		}
+	}
+
+	return raycastResult;
 }
 
 //-----------------------------------------------------------------------------------------------
-RaycastResult3D Map::RaycastWorldXY( [[maybe_unused]] Vec3 const& start, [[maybe_unused]] Vec3 const& direction, [[maybe_unused]] float distance ) const
+RaycastResult3D Map::RaycastWorldXY( Vec3 const& start, Vec3 const& direction, float distance ) const
 {
-	return RaycastResult3D();
+	RaycastResult3D raycast = RaycastResult3D( start, direction, distance );
+
+	if( IsPointInSolid( start ) )
+	{
+		raycast.m_didImpact = true;
+		raycast.m_implactDist = 0.f;
+		raycast.m_impactPos = start;
+		return raycast;
+	}
+
+	int tileX = static_cast<int>( floorf( start.x ) );
+	int tileY = static_cast<int>( floorf( start.y ) );
+
+	// X Tile Crossing
+	float fwdDistPerXCrossing = 1.f / abs( direction.x );
+	int tileStepDirectionX;
+	if( direction.x < 0 )
+	{
+		tileStepDirectionX = -1;
+	}
+	else
+	{
+		tileStepDirectionX = 1;
+	}
+	float xAtFirstXCrossing = static_cast<float>( tileX + ( tileStepDirectionX + 1 ) / 2 );
+	float xDistToFirstXCrossing = xAtFirstXCrossing - start.x;
+	float fwdDistAtNextXCrossing = fabsf( xDistToFirstXCrossing ) * fwdDistPerXCrossing;
+
+	// Y Tile Crossing
+	float fwdDistPerYCrossing = 1.f / abs( direction.y );
+	int tileStepDirectionY;
+	if( direction.y < 0 )
+	{
+		tileStepDirectionY = -1;
+	}
+	else
+	{
+		tileStepDirectionY = 1;
+	}
+	float yAtFirstYCrossing = static_cast<float>( tileY + ( tileStepDirectionY + 1 ) / 2 );
+	float yDistToFirstYCrossing = yAtFirstYCrossing - start.y;
+	float fwdDistAtNextYCrossing = fabsf( yDistToFirstYCrossing ) * fwdDistPerYCrossing;
+
+	while( true )
+	{
+		if( fwdDistAtNextXCrossing <= fwdDistAtNextYCrossing )
+		{
+			if( fwdDistAtNextXCrossing >= distance )
+			{
+				raycast.m_didImpact = false;
+				raycast.m_implactDist = distance;
+				raycast.m_impactPos = ( direction * distance ) + start;
+				return raycast;
+			}
+
+			tileX += tileStepDirectionX;
+			if( IsPointInSolid( IntVec2( tileX, tileY ) ) )
+			{
+				raycast.m_didImpact = true;
+				raycast.m_implactDist = fwdDistAtNextXCrossing;
+				raycast.m_impactPos = ( direction * fwdDistAtNextXCrossing ) + start;
+				return raycast;
+			}
+
+			fwdDistAtNextXCrossing += fwdDistPerXCrossing;
+		}
+		else
+		{
+			if( fwdDistAtNextYCrossing >= distance )
+			{
+				raycast.m_didImpact = false;
+				raycast.m_implactDist = distance;
+				raycast.m_impactPos = ( direction * distance ) + start;
+				return raycast;
+			}
+
+			tileY += tileStepDirectionY;
+			if( IsPointInSolid( IntVec2( tileX, tileY ) ) )
+			{
+				raycast.m_didImpact = true;
+				raycast.m_implactDist = fwdDistAtNextYCrossing;
+				raycast.m_impactPos = ( direction * fwdDistAtNextYCrossing ) + start;
+				return raycast;
+			}
+
+			fwdDistAtNextYCrossing += fwdDistPerYCrossing;
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -463,5 +639,39 @@ void Map::KeyboardControls( float deltaSeconds )
 	if( g_engine->m_input->IsKeyDown( 'C' ) )
 	{
 		m_testActor->m_position.z -= deltaSeconds * speedFactor;
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::MouseControls()
+{
+	if( g_game->m_currentState != GAME_STATE_PLAY )
+	{
+		return;
+	}
+
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_MOUSE ) )
+	{
+		Vec3 startPosition = g_game->m_player->m_position;
+		Vec3 direction = g_game->m_player->GetModelToWorldTransform().GetIBasis3D();
+		Vec3 endPosition = startPosition + ( direction * 10.f );
+		DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8::WHITE, Rgba8::WHITE, DebugRenderMode::X_RAY );
+
+		RaycastResult3D raycast = RaycastAll( startPosition, direction, 10.f );
+
+		DebugAddWorldSphere( raycast.m_impactPos, 0.06f, 10.f );
+		/*Vec3 arrowStart = raycast.m_impactPos;
+		Vec3 arrowEnd = raycast.m_impactPos + ( raycast.m_impactNormal );
+		DebugAddWorldArrow( arrowStart, arrowEnd, 0.03f, 10.f, Rgba8::BLUE, Rgba8::BLUE );*/
+	}
+
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_RIGHT_MOUSE ) )
+	{
+		Vec3 startPosition = g_game->m_player->m_position;
+		Vec3 direction = g_game->m_player->GetModelToWorldTransform().GetIBasis3D();
+		Vec3 endPosition = startPosition + ( direction * 0.25f );
+		DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8::WHITE, Rgba8::WHITE, DebugRenderMode::X_RAY );
+
+		RaycastResult3D raycast = RaycastAll( startPosition, direction, 10.f );
 	}
 }
