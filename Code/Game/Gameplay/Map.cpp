@@ -152,7 +152,7 @@ bool Map::IsPositionInBounds( [[maybe_unused]] Vec3 const& position ) const
 }
 
 //-----------------------------------------------------------------------------------------------
-bool Map::AreCoordsInBounds( [[maybe_unused]] int x, [[maybe_unused]] int y ) const
+bool Map::AreCoordsInBounds( int x, int y ) const
 {
 	IntVec2 boundsXY = m_definition->GetImage()->GetDimensions();
 
@@ -167,15 +167,27 @@ bool Map::AreCoordsInBounds( [[maybe_unused]] int x, [[maybe_unused]] int y ) co
 //-----------------------------------------------------------------------------------------------
 bool Map::IsPointInSolid( IntVec2 const& position ) const
 {
+	if( !AreCoordsInBounds( position.x, position.y ) )
+	{
+		return false;
+	}
+
 	int tileIndex = GetTileIndexFromCoords( position );
+
 	return m_tiles[ tileIndex ].m_tileDef->IsSolid();
 }
 
 //-----------------------------------------------------------------------------------------------
 bool Map::IsPointInSolid( Vec3 const& position ) const
 {
+	if( !IsPositionInBounds( position ) )
+	{
+		return false;
+	}
+
 	IntVec2 coords = IntVec2( RoundDownToInt( position.x ), RoundDownToInt( position.y ) );
 	int tileIndex = GetTileIndexFromCoords( coords );
+
 	return m_tiles[ tileIndex ].m_tileDef->IsSolid();
 }
 
@@ -529,17 +541,29 @@ RaycastResult3D Map::RaycastWorldXY( Vec3 const& start, Vec3 const& direction, f
 			{
 				raycast.m_didImpact = false;
 				raycast.m_implactDist = distance;
-				raycast.m_impactPos = ( direction * distance ) + start;
+				raycast.m_impactPos = start + ( direction * distance );
 				return raycast;
 			}
 
 			tileX += tileStepDirectionX;
 			if( IsPointInSolid( IntVec2( tileX, tileY ) ) )
 			{
-				raycast.m_didImpact = true;
-				raycast.m_implactDist = fwdDistAtNextXCrossing;
-				raycast.m_impactPos = ( direction * fwdDistAtNextXCrossing ) + start;
-				return raycast;
+				Vec3 currentPos = ( direction * fwdDistAtNextXCrossing ) + start;
+				if( currentPos.z >= 0.f && currentPos.z <= 1.f )
+				{
+					raycast.m_didImpact = true;
+					raycast.m_implactDist = fwdDistAtNextXCrossing;
+					raycast.m_impactPos = currentPos;
+					if( tileStepDirectionX > 0 )
+					{
+						raycast.m_impactNormal = Vec3( -1.f, 0.f, 0.f );
+					}
+					else
+					{
+						raycast.m_impactNormal = Vec3( 1.f, 0.f, 0.f );
+					}
+					return raycast;
+				}
 			}
 
 			fwdDistAtNextXCrossing += fwdDistPerXCrossing;
@@ -550,17 +574,29 @@ RaycastResult3D Map::RaycastWorldXY( Vec3 const& start, Vec3 const& direction, f
 			{
 				raycast.m_didImpact = false;
 				raycast.m_implactDist = distance;
-				raycast.m_impactPos = ( direction * distance ) + start;
+				raycast.m_impactPos = start + ( direction * distance );
 				return raycast;
 			}
 
 			tileY += tileStepDirectionY;
 			if( IsPointInSolid( IntVec2( tileX, tileY ) ) )
 			{
-				raycast.m_didImpact = true;
-				raycast.m_implactDist = fwdDistAtNextYCrossing;
-				raycast.m_impactPos = ( direction * fwdDistAtNextYCrossing ) + start;
-				return raycast;
+				Vec3 currentPos = ( direction * fwdDistAtNextYCrossing ) + start;
+				if( currentPos.z >= 0.f && currentPos.z <= 1.f )
+				{
+					raycast.m_didImpact = true;
+					raycast.m_implactDist = fwdDistAtNextYCrossing;
+					raycast.m_impactPos = currentPos;
+					if( tileStepDirectionY > 0 )
+					{
+						raycast.m_impactNormal = Vec3( 0.f, -1.f, 0.f );
+					}
+					else
+					{
+						raycast.m_impactNormal = Vec3( 0.f, 1.f, 0.f );
+					}
+					return raycast;
+				}
 			}
 
 			fwdDistAtNextYCrossing += fwdDistPerYCrossing;
@@ -571,7 +607,63 @@ RaycastResult3D Map::RaycastWorldXY( Vec3 const& start, Vec3 const& direction, f
 //-----------------------------------------------------------------------------------------------
 RaycastResult3D Map::RaycastWorldZ( [[maybe_unused]] Vec3 const& start, [[maybe_unused]] Vec3 const& direction, [[maybe_unused]] float distance ) const
 {
-	return RaycastResult3D();
+	RaycastResult3D raycast = RaycastResult3D( start, direction, distance );
+
+	if( IsPointInSolid( start ) )
+	{
+		raycast.m_didImpact = true;
+		raycast.m_implactDist = 0.f;
+		raycast.m_impactPos = start;
+		return raycast;
+	}
+
+	int tileZ = static_cast<int>( floorf( start.z ) );
+
+	// Z Tile Crossing
+	float fwdDistPerZCrossing = 1.f / abs( direction.z );
+	int tileStepDirectionZ;
+	if( direction.z < 0 )
+	{
+		tileStepDirectionZ = -1;
+	}
+	else
+	{
+		tileStepDirectionZ = 1;
+	}
+	float zAtFirstZCrossing = static_cast<float>( tileZ + ( tileStepDirectionZ + 1 ) / 2 );
+	float zDistToFirstZCrossing = zAtFirstZCrossing - start.z;
+	float fwdDistAtNextZCrossing = fabsf( zDistToFirstZCrossing ) * fwdDistPerZCrossing;
+
+	while( true )
+	{
+		if( fwdDistAtNextZCrossing >= distance )
+		{
+			raycast.m_didImpact = false;
+			raycast.m_implactDist = distance;
+			raycast.m_impactPos = ( direction * distance ) + start;
+			return raycast;
+		}
+
+		tileZ += tileStepDirectionZ;
+		Vec3 currentPos = ( direction * fwdDistAtNextZCrossing ) + start;
+		if( IsPositionInBounds( currentPos ) )
+		{
+			raycast.m_didImpact = true;
+			raycast.m_implactDist = fwdDistAtNextZCrossing;
+			raycast.m_impactPos = currentPos;
+			if( tileStepDirectionZ > 0 )
+			{
+				raycast.m_impactNormal = Vec3( 0.f, 0.f, -1.f );
+			}
+			else
+			{
+				raycast.m_impactNormal = Vec3( 0.f, 0.f, 1.f );
+			}
+			return raycast;
+		}
+
+		fwdDistAtNextZCrossing += fwdDistPerZCrossing;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -659,10 +751,13 @@ void Map::MouseControls()
 
 		RaycastResult3D raycast = RaycastAll( startPosition, direction, 10.f );
 
-		DebugAddWorldSphere( raycast.m_impactPos, 0.06f, 10.f );
-		/*Vec3 arrowStart = raycast.m_impactPos;
-		Vec3 arrowEnd = raycast.m_impactPos + ( raycast.m_impactNormal );
-		DebugAddWorldArrow( arrowStart, arrowEnd, 0.03f, 10.f, Rgba8::BLUE, Rgba8::BLUE );*/
+		if( raycast.m_didImpact )
+		{
+			DebugAddWorldSphere( raycast.m_impactPos, 0.06f, 10.f );
+			Vec3 arrowStart = raycast.m_impactPos;
+			Vec3 arrowEnd = raycast.m_impactPos + ( raycast.m_impactNormal * 0.3f );
+			DebugAddWorldArrow( arrowStart, arrowEnd, 0.03f, 10.f, Rgba8::BLUE, Rgba8::BLUE );
+		}
 	}
 
 	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_RIGHT_MOUSE ) )
