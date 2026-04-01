@@ -785,6 +785,14 @@ void Map::MouseControls()
 		Vec3 endPosition = startPosition + ( direction * 0.25f );
 		DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8::WHITE, Rgba8::WHITE, DebugRenderMode::X_RAY );
 
-		RaycastResult3D raycast = RaycastAll( startPosition, direction, 10.f );
+		RaycastResult3D raycast = RaycastAll( startPosition, direction, 0.25f );
+
+		if( raycast.m_didImpact )
+		{
+			DebugAddWorldSphere( raycast.m_impactPos, 0.06f, 10.f );
+			Vec3 arrowStart = raycast.m_impactPos;
+			Vec3 arrowEnd = raycast.m_impactPos + ( raycast.m_impactNormal * 0.3f );
+			DebugAddWorldArrow( arrowStart, arrowEnd, 0.03f, 10.f, Rgba8::BLUE, Rgba8::BLUE );
+		}
 	}
 }
