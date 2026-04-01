@@ -72,7 +72,23 @@ void Game::Startup()
 
 	Vec2 worldCenter( WORLD_SIZE_X * 0.5f, WORLD_SIZE_Y * 0.5f );
 
- 	m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles() );
+ 	m_player = new Player( Vec3( 4.365963459015f, 13.676973342896f, 0.731300711632f ), EulerAngles( -103.720199584961, 11.171030044556f, 0.f ) );
+	
+	Vec3 startPosition = m_player->m_position;
+	Vec3 direction = m_player->GetModelToWorldTransform().GetIBasis3D();
+	Vec3 endPosition = startPosition + ( direction * 10.f );
+	DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8::WHITE, Rgba8::WHITE, DebugRenderMode::X_RAY );
+
+	RaycastResult3D raycast = m_currentMap->RaycastAll( startPosition, direction, 10.f );
+
+	if( raycast.m_didImpact )
+	{
+		DebugAddWorldSphere( raycast.m_impactPos, 0.06f, 10.f );
+		Vec3 arrowStart = raycast.m_impactPos;
+		Vec3 arrowEnd = raycast.m_impactPos + ( raycast.m_impactNormal * 0.3f );
+		DebugAddWorldArrow( arrowStart, arrowEnd, 0.03f, 10.f, Rgba8::BLUE, Rgba8::BLUE );
+	}
+
 	m_worldCamera->SetPosition( m_player->m_position );
 	m_worldCamera->SetOrientation( m_player->m_orientation );
 
@@ -355,7 +371,7 @@ void Game::UpdateKeyboardInput()
 	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( '7' ) )
 	{
 		AABB2 textBox = AABB2( 1.f, 770.f, 800.f, 785.f );
-		std::string text = Stringf( "Camera Orientation: %.2f, %.2f, %.2f", m_worldCamera->GetOrientation().m_rollDegrees, m_worldCamera->GetOrientation().m_pitchDegrees, m_worldCamera->GetOrientation().m_yawDegrees );
+		std::string text = Stringf( "Camera Orientation: %.12f, %.12f, %.12f", m_worldCamera->GetOrientation().m_yawDegrees, m_worldCamera->GetOrientation().m_pitchDegrees, m_worldCamera->GetOrientation().m_rollDegrees );
 		DebugAddScreenText( text, textBox, 15.f, Vec2( 0.f, 1.f ), 5.f );
 	}
 }
@@ -415,7 +431,7 @@ void Game::DebugDrawWorldBounds() const
 void Game::DebugAddDebugText() const
 {
 	AABB2 positionBox = AABB2( 1.f, 784.f, 800.f, 799.f );
-	std::string positionText = Stringf( "Position: %.2f, %.2f, %.2f", m_player->m_position.x, m_player->m_position.y, m_player->m_position.z );
+	std::string positionText = Stringf( "Position: %.12f, %.12f, %.12f", m_player->m_position.x, m_player->m_position.y, m_player->m_position.z );
 	DebugAddScreenText( positionText, positionBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
 
 	AABB2 timeBox = AABB2( 800.f, 784.f, 1599.f, 799.f );

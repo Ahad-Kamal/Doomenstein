@@ -140,10 +140,12 @@ void Map::CreateBuffer()
 bool Map::IsPositionInBounds( [[maybe_unused]] Vec3 const& position ) const
 {
 	IntVec2 boundsXY = m_definition->GetImage()->GetDimensions();
+	float epsilon = -1e-6f;
+
 
 	if( position.x >= 0.f && position.x <= static_cast<float>( boundsXY.x ) && 
 		position.y >= 0.f && position.y <= static_cast<float>( boundsXY.y ) && 
-		position.z >= 0.f && position.z <= 1.f )
+		position.z >= epsilon && position.z <= 1.f - epsilon )
 	{
 		return true;
 	}
@@ -597,7 +599,7 @@ RaycastResult3D Map::RaycastWorldXY( Vec3 const& start, Vec3 const& direction, f
 }
 
 //-----------------------------------------------------------------------------------------------
-RaycastResult3D Map::RaycastWorldZ( [[maybe_unused]] Vec3 const& start, [[maybe_unused]] Vec3 const& direction, [[maybe_unused]] float distance ) const
+RaycastResult3D Map::RaycastWorldZ( Vec3 const& start, Vec3 const& direction, float distance ) const
 {
 	RaycastResult3D raycast = RaycastResult3D( start, direction, distance );
 
