@@ -450,35 +450,26 @@ RaycastResult3D Map::RaycastAll( Vec3 const& start, Vec3 const& direction, float
 		return raycastResultWorld;
 	}
 
-	if( raycastResultXY.m_didImpact && raycastResultZ.m_didImpact )
+	raycastResult = raycastResultXY;
+	if( !raycastResult.m_didImpact && raycastResultZ.m_didImpact )
 	{
-		if( raycastResultXY.m_implactDist < raycastResultZ.m_implactDist )
-		{
-			raycastResult = raycastResultXY;
-		}
-		else
+		raycastResult = raycastResultZ;
+	}
+	else if( raycastResult.m_didImpact && raycastResultZ.m_didImpact )
+	{
+		if( raycastResult.m_implactDist > raycastResultZ.m_implactDist )
 		{
 			raycastResult = raycastResultZ;
 		}
 	}
-	if( raycastResultXY.m_didImpact && raycastResultWorld.m_didImpact )
+
+	if( !raycastResult.m_didImpact && raycastResultWorld.m_didImpact )
 	{
-		if( raycastResultXY.m_implactDist < raycastResultWorld.m_implactDist )
-		{
-			raycastResult = raycastResultXY;
-		}
-		else
-		{
-			raycastResult = raycastResultWorld;
-		}
+		raycastResult = raycastResultWorld;
 	}
-	if( raycastResultZ.m_didImpact < raycastResultWorld.m_didImpact )
+	else if( raycastResult.m_didImpact && raycastResultWorld.m_didImpact )
 	{
-		if( raycastResultZ.m_implactDist < raycastResultWorld.m_implactDist )
-		{
-			raycastResult = raycastResultZ;
-		}
-		else
+		if( raycastResult.m_implactDist > raycastResultWorld.m_implactDist )
 		{
 			raycastResult = raycastResultWorld;
 		}
@@ -671,7 +662,30 @@ RaycastResult3D Map::RaycastWorldZ( [[maybe_unused]] Vec3 const& start, [[maybe_
 //-----------------------------------------------------------------------------------------------
 RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[maybe_unused]] Vec3 const& direction, [[maybe_unused]] float distance, [[maybe_unused]] Actor* owner /*= nullptr */ ) const
 {
-	return RaycastResult3D();
+	RaycastResult3D result = RaycastResult3D();
+	std::vector<RaycastResult3D> raycastResults;
+	raycastResults.resize( m_actors.size() );
+
+	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
+	{
+		Actor* actor = m_actors[ actorIndex ];
+		raycastResults[ actorIndex ] = RaycastVsCylinder(start, direction, distance, actor->m_position, actor->m_physicsRadius, actor->m_physicsHeight);
+
+		RaycastResult3D* raycast = &raycastResults[ actorIndex ];
+		if( !result.m_didImpact && raycast->m_didImpact )
+		{
+			result = *raycast;
+		}
+		else if( result.m_didImpact && raycast->m_didImpact )
+		{
+			if( result.m_implactDist > raycast->m_implactDist )
+			{
+				result = *raycast;
+			}
+		}
+	}
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------------------------
