@@ -114,8 +114,8 @@ void Game::Render() const
 		return;
 	}
 
-	Vec3 normalizedLighting = Vec3( 2.f, 1.f, -1.f ).GetNormalized();
-	g_engine->m_render->SetLightConstants( normalizedLighting, 0.85f, 0.35f );
+	Vec3 normalizedLighting = m_sunDirection.GetNormalized();
+	g_engine->m_render->SetLightConstants( normalizedLighting, m_sunIntensity, m_ambientIntensity );
 	RenderMap();
 
 	if( g_engine->m_devConsole->IsOpen() )
@@ -304,60 +304,113 @@ void Game::ShakeCamera( float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Game::UpdateKeyboardInput()
 {
-	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( KEYCODE_F1 ) )
+	if( m_currentState != GAME_STATE_PLAY )
 	{
-		if( !m_debugDraw )
-		{
-			m_debugDraw = true;
-		}
-		else
-		{
-			m_debugDraw = false;
-		}
+		return;
 	}
 
-	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( '1' ) )
+	if( g_engine->m_input->WasKeyJustPressed( '1' ) )
 	{
 		Vec3 endPosition = m_player->m_position + ( m_player->GetModelToWorldTransform().GetIBasis3D() * 20.f );
 		DebugAddWorldCylinder( Vec3( m_player->m_position ), endPosition,
 			0.0625f, 10.f, Rgba8::YELLOW, Rgba8::YELLOW, DebugRenderMode::X_RAY );
 	}
 
-	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->IsKeyDown( '2' ) )
+	if( g_engine->m_input->IsKeyDown( '2' ) )
 	{
 		DebugAddWorldSphere( Vec3( m_player->m_position.x, m_player->m_position.y, 0.f ), 0.5f, 60.f, Rgba8( 150, 75, 0 ), Rgba8( 150, 75, 0 ) );
 	}
 
-	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( '3' ) )
+	if( g_engine->m_input->WasKeyJustPressed( '3' ) )
 	{
 		Mat44 playerMat = m_player->GetModelToWorldTransform();
 		playerMat.AppendTranslation2D( Vec2( 2.f, 0.f ) );
 		DebugAddWorldWireSphere( playerMat.GetTranslation3D(), 1.f, 5.f, Rgba8::GREEN, Rgba8::RED );
 	}
 
-	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( '4' ) )
+	if( g_engine->m_input->WasKeyJustPressed( '4' ) )
 	{
 		DebugAddBasis( m_player->GetModelToWorldTransform(), 20.f, 1.f, 0.125f );
 	}
 
-	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( '5' ) )
+	if( g_engine->m_input->WasKeyJustPressed( '5' ) )
 	{
 		Vec3 position = m_player->GetModelToWorldTransform().GetTranslation3D() + m_player->GetModelToWorldTransform().GetIBasis3D() * 10.f;
 		std::string text = Stringf("Position: %.2f, %.2f, %.2f", m_player->m_position.x, m_player->m_position.y, m_player->m_position.z );
 		DebugAddWorldBillboardText( text, position, 1.f, Vec2( 0.5f, 0.5f ), 5.f, Rgba8::WHITE, Rgba8::RED );
 	}
 
-	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( '6' ) )
+	if( g_engine->m_input->WasKeyJustPressed( '6' ) )
 	{
 		DebugAddWorldWireCylinder( Vec3( m_player->m_position.x, m_player->m_position.y, m_player->m_position.z - 0.5f ), 
 			Vec3( m_player->m_position.x, m_player->m_position.y, m_player->m_position.z + 0.5f ), 0.5f, 10.f, Rgba8::WHITE, Rgba8::RED );
 	}
 
-	if( m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( '7' ) )
+	if( g_engine->m_input->WasKeyJustPressed( '7' ) )
 	{
 		AABB2 textBox = AABB2( 1.f, 770.f, 800.f, 785.f );
 		std::string text = Stringf( "Camera Orientation: %.2f, %.2f, %.2f", m_worldCamera->GetOrientation().m_yawDegrees, m_worldCamera->GetOrientation().m_pitchDegrees, m_worldCamera->GetOrientation().m_rollDegrees );
 		DebugAddScreenText( text, textBox, 15.f, Vec2( 0.f, 1.f ), 5.f );
+	}
+
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F2 ) )
+	{
+		m_sunDirection.x -= 1.f;
+		AABB2 textBox = AABB2( 1.f, 775.f, 800.f, 785.f );
+		std::string text = Stringf( "Sun Direction X: %0.f", m_sunDirection.x );
+		DebugAddScreenText( text, textBox, 10.f, Vec2( 0.f, 1.f ), 2.f );
+	}
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F3 ) )
+	{
+		m_sunDirection.x += 1.f;
+		AABB2 textBox = AABB2( 1.f, 775.f, 800.f, 785.f );
+		std::string text = Stringf( "Sun Direction X: %0.f", m_sunDirection.x );
+		DebugAddScreenText( text, textBox, 10.f, Vec2( 0.f, 1.f ), 2.f );
+	}
+
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F4 ) )
+	{
+		m_sunDirection.y -= 1.f;
+		AABB2 textBox = AABB2( 1.f, 775.f, 800.f, 785.f );
+		std::string text = Stringf( "Sun Direction Y: %0.f", m_sunDirection.y );
+		DebugAddScreenText( text, textBox, 10.f, Vec2( 0.f, 1.f ), 2.f );
+	}
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F5 ) )
+	{
+		m_sunDirection.y += 1.f;
+		AABB2 textBox = AABB2( 1.f, 775.f, 800.f, 785.f );
+		std::string text = Stringf( "Sun Direction Y: %0.f", m_sunDirection.y );
+		DebugAddScreenText( text, textBox, 10.f, Vec2( 0.f, 1.f ), 2.f );
+	}
+
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F6 ) )
+	{
+		m_sunIntensity -= 0.05f;
+		AABB2 textBox = AABB2( 1.f, 775.f, 800.f, 785.f );
+		std::string text = Stringf( "Sun Intensity: %.2f", m_sunIntensity );
+		DebugAddScreenText( text, textBox, 10.f, Vec2( 0.f, 1.f ), 2.f );
+	}
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F7 ) )
+	{
+		m_sunIntensity += 0.05f;
+		AABB2 textBox = AABB2( 1.f, 775.f, 800.f, 785.f );
+		std::string text = Stringf( "Sun Intensity: %.2f", m_sunIntensity );
+		DebugAddScreenText( text, textBox, 10.f, Vec2( 0.f, 1.f ), 2.f );
+	}
+
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F8 ) )
+	{
+		m_ambientIntensity -= 0.05f;
+		AABB2 textBox = AABB2( 1.f, 775.f, 800.f, 785.f );
+		std::string text = Stringf( "Ambient Intensity: %.2f", m_ambientIntensity );
+		DebugAddScreenText( text, textBox, 10.f, Vec2( 0.f, 1.f ), 2.f );
+	}
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F9 ) )
+	{
+		m_ambientIntensity += 0.05f;
+		AABB2 textBox = AABB2( 1.f, 775.f, 800.f, 785.f );
+		std::string text = Stringf( "Ambient Intensity: %.2f", m_ambientIntensity );
+		DebugAddScreenText( text, textBox, 10.f, Vec2( 0.f, 1.f ), 2.f );
 	}
 }
 
@@ -438,6 +491,11 @@ void Game::DebugAddDebugText() const
 		std::string cameraText = "[F1] Control Mode: Camera";
 		DebugAddScreenText( cameraText, cameraTextbox, 15.f, Vec2( 0.5f, 0.5f ), 0.f );
 	}
+
+	AABB2 lightingBox = AABB2( 800.f, 739.f, 1599.f, 784.f );
+	std::string lightingText = Stringf( "Sun Direction X: %.0f [F2 / F3 to change]\nSun Direction Y: %0.f [F4 / F5 to change]\nSun Intensity: %.2f [F6 / F7 to change]\n Ambient Intensity: %.2f [F8 / F9 to change]",
+		g_game->m_sunDirection.x, g_game->m_sunDirection.y, m_sunIntensity, m_ambientIntensity );
+	DebugAddScreenText( lightingText, lightingBox, 25.f, Vec2( 1.f, 0.f ), 0.f );
 }
 
 //-----------------------------------------------------------------------------------------------

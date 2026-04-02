@@ -152,11 +152,6 @@ void App::UpdateKeyboardInput()
 		g_game->m_nextState = GAME_STATE_PLAY;
 	}
 
-	if( g_game->m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( KEYCODE_F8 ) )
-	{
-		RestartGame();
-	}
-
 	if( g_game->m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( KEYCODE_ESC ) )
 	{
 		RestartGame();
