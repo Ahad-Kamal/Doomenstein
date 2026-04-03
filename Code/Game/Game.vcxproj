@@ -24,7 +24,7 @@
     <ProjectGuid>{0d6c1a11-9ea7-462c-a2de-a4a23b40a73e}</ProjectGuid>
     <RootNamespace>Game</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Protogame3D</ProjectName>
+    <ProjectName>Doomenstein</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
