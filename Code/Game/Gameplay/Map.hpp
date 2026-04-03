@@ -19,6 +19,7 @@ class Texture;
 class Shader;
 class VertexBuffer;
 class IndexBuffer;
+class Player;
 
 class Map
 {
@@ -59,6 +60,10 @@ public:
 
 	void KeyboardControls( float deltaSeconds );
 	void MouseControls();
+
+
+public:
+	Player*	m_player = nullptr;
 
 protected:
 	MapDefinition const* m_definition = nullptr;

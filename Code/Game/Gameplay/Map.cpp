@@ -25,6 +25,7 @@ Map::Map( MapDefinition* definition )
 {
 	m_texture = nullptr;
 	
+	m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles() );
 	CreateBuffer();
 	CreateTiles();
 	CreateGeometry();
@@ -235,6 +236,9 @@ TileDefinitions* Map::GetTileDefinition( std::string name ) const
 void Map::Update()
 {
 	float deltaSeconds = static_cast<float>( g_game->m_gameClock->GetDeltaSeconds() );
+
+	m_player->Update( deltaSeconds );
+
 	KeyboardControls( deltaSeconds );
 	MouseControls();
 
@@ -709,7 +713,7 @@ void Map::KeyboardControls( float deltaSeconds )
 		return;
 	}
 
-	Vec3 forwardVector = g_game->m_player->m_orientation.GetForwardDir_IFwd_JLeft_KUp();
+	Vec3 forwardVector = m_player->m_orientation.GetForwardDir_IFwd_JLeft_KUp();
 	float speedFactor = 1.f;
 	if( g_engine->m_input->IsKeyDown( KEYCODE_SHIFT ) )
 	{
@@ -762,8 +766,8 @@ void Map::MouseControls()
 
 	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_MOUSE ) )
 	{
-		Vec3 startPosition = g_game->m_player->m_position;
-		Vec3 direction = g_game->m_player->GetModelToWorldTransform().GetIBasis3D();
+		Vec3 startPosition = m_player->m_position;
+		Vec3 direction = m_player->GetModelToWorldTransform().GetIBasis3D();
 		Vec3 endPosition = startPosition + ( direction * 10.f );
 		DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8::WHITE, Rgba8::WHITE, DebugRenderMode::X_RAY );
 
@@ -780,8 +784,8 @@ void Map::MouseControls()
 
 	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_RIGHT_MOUSE ) )
 	{
-		Vec3 startPosition = g_game->m_player->m_position;
-		Vec3 direction = g_game->m_player->GetModelToWorldTransform().GetIBasis3D();
+		Vec3 startPosition = m_player->m_position;
+		Vec3 direction = m_player->GetModelToWorldTransform().GetIBasis3D();
 		Vec3 endPosition = startPosition + ( direction * 0.25f );
 		DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8::WHITE, Rgba8::WHITE, DebugRenderMode::X_RAY );
 

@@ -83,10 +83,8 @@ void Game::Startup()
 
 	Vec2 worldCenter( WORLD_SIZE_X * 0.5f, WORLD_SIZE_Y * 0.5f );
 
- 	m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles() );
-
-	m_worldCamera->SetPosition( m_player->m_position );
-	m_worldCamera->SetOrientation( m_player->m_orientation );
+	m_worldCamera->SetPosition( m_currentMap->m_player->m_position );
+	m_worldCamera->SetOrientation( m_currentMap->m_player->m_orientation );
 
 	//AddDebugObjects();
 }
@@ -242,8 +240,6 @@ void Game::UpdateEntities( float deltaSeconds )
 	m_time += deltaSeconds;
 	m_startAlpha = 127.5f * cosf( m_time * 2.0f ) + 127.5f;
 
-	m_player->Update( deltaSeconds );
-
 	DebugAddDebugText();
 }
 
@@ -322,39 +318,39 @@ void Game::UpdateKeyboardInput()
 
 	if( g_engine->m_input->WasKeyJustPressed( '1' ) )
 	{
-		Vec3 endPosition = m_player->m_position + ( m_player->GetModelToWorldTransform().GetIBasis3D() * 20.f );
-		DebugAddWorldCylinder( Vec3( m_player->m_position ), endPosition,
+		Vec3 endPosition = m_currentMap->m_player->m_position + ( m_currentMap->m_player->GetModelToWorldTransform().GetIBasis3D() * 20.f );
+		DebugAddWorldCylinder( Vec3( m_currentMap->m_player->m_position ), endPosition,
 			0.0625f, 10.f, Rgba8::YELLOW, Rgba8::YELLOW, DebugRenderMode::X_RAY );
 	}
 
 	if( g_engine->m_input->IsKeyDown( '2' ) )
 	{
-		DebugAddWorldSphere( Vec3( m_player->m_position.x, m_player->m_position.y, 0.f ), 0.5f, 60.f, Rgba8( 150, 75, 0 ), Rgba8( 150, 75, 0 ) );
+		DebugAddWorldSphere( Vec3( m_currentMap->m_player->m_position.x,m_currentMap-> m_player->m_position.y, 0.f ), 0.5f, 60.f, Rgba8( 150, 75, 0 ), Rgba8( 150, 75, 0 ) );
 	}
 
 	if( g_engine->m_input->WasKeyJustPressed( '3' ) )
 	{
-		Mat44 playerMat = m_player->GetModelToWorldTransform();
+		Mat44 playerMat = m_currentMap->m_player->GetModelToWorldTransform();
 		playerMat.AppendTranslation2D( Vec2( 2.f, 0.f ) );
 		DebugAddWorldWireSphere( playerMat.GetTranslation3D(), 1.f, 5.f, Rgba8::GREEN, Rgba8::RED );
 	}
 
 	if( g_engine->m_input->WasKeyJustPressed( '4' ) )
 	{
-		DebugAddBasis( m_player->GetModelToWorldTransform(), 20.f, 1.f, 0.125f );
+		DebugAddBasis( m_currentMap->m_player->GetModelToWorldTransform(), 20.f, 1.f, 0.125f );
 	}
 
 	if( g_engine->m_input->WasKeyJustPressed( '5' ) )
 	{
-		Vec3 position = m_player->GetModelToWorldTransform().GetTranslation3D() + m_player->GetModelToWorldTransform().GetIBasis3D() * 10.f;
-		std::string text = Stringf("Position: %.2f, %.2f, %.2f", m_player->m_position.x, m_player->m_position.y, m_player->m_position.z );
+		Vec3 position = m_currentMap->m_player->GetModelToWorldTransform().GetTranslation3D() + m_currentMap->m_player->GetModelToWorldTransform().GetIBasis3D() * 10.f;
+		std::string text = Stringf("Position: %.2f, %.2f, %.2f", m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z );
 		DebugAddWorldBillboardText( text, position, 1.f, Vec2( 0.5f, 0.5f ), 5.f, Rgba8::WHITE, Rgba8::RED );
 	}
 
 	if( g_engine->m_input->WasKeyJustPressed( '6' ) )
 	{
-		DebugAddWorldWireCylinder( Vec3( m_player->m_position.x, m_player->m_position.y, m_player->m_position.z - 0.5f ), 
-			Vec3( m_player->m_position.x, m_player->m_position.y, m_player->m_position.z + 0.5f ), 0.5f, 10.f, Rgba8::WHITE, Rgba8::RED );
+		DebugAddWorldWireCylinder( Vec3( m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z - 0.5f ), 
+			Vec3( m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z + 0.5f ), 0.5f, 10.f, Rgba8::WHITE, Rgba8::RED );
 	}
 
 	if( g_engine->m_input->WasKeyJustPressed( '7' ) )
@@ -480,7 +476,7 @@ void Game::DebugDrawWorldBounds() const
 void Game::DebugAddDebugText() const
 {
 	AABB2 positionBox = AABB2( 1.f, 784.f, 800.f, 799.f );
-	std::string positionText = Stringf( "Position: %.2f, %.2f, %.2f", m_player->m_position.x, m_player->m_position.y, m_player->m_position.z );
+	std::string positionText = Stringf( "Position: %.2f, %.2f, %.2f", m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z );
 	DebugAddScreenText( positionText, positionBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
 
 	AABB2 timeBox = AABB2( 800.f, 784.f, 1599.f, 799.f );
