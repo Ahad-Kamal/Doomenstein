@@ -6,6 +6,8 @@
 #include "Engine/Core/VertexUtils.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Core/XmlUtils.hpp"
+#include "Engine/Core/NamedStrings.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Math/AABB3.hpp"
@@ -23,6 +25,7 @@ Game* g_game = nullptr;
 RandomNumberGenerator* g_rng = nullptr;
 SpriteSheet* g_terrainSpriteSheet = nullptr;
 BitmapFont* g_bitmapFont = nullptr;
+NamedStrings* g_blackboard = nullptr;
 
 //-----------------------------------------------------------------------------------------------
 Game::Game()
@@ -51,7 +54,15 @@ void Game::Startup()
 	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );
 	TileDefinitions::InitializeTileDefs();
 
-	m_currentMap = new Map( &MapDefinition::s_mapDefs[ 0 ] );
+	g_blackboard = new NamedStrings();
+
+	XmlDocument gameConfig;
+	gameConfig.LoadFile( "Data/GameConfig.xml" );
+	XmlElement* gameConfigElement = gameConfig.FirstChildElement();
+	g_blackboard->PopulateFromXmlElementAttributes( *gameConfigElement );
+
+	std::string mapName = g_blackboard->GetValue( "defaultMap", "TestMap" );
+	m_currentMap = new Map( MapDefinition::GetMapDefFromName( mapName ) );
 
 	m_worldCamera = new Camera();
 	m_screenCamera = new Camera();

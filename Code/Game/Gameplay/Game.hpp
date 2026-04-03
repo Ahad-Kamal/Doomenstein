@@ -16,12 +16,14 @@ class Clock;
 class Player;
 class BitmapFont;
 class SpriteSheet;
+class NamedStrings;
 
 //-----------------------------------------------------------------------------------------------
 extern Game* g_game;
 extern RandomNumberGenerator* g_rng;
 extern SpriteSheet* g_terrainSpriteSheet;
 extern BitmapFont* g_bitmapFont;
+extern NamedStrings* g_blackboard;
 
 //-----------------------------------------------------------------------------------------------
 constexpr float MAX_SCREEN_SHAKE_AMOUNT = 5.f;

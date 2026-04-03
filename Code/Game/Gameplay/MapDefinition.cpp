@@ -77,3 +77,16 @@ IntVec2 MapDefinition::GetSpriteSheetCellCount() const
 {
 	return m_spriteSheetCellCount;
 }
+
+//-----------------------------------------------------------------------------------------------
+MapDefinition* MapDefinition::GetMapDefFromName( std::string name )
+{
+	for( unsigned int mapDefIndex = 0; mapDefIndex < s_mapDefs.size(); mapDefIndex++ )
+	{
+		if( s_mapDefs[ mapDefIndex ].GetName() == name )
+		{
+			return &s_mapDefs[ mapDefIndex ];
+		}
+	}
+}
+

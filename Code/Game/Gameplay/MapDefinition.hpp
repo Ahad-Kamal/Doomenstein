@@ -20,6 +20,8 @@ public:
 	Texture* GetSpriteSheetTexture() const;
 	IntVec2 GetSpriteSheetCellCount() const;
 
+	static MapDefinition* GetMapDefFromName( std::string name );
+
 public:
 	static std::vector<MapDefinition> s_mapDefs;
 
