@@ -75,8 +75,6 @@ public:
 	std::vector<Map>	m_maps;
 	Map*				m_currentMap;
 
-	//Player*				m_player = nullptr;
-
 	Camera*				m_worldCamera;
 	Camera*				m_screenCamera;
 
