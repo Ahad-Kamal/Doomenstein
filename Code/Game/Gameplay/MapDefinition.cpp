@@ -88,5 +88,7 @@ MapDefinition* MapDefinition::GetMapDefFromName( std::string name )
 			return &s_mapDefs[ mapDefIndex ];
 		}
 	}
+
+	return nullptr;
 }
 
