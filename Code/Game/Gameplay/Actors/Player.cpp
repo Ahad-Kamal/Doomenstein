@@ -1,6 +1,5 @@
 #include "Game/Gameplay/Actors/Player.hpp"
 #include "Game/Gameplay/Game.hpp"
-#include "Game/Gameplay/Entity.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Renderer/Camera.hpp"

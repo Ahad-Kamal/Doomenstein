@@ -1,5 +1,4 @@
 #include "Game/Gameplay/Game.hpp"
-#include "Game/Gameplay/Entity.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
 #include "Game/Framework/App.hpp"
 #include "Engine/Core/Engine.hpp"
