@@ -6,6 +6,7 @@
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
 #include "Game/Framework/GameCommon.hpp"
+#include "Game/Framework/ActorHandle.hpp"
 #include "Engine/Math/RaycastUtils.hpp"
 #include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/IntVec3.hpp"

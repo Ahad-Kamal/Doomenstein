@@ -177,6 +177,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Framework\ActorHandle.cpp" />
     <ClCompile Include="Framework\App.cpp" />
     <ClCompile Include="Framework\GameCommon.cpp" />
     <ClCompile Include="Framework\Main_Windows.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="Gameplay\TileDefinition.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\ActorHandle.hpp" />
     <ClInclude Include="Framework\App.hpp" />
     <ClInclude Include="Framework\EngineBuildPreferences.hpp" />
     <ClInclude Include="Framework\GameCommon.hpp" />
