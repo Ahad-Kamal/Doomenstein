@@ -76,6 +76,8 @@ protected:
 	Shader* m_shader = nullptr;
 	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer;
+	
+	unsigned int m_nextActorUID = 0;
 
 // Note: remove later
 public:

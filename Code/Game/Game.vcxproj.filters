@@ -49,6 +49,9 @@
     <ClCompile Include="Framework\ActorHandle.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="Gameplay\ActorDefinition.cpp">
+      <Filter>Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\App.hpp">
@@ -83,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="Framework\ActorHandle.hpp">
       <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\ActorDefinition.hpp">
+      <Filter>Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
