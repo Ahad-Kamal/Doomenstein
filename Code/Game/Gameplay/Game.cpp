@@ -104,7 +104,7 @@ void Game::Update()
 	}
 
 	UpdateEntities( deltaSeconds );
-	UpdateMap();
+	UpdateMap( deltaSeconds );
 
 	DeleteGarbageEntities();
 
@@ -243,9 +243,9 @@ void Game::UpdateEntities( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Game::UpdateMap()
+void Game::UpdateMap( float deltaSeconds )
 {
-	m_currentMap->Update();
+	m_currentMap->Update( deltaSeconds );
 }
 
 //-----------------------------------------------------------------------------------------------

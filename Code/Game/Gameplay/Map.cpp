@@ -234,10 +234,8 @@ TileDefinitions* Map::GetTileDefinition( std::string name ) const
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::Update()
+void Map::Update( float deltaSeconds )
 {
-	float deltaSeconds = static_cast<float>( g_game->m_gameClock->GetDeltaSeconds() );
-
 	m_player->Update( deltaSeconds );
 
 	KeyboardControls( deltaSeconds );

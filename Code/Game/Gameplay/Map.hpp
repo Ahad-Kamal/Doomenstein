@@ -44,7 +44,7 @@ public:
 	IntVec2 GetTileCoordsFromIndex( int index ) const;
 	TileDefinitions* GetTileDefinition( std::string name ) const;
 
-	void Update();
+	void Update( float deltaSeconds );
 	void SpawnActors();
 	void CollideActors();
 	void CollideActors( Actor* actorA, Actor* actorB );

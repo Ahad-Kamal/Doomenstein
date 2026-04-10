@@ -20,15 +20,14 @@ Player::~Player()
 }
 
 //-----------------------------------------------------------------------------------------------
-void Player::Update( [[maybe_unused]] float deltaSeconds )
+void Player::Update( float deltaSeconds )
 {
-	float systemDeltaSeconds = static_cast<float>( Clock::GetSystemClock().GetDeltaSeconds() );
 	m_position += m_velocity;
 
 	if( g_game->m_currentState == GAME_STATE_PLAY )
 	{
-		CameraControlsKeyboard( systemDeltaSeconds );
-		CameraControlsController( systemDeltaSeconds );
+		CameraControlsKeyboard( deltaSeconds );
+		CameraControlsController( deltaSeconds );
 	}
 
 	g_game->m_worldCamera->SetPosition( m_position );

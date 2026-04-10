@@ -50,7 +50,7 @@ private:
 	void RenderAttractMode() const;
 
 	void UpdateEntities( float deltaSeconds );
-	void UpdateMap();
+	void UpdateMap( float deltaSeconds );
 	void RenderEntities() const;
 	void RenderMap() const;
 
