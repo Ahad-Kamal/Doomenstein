@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Math/FloatRange.hpp"
+#include <string>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -49,10 +50,23 @@ struct AI
 };
 
 //-----------------------------------------------------------------------------------------------
-class ActorDefinition
+class ActorDefinitions
 {
+public:
+	static void InitializeTileDefs();
+
+	std::string GetName() const;
+	bool IsSolid() const;
+
+public:
+	static std::vector<ActorDefinitions> s_tileDefs;
 
 private:
+	std::string m_name;
+	Collision m_collision;
+	Physics m_physics;
+	CameraView m_cameraView;
+	AI m_ai;
 	Faction m_faction = Faction::NEUTRAL;
 	int m_health = 1;
 	float m_corpseLifetime = 0.f;

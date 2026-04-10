@@ -181,7 +181,7 @@
     <ClCompile Include="Framework\App.cpp" />
     <ClCompile Include="Framework\GameCommon.cpp" />
     <ClCompile Include="Framework\Main_Windows.cpp" />
-    <ClCompile Include="Gameplay\ActorDefinition.cpp" />
+    <ClCompile Include="Gameplay\ActorDefinitions.cpp" />
     <ClCompile Include="Gameplay\Actors\Actor.cpp" />
     <ClCompile Include="Gameplay\Actors\Player.cpp" />
     <ClCompile Include="Gameplay\Game.cpp" />
@@ -196,7 +196,7 @@
     <ClInclude Include="Framework\App.hpp" />
     <ClInclude Include="Framework\EngineBuildPreferences.hpp" />
     <ClInclude Include="Framework\GameCommon.hpp" />
-    <ClInclude Include="Gameplay\ActorDefinition.hpp" />
+    <ClInclude Include="Gameplay\ActorDefinitions.hpp" />
     <ClInclude Include="Gameplay\Actors\Actor.hpp" />
     <ClInclude Include="Gameplay\Actors\Player.hpp" />
     <ClInclude Include="Gameplay\Game.hpp" />

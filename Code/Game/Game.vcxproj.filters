@@ -49,7 +49,7 @@
     <ClCompile Include="Framework\ActorHandle.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Gameplay\ActorDefinition.cpp">
+    <ClCompile Include="Gameplay\ActorDefinitions.cpp">
       <Filter>Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="Gameplay\WeaponDefinition.cpp">
@@ -90,7 +90,7 @@
     <ClInclude Include="Framework\ActorHandle.hpp">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Gameplay\ActorDefinition.hpp">
+    <ClInclude Include="Gameplay\ActorDefinitions.hpp">
       <Filter>Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="Gameplay\WeaponDefinition.hpp">
