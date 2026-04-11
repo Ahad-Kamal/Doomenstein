@@ -1,6 +1,7 @@
 #include "Game/Gameplay/ActorDefinition.hpp"
 #include "Engine/Core/XmlUtils.hpp"
 #include "Engine/Core/NamedStrings.hpp"
+#include "Engine/Core/StringUtils.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -9,7 +10,7 @@ std::vector<ActorDefinition> ActorDefinition::s_actorDefs;
 //-----------------------------------------------------------------------------------------------
 void ActorDefinition::InitializeActorDefs()
 {
-	// Read in TileDefinitions.xml
+	// Read in ActorDefinitions.xml
 	XmlDocument actorDefs;
 	actorDefs.LoadFile( "Data/Definitions/ActorDefinitions.xml" );
 	int numActorDefs = actorDefs.FirstChildElement()->ChildElementCount();
@@ -43,7 +44,6 @@ void ActorDefinition::InitializeActorDefs()
 			currentActorDef.m_faction = Faction::NEUTRAL;
 		}
 
-		// Collision
 		XmlElement* childElement = currentElement->FirstChildElement();
 		while( childElement )
 		{
@@ -51,6 +51,7 @@ void ActorDefinition::InitializeActorDefs()
 			actorDefChildBlackboard.PopulateFromXmlElementAttributes( *childElement );
 			std::string attributeName = childElement->Name();
 
+			// Collision
 			if( attributeName == "Collision" )
 			{
 				currentActorDef.m_collision.m_physicsRadius = actorDefChildBlackboard.GetValue( "radius", 0.f );
@@ -59,10 +60,11 @@ void ActorDefinition::InitializeActorDefs()
 				currentActorDef.m_collision.m_collidesWithActors = actorDefChildBlackboard.GetValue( "collidesWithActors", false );
 				currentActorDef.m_collision.m_dieOnCollide = actorDefChildBlackboard.GetValue( "dieOnCollide", false );
 				currentActorDef.m_collision.m_impulseOnCollide = actorDefChildBlackboard.GetValue( "impulseOnCollide", 0.f );
-				float damageOnCollideMin = actorDefChildBlackboard.GetValue( "damageOnCollideMin", 0.f );
-				float damageOnCollideMax = actorDefChildBlackboard.GetValue( "damageOnCollideMax", 0.f );
-				currentActorDef.m_collision.m_damageOnCollide = FloatRange( damageOnCollideMin, damageOnCollideMax );
+				std::string damageOnCollide = actorDefChildBlackboard.GetValue( "damageOnCollide", "0.0~0.0" );
+				Strings damageOnCollideValues = SplitStringOnDelimiter( damageOnCollide, '~' );
+				currentActorDef.m_collision.m_damageOnCollide = FloatRange( stof( damageOnCollideValues[ 0 ] ), stof( damageOnCollideValues[ 1 ] ) );
 			}
+			// Physics
 			else if( attributeName == "Physics" )
 			{
 				currentActorDef.m_physics.m_walkSpeed = actorDefChildBlackboard.GetValue( "walkSpeed", 0.f );
@@ -72,11 +74,13 @@ void ActorDefinition::InitializeActorDefs()
 				currentActorDef.m_physics.m_isSimulated = actorDefChildBlackboard.GetValue( "simulated", false );
 				currentActorDef.m_physics.m_isFlying = actorDefChildBlackboard.GetValue( "flying", false );
 			}
+			// CameraView
 			else if( attributeName == "Camera" )
 			{
 				currentActorDef.m_cameraView.m_eyeHeight = actorDefChildBlackboard.GetValue( "eyeHeight", 0.f );
 				currentActorDef.m_cameraView.m_cameraFOVDegrees = actorDefChildBlackboard.GetValue( "cameraFOV", 60.f );
 			}
+			// AI
 			else if( attributeName == "AI" )
 			{
 				currentActorDef.m_ai.m_aiEnabled = actorDefChildBlackboard.GetValue( "aiEnabled", true );

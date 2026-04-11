@@ -1,5 +1,7 @@
 #pragma once
 #include "Engine/Math/FloatRange.hpp"
+#include <string>
+#include <vector>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -15,6 +17,7 @@ struct RayWeapon
 //-----------------------------------------------------------------------------------------------
 struct ProjectileWeapon
 {
+	std::string m_projectileActor;
 	int m_projectileCount = 0;
 	float m_projectileCone = 0.f;
 	float m_projectileSpeed = 0.f;
@@ -33,7 +36,18 @@ struct MeleeWeapon
 //-----------------------------------------------------------------------------------------------
 class WeaponDefinition
 {
+public:
+	static void InitializeWeaponDefs();
+
+	std::string GetName() const;
+
+public:
+	static std::vector<WeaponDefinition> s_weaponDefs;
 
 private:
+	std::string m_name;
 	float m_refireTime = 0.f;
+	RayWeapon m_ray;
+	ProjectileWeapon m_projectile;
+	MeleeWeapon m_melee;
 };

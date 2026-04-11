@@ -18,6 +18,7 @@
 #include "Game/Gameplay/TileDefinition.hpp"
 #include "Game/Gameplay/MapDefinition.hpp"
 #include "Game/Gameplay/ActorDefinition.hpp"
+#include "Game/Gameplay/WeaponDefinition.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -50,6 +51,7 @@ void Game::Startup()
 
 	MapDefinition::InitializeMapDefs();
 	ActorDefinition::InitializeActorDefs();
+	WeaponDefinition::InitializeWeaponDefs();
 
 	Texture* terrainTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Terrain_8x8.png" );
 	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );
