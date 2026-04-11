@@ -64,10 +64,10 @@ public:
 private:
 	std::string m_name;
 	std::string m_weapon;
-	Collision* m_collision = new Collision;
-	Physics* m_physics = new Physics;
-	CameraView* m_cameraView = new CameraView;
-	AI* m_ai = new AI;
+	Collision m_collision;
+	Physics m_physics;
+	CameraView m_cameraView;
+	AI m_ai;
 	Faction m_faction = Faction::NEUTRAL;
 	int m_health = 1;
 	float m_corpseLifetime = 0.f;
