@@ -17,6 +17,7 @@
 #include "Engine/Renderer/BitmapFont.hpp"
 #include "Game/Gameplay/TileDefinition.hpp"
 #include "Game/Gameplay/MapDefinition.hpp"
+#include "Game/Gameplay/ActorDefinition.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -48,6 +49,7 @@ void Game::Startup()
 	g_engine->m_render->BindShader( diffuseShader );
 
 	MapDefinition::InitializeMapDefs();
+	ActorDefinition::InitializeActorDefs();
 
 	Texture* terrainTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Terrain_8x8.png" );
 	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );

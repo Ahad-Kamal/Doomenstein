@@ -63,6 +63,7 @@ public:
 
 private:
 	std::string m_name;
+	std::string m_weapon;
 	Collision m_collision;
 	Physics m_physics;
 	CameraView m_cameraView;
