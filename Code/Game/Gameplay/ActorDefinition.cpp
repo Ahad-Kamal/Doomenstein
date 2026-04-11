@@ -100,3 +100,48 @@ std::string ActorDefinition::GetName() const
 {
 	return m_name;
 }
+
+std::string ActorDefinition::GetWeapon() const
+{
+	return m_weapon;
+}
+
+Collision ActorDefinition::GetCollision() const
+{
+	return m_collision;
+}
+
+Physics ActorDefinition::GetPhysics() const
+{
+	return m_physics;
+}
+
+CameraView ActorDefinition::GetCameraView() const
+{
+	return m_cameraView;
+}
+
+AI ActorDefinition::GetAI() const
+{
+	return m_ai;
+}
+
+int ActorDefinition::GetHealth() const
+{
+	return m_health;
+}
+
+float ActorDefinition::GetCorpseLifetime() const
+{
+	return m_corpseLifetime;
+}
+
+bool ActorDefinition::GetIsVisible() const
+{
+	return m_isVisible;
+}
+
+bool ActorDefinition::GetCanBePossesed() const
+{
+	return m_canBePossessed;
+}

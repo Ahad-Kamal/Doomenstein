@@ -57,6 +57,15 @@ public:
 	static void InitializeActorDefs();
 
 	std::string GetName() const;
+	std::string GetWeapon() const;
+	Collision GetCollision() const;
+	Physics GetPhysics() const;
+	CameraView GetCameraView() const;
+	AI GetAI() const;
+	int GetHealth() const;
+	float GetCorpseLifetime() const;
+	bool GetIsVisible() const;
+	bool GetCanBePossesed() const;
 
 public:
 	static std::vector<ActorDefinition> s_actorDefs;

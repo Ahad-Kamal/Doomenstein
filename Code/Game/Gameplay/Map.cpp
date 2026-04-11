@@ -5,6 +5,7 @@
 #include "Game/Gameplay/Game.hpp"
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
+#include "Game/Gameplay/ActorDefinition.hpp"
 #include "Game/Framework/GameCommon.hpp"
 #include "Game/Framework/ActorHandle.hpp"
 #include "Engine/Math/RaycastUtils.hpp"
@@ -18,6 +19,7 @@
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Core/DebugRender.hpp"
 #include "Engine/Renderer/Camera.hpp"
+#include "Engine/Core/ErrorWarningAssert.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -26,7 +28,6 @@ Map::Map( MapDefinition* definition )
 {
 	m_texture = nullptr;
 	
-	m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles() );
 	CreateBuffer();
 	CreateTiles();
 	CreateGeometry();
@@ -236,7 +237,7 @@ TileDefinitions* Map::GetTileDefinition( std::string name ) const
 //-----------------------------------------------------------------------------------------------
 void Map::Update( float deltaSeconds )
 {
-	m_player->Update( deltaSeconds );
+	UpdateActors( deltaSeconds );
 
 	KeyboardControls( deltaSeconds );
 	MouseControls();
@@ -246,22 +247,46 @@ void Map::Update( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
+void Map::UpdateActors( float deltaSeconds )
+{
+	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
+	{
+		m_actors[ actorIndex ]->Update( deltaSeconds );
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 void Map::SpawnActors()
 {
-	m_testActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f,  false, Rgba8( 0, 0, 200 ) );
-	m_actors.push_back( m_testActor );
+	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
+	{
+		ActorDefinition& actorDef = ActorDefinition::s_actorDefs[ actorDefIndex ];
+		std::string name = actorDef.GetName();
+		if( name == "Marine" )
+		{
+			m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles(), &actorDef );
+			m_actors.push_back( m_player );
+		}
+	}
+	if( m_player == nullptr )
+	{
+		ERROR_AND_DIE( "ERROR: Player could not be created, Player Actor Definition missing." );
+	}
 
-	Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
-	m_actors.push_back( staticActor1 );
+	//m_testActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f,  false, Rgba8( 0, 0, 200 ) );
+	//m_actors.push_back( m_testActor );
 
-	Actor* staticActor2 = new Actor( Vec3( 8.5f, 8.5f, 0.125f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
-	m_actors.push_back( staticActor2 );
+	//Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+	//m_actors.push_back( staticActor1 );
 
-	Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
-	m_actors.push_back( staticActor3 );
+	//Actor* staticActor2 = new Actor( Vec3( 8.5f, 8.5f, 0.125f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+	//m_actors.push_back( staticActor2 );
 
-	Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 200, 0 ) );
-	m_actors.push_back( nonStaticActor );
+	//Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+	//m_actors.push_back( staticActor3 );
+
+	//Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 200, 0 ) );
+	//m_actors.push_back( nonStaticActor );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -707,7 +732,7 @@ void Map::KeyboardControls( float deltaSeconds )
 		m_isTestActor = !m_isTestActor;
 	}
 
-	if( !m_isTestActor )
+	if( !m_isTestActor || m_testActor == nullptr )
 	{
 		return;
 	}

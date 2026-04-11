@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------------------------------
 struct Mat44;
 struct IntVec2;
+class ActorDefinition;
 
 //-----------------------------------------------------------------------------------------------
 class Actor
@@ -16,10 +17,11 @@ public:
 		float physicsRadius, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
 	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float cosmeticHeight,
 		float physicsRadius, float cosmeticRadius, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
+	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
 	~Actor();
 
-	void Update( float deltaSeconds );
-	void Render() const;
+	virtual void Update( float deltaSeconds );
+	virtual void Render() const;
 
 	bool IsAlive() const;
 
@@ -27,6 +29,7 @@ public:
 	Mat44 GetModelToWorldTransform() const;
 
 public:
+	ActorDefinition* m_definition;
 	Vec3		m_position;
 	EulerAngles m_orientation;
 	Rgba8		m_color;

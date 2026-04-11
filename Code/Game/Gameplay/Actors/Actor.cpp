@@ -1,7 +1,7 @@
 #include "Game/Gameplay/Actors/Actor.hpp"
+#include "Game/Gameplay/ActorDefinition.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Vertex.hpp"
-//#include "Engine/Core/Vertex_PCUTBN.hpp"
 #include "Engine/Core/VertexUtils.hpp"
 #include "Engine/Math/Mat44.hpp"
 #include "Engine/Math/IntVec2.hpp"
@@ -15,6 +15,7 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, bool
 	, m_orientation( orientation )
 	, m_isStatic( isStatic )
 	, m_color( color )
+	, m_definition( nullptr )
 {
 	m_physicsHeight = 0.75f;
 	m_cosmeticHeight = 0.75f;
@@ -32,6 +33,7 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, floa
 	, m_cosmeticRadius( cosmeticRadius )
 	, m_isStatic( isStatic )
 	, m_color( color )
+	, m_definition( nullptr )
 {
 }
 
@@ -45,7 +47,22 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, floa
 	, m_cosmeticRadius( physicsRadius )
 	, m_isStatic( isStatic )
 	, m_color( color )
+	, m_definition( nullptr )
 {
+}
+
+//-----------------------------------------------------------------------------------------------
+Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
+	: m_position( startingPosition )
+	, m_orientation( orientation )
+	, m_isStatic( isStatic )
+	, m_color( color )
+	, m_definition( definition )
+{
+	m_physicsHeight = definition->GetCollision().m_physicsHeight;
+	m_cosmeticHeight = definition->GetCollision().m_physicsHeight;
+	m_physicsRadius = definition->GetCollision().m_physicsRadius;
+	m_cosmeticHeight = definition->GetCollision().m_physicsRadius;
 }
 
 //-----------------------------------------------------------------------------------------------

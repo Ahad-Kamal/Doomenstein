@@ -45,6 +45,7 @@ public:
 	TileDefinitions* GetTileDefinition( std::string name ) const;
 
 	void Update( float deltaSeconds );
+	void UpdateActors( float deltaSeconds );
 	void SpawnActors();
 	void CollideActors();
 	void CollideActors( Actor* actorA, Actor* actorB );

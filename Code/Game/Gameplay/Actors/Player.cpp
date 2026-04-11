@@ -1,4 +1,5 @@
 #include "Game/Gameplay/Actors/Player.hpp"
+#include "Game/Gameplay/ActorDefinition.hpp"
 #include "Game/Gameplay/Game.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Clock.hpp"
@@ -8,8 +9,13 @@
 
 //-----------------------------------------------------------------------------------------------
 Player::Player( Vec3 const& startingPosition, EulerAngles const& orientation )
-	: m_position( startingPosition )
-	, m_orientation( orientation )
+	: Actor( startingPosition, orientation, false )
+{
+}
+
+//-----------------------------------------------------------------------------------------------
+Player::Player( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition )
+	: Actor( startingPosition, orientation, definition, false )
 {
 }
 
@@ -57,16 +63,16 @@ void Player::CameraControlsKeyboard( float deltaSeconds )
 	}
 
 	// Roll
-	if( g_engine->m_input->IsKeyDown( 'E' ) )
-	{
-		m_orientation.m_rollDegrees += 90.f * deltaSeconds;
-		m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
-	}
-	if( g_engine->m_input->IsKeyDown( 'Q' ) )
-	{
-		m_orientation.m_rollDegrees -= 90.f * deltaSeconds;
-		m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
-	}
+	//if( g_engine->m_input->IsKeyDown( 'E' ) )
+	//{
+	//	m_orientation.m_rollDegrees += 90.f * deltaSeconds;
+	//	m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
+	//}
+	//if( g_engine->m_input->IsKeyDown( 'Q' ) )
+	//{
+	//	m_orientation.m_rollDegrees -= 90.f * deltaSeconds;
+	//	m_orientation.m_rollDegrees = GetClamped( m_orientation.m_rollDegrees, -45.f, 45.f );
+	//}
 
 	// Note: remove later
 	if( g_game->m_currentMap->m_isTestActor )
