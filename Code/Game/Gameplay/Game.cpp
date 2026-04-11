@@ -489,18 +489,18 @@ void Game::DebugAddDebugText() const
 	std::string timeText = Stringf( "Time: %.2f FPS: %.1f Scale: %.2f", totalSeconds, framesPerSecond, timeScale );
 	DebugAddScreenText( timeText, timeBox, 15.f, Vec2( 1.f, 0.f ), 0.f );
 
-	if( m_currentMap->m_isTestActor )
-	{
-		AABB2 actorTextbox = AABB2( 380.f, 784.f, 1179.f, 799.f );
-		std::string actorText = "[F1] Control Mode: Actor";
-		DebugAddScreenText( actorText, actorTextbox, 15.f, Vec2( 0.5f, 0.5f ), 0.f, Rgba8::BLUE, Rgba8::BLUE );
-	}
-	else
-	{
-		AABB2 cameraTextbox = AABB2( 380.f, 784.f, 1179.f, 799.f );
-		std::string cameraText = "[F1] Control Mode: Camera";
-		DebugAddScreenText( cameraText, cameraTextbox, 15.f, Vec2( 0.5f, 0.5f ), 0.f );
-	}
+	//if( m_currentMap->m_isFreeFly )
+	//{
+	//	AABB2 actorTextbox = AABB2( 380.f, 784.f, 1179.f, 799.f );
+	//	std::string actorText = "[F1] Control Mode: Actor";
+	//	DebugAddScreenText( actorText, actorTextbox, 15.f, Vec2( 0.5f, 0.5f ), 0.f, Rgba8::BLUE, Rgba8::BLUE );
+	//}
+	//else
+	//{
+	//	AABB2 cameraTextbox = AABB2( 380.f, 784.f, 1179.f, 799.f );
+	//	std::string cameraText = "[F1] Control Mode: Camera";
+	//	DebugAddScreenText( cameraText, cameraTextbox, 15.f, Vec2( 0.5f, 0.5f ), 0.f );
+	//}
 
 	AABB2 lightingBox = AABB2( 800.f, 739.f, 1599.f, 784.f );
 	std::string lightingText = Stringf( "Sun Direction X: %.0f [F2 / F3 to change]\nSun Direction Y: %0.f [F4 / F5 to change]\nSun Intensity: %.2f [F6 / F7 to change]\n Ambient Intensity: %.2f [F8 / F9 to change]",

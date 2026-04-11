@@ -239,7 +239,8 @@ void Map::Update( float deltaSeconds )
 {
 	UpdateActors( deltaSeconds );
 
-	KeyboardControls( deltaSeconds );
+	FreeFlyKeyboardControls( deltaSeconds );
+	FreeFlyControllerControls( deltaSeconds );
 	MouseControls();
 
 	CollideActors();
@@ -699,6 +700,13 @@ RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[m
 	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
 	{
 		Actor* actor = m_actors[ actorIndex ];
+
+		// Note: remove later //-----------------------------------------------------------------------------------------------
+		if( actor == m_player )
+		{
+			continue;
+		}
+
 		raycastResults[ actorIndex ] = RaycastVsCylinder(start, direction, distance, actor->m_position, actor->m_physicsRadius, actor->m_physicsHeight);
 
 		RaycastResult3D* raycast = &raycastResults[ actorIndex ];
@@ -719,65 +727,166 @@ RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[m
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::KeyboardControls( float deltaSeconds )
+void Map::FreeFlyKeyboardControls( float deltaSeconds )
 {
 	if( g_game->m_currentState != GAME_STATE_PLAY )
 	{
 		return;
 	}
 
-	// Note: remove later
-	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_F1 ) )
-	{
-		m_isTestActor = !m_isTestActor;
-	}
-
-	if( !m_isTestActor || m_testActor == nullptr )
+	if( !m_isFreeFly )
 	{
 		return;
 	}
 
-	Vec3 forwardVector = m_player->m_orientation.GetForwardDir_IFwd_JLeft_KUp();
+	EulerAngles worldCameraOrientation = g_game->m_worldCamera->GetOrientation();
+	Vec3 forwardVector = worldCameraOrientation.GetForwardDir_IFwd_JLeft_KUp();
+	Vec3 velocity = Vec3();
+
 	float speedFactor = 1.f;
 	if( g_engine->m_input->IsKeyDown( KEYCODE_SHIFT ) )
 	{
 		speedFactor *= 15.f;
 	}
 
+	// Yaw
+	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
+	{
+		worldCameraOrientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
+	}
+
+	// Pitch
+	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
+	{
+		worldCameraOrientation.m_pitchDegrees += g_engine->m_input->m_cursorState.m_cursorClientDelta.y * 0.075f;
+		worldCameraOrientation.m_pitchDegrees = GetClamped( worldCameraOrientation.m_pitchDegrees, -85.f, 85.f );
+	}
+
 	// Left and Right
 	if( g_engine->m_input->IsKeyDown( 'A' ) )
 	{
-		m_testActor->m_position.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		m_testActor->m_position.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
-
+		velocity.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		velocity.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
 	}
+
 	if( g_engine->m_input->IsKeyDown( 'D' ) )
 	{
-		m_testActor->m_position.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		m_testActor->m_position.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		velocity.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		velocity.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
 	}
 
 	// Forward and Back
 	if( g_engine->m_input->IsKeyDown( 'W' ) )
 	{
-		m_testActor->m_position.x += forwardVector.x * deltaSeconds * speedFactor;
-		m_testActor->m_position.y += forwardVector.y * deltaSeconds * speedFactor;
+		velocity.x += forwardVector.x * deltaSeconds * speedFactor;
+		velocity.y += forwardVector.y * deltaSeconds * speedFactor;
+		velocity.z += forwardVector.z * deltaSeconds * speedFactor;
 	}
 	if( g_engine->m_input->IsKeyDown( 'S' ) )
 	{
-		m_testActor->m_position.x -= forwardVector.x * deltaSeconds * speedFactor;
-		m_testActor->m_position.y -= forwardVector.y * deltaSeconds * speedFactor;
+		velocity.x -= forwardVector.x * deltaSeconds * speedFactor;
+		velocity.y -= forwardVector.y * deltaSeconds * speedFactor;
+		velocity.z -= forwardVector.z * deltaSeconds * speedFactor;
 	}
 
 	// Up and Down
 	if( g_engine->m_input->IsKeyDown( 'Z' ) )
 	{
-		m_testActor->m_position.z += deltaSeconds * speedFactor;
+		velocity.z += deltaSeconds * speedFactor;
 	}
 	if( g_engine->m_input->IsKeyDown( 'C' ) )
 	{
-		m_testActor->m_position.z -= deltaSeconds * speedFactor;
+		velocity.z -= deltaSeconds * speedFactor;
 	}
+
+	Vec3 currentCameraPosition = g_game->m_worldCamera->GetPosition();
+	g_game->m_worldCamera->SetPosition( currentCameraPosition + velocity );
+	g_game->m_worldCamera->SetOrientation( worldCameraOrientation );
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::FreeFlyControllerControls( float deltaSeconds )
+{
+	if( g_game->m_currentState != GAME_STATE_PLAY )
+	{
+		return;
+	}
+
+	if( g_engine->m_input->WasKeyJustPressed( 'F' ) )
+	{
+		m_isFreeFly = !m_isFreeFly;
+	}
+
+	if( !m_isFreeFly )
+	{
+		return;
+	}
+
+	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
+
+	EulerAngles worldCameraOrientation = g_game->m_worldCamera->GetOrientation();
+	Vec3 forwardVector = worldCameraOrientation.GetForwardDir_IFwd_JLeft_KUp();
+	Vec3 velocity = Vec3();
+
+	float speedFactor = 1.f;
+	if( controller.GetButton( XboxButtonID::A ).m_isPressed )
+	{
+		speedFactor *= 15.f;
+	}
+
+	// Yaw
+	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
+	{
+		worldCameraOrientation.m_yawDegrees -= controller.GetRightStick().GetPosition().x * 0.075f * 3.f;
+	}
+
+	// Pitch
+	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
+	{
+		worldCameraOrientation.m_pitchDegrees -= controller.GetRightStick().GetPosition().y * 0.075f * 3.f;
+		worldCameraOrientation.m_pitchDegrees = GetClamped( worldCameraOrientation.m_pitchDegrees, -85.f, 85.f );
+	}
+
+	// Left and Right
+	if( controller.GetLeftStick().GetPosition().x < 0.5f )
+	{
+		velocity.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		velocity.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+	}
+
+	if( controller.GetLeftStick().GetPosition().x > -0.5f )
+	{
+		velocity.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		velocity.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+	}
+
+	// Forward and Back
+	if( controller.GetLeftStick().GetPosition().y > 0.5f )
+	{
+		velocity.x += forwardVector.x * deltaSeconds * speedFactor;
+		velocity.y += forwardVector.y * deltaSeconds * speedFactor;
+		velocity.z += forwardVector.z * deltaSeconds * speedFactor;
+	}
+	if( controller.GetLeftStick().GetPosition().y < -0.5f )
+	{
+		velocity.x -= forwardVector.x * deltaSeconds * speedFactor;
+		velocity.y -= forwardVector.y * deltaSeconds * speedFactor;
+		velocity.z -= forwardVector.z * deltaSeconds * speedFactor;
+	}
+
+	// Up and Down
+	if( controller.IsButtonDown( XboxButtonID::LEFT_BUMPER ) )
+	{
+		velocity.z += deltaSeconds * speedFactor;
+	}
+	if( controller.IsButtonDown( XboxButtonID::RIGHT_BUMPER ) )
+	{
+		velocity.z -= deltaSeconds * speedFactor;
+	}
+
+	Vec3 currentCameraPosition = g_game->m_worldCamera->GetPosition();
+	g_game->m_worldCamera->SetPosition( currentCameraPosition + velocity );
+	g_game->m_worldCamera->SetOrientation( worldCameraOrientation );
 }
 
 //-----------------------------------------------------------------------------------------------

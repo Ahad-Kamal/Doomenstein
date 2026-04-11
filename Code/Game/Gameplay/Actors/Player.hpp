@@ -20,8 +20,8 @@ public:
 	void Update( float deltaSeconds ) override;
 	void Render() const override;
 
-	void CameraControlsKeyboard( float deltaSeconds );
-	void CameraControlsController( float deltaSeconds );
+	void UpdateFromKeyboard( float deltaSeconds );
+	void UpdateFromController( float deltaSeconds );
 
 	Mat44 GetModelToWorldTransform() const;
 
