@@ -53,35 +53,35 @@ void ActorDefinition::InitializeActorDefs()
 
 			if( attributeName == "Collision" )
 			{
-				currentActorDef.m_collision.m_physicsRadius = actorDefChildBlackboard.GetValue( "radius", 0.f );
-				currentActorDef.m_collision.m_physicsHeight = actorDefChildBlackboard.GetValue( "height", 0.f );
-				currentActorDef.m_collision.m_collidesWithWorld = actorDefChildBlackboard.GetValue( "collidesWithWorld", false );
-				currentActorDef.m_collision.m_collidesWithActors = actorDefChildBlackboard.GetValue( "collidesWithActors", false );
-				currentActorDef.m_collision.m_dieOnCollide = actorDefChildBlackboard.GetValue( "dieOnCollide", false );
-				currentActorDef.m_collision.m_impulseOnCollide = actorDefChildBlackboard.GetValue( "impulseOnCollide", 0.f );
+				currentActorDef.m_collision->m_physicsRadius = actorDefChildBlackboard.GetValue( "radius", 0.f );
+				currentActorDef.m_collision->m_physicsHeight = actorDefChildBlackboard.GetValue( "height", 0.f );
+				currentActorDef.m_collision->m_collidesWithWorld = actorDefChildBlackboard.GetValue( "collidesWithWorld", false );
+				currentActorDef.m_collision->m_collidesWithActors = actorDefChildBlackboard.GetValue( "collidesWithActors", false );
+				currentActorDef.m_collision->m_dieOnCollide = actorDefChildBlackboard.GetValue( "dieOnCollide", false );
+				currentActorDef.m_collision->m_impulseOnCollide = actorDefChildBlackboard.GetValue( "impulseOnCollide", 0.f );
 				float damageOnCollideMin = actorDefChildBlackboard.GetValue( "damageOnCollideMin", 0.f );
 				float damageOnCollideMax = actorDefChildBlackboard.GetValue( "damageOnCollideMax", 0.f );
-				currentActorDef.m_collision.m_damageOnCollide = FloatRange( damageOnCollideMin, damageOnCollideMax );
+				currentActorDef.m_collision->m_damageOnCollide = FloatRange( damageOnCollideMin, damageOnCollideMax );
 			}
 			else if( attributeName == "Physics" )
 			{
-				currentActorDef.m_physics.m_walkSpeed = actorDefChildBlackboard.GetValue( "walkSpeed", 0.f );
-				currentActorDef.m_physics.m_runSpeed = actorDefChildBlackboard.GetValue( "runSpeed", 0.f );
-				currentActorDef.m_physics.m_turnSpeed = actorDefChildBlackboard.GetValue( "turnSpeed", 0.f );
-				currentActorDef.m_physics.m_drag = actorDefChildBlackboard.GetValue( "drag", 0.f );
-				currentActorDef.m_physics.m_isSimulated = actorDefChildBlackboard.GetValue( "simulated", false );
-				currentActorDef.m_physics.m_isFlying = actorDefChildBlackboard.GetValue( "flying", false );
+				currentActorDef.m_physics->m_walkSpeed = actorDefChildBlackboard.GetValue( "walkSpeed", 0.f );
+				currentActorDef.m_physics->m_runSpeed = actorDefChildBlackboard.GetValue( "runSpeed", 0.f );
+				currentActorDef.m_physics->m_turnSpeed = actorDefChildBlackboard.GetValue( "turnSpeed", 0.f );
+				currentActorDef.m_physics->m_drag = actorDefChildBlackboard.GetValue( "drag", 0.f );
+				currentActorDef.m_physics->m_isSimulated = actorDefChildBlackboard.GetValue( "simulated", false );
+				currentActorDef.m_physics->m_isFlying = actorDefChildBlackboard.GetValue( "flying", false );
 			}
 			else if( attributeName == "Camera" )
 			{
-				currentActorDef.m_cameraView.m_eyeHeight = actorDefChildBlackboard.GetValue( "eyeHeight", 0.f );
-				currentActorDef.m_cameraView.m_cameraFOVDegrees = actorDefChildBlackboard.GetValue( "cameraFOV", 60.f );
+				currentActorDef.m_cameraView->m_eyeHeight = actorDefChildBlackboard.GetValue( "eyeHeight", 0.f );
+				currentActorDef.m_cameraView->m_cameraFOVDegrees = actorDefChildBlackboard.GetValue( "cameraFOV", 60.f );
 			}
 			else if( attributeName == "AI" )
 			{
-				currentActorDef.m_ai.m_aiEnabled = actorDefChildBlackboard.GetValue( "aiEnabled", true );
-				currentActorDef.m_ai.m_sightRadius = actorDefChildBlackboard.GetValue( "sightRadius", 0.f );
-				currentActorDef.m_ai.m_sightAngle = actorDefChildBlackboard.GetValue( "sightAngle", 0.f );
+				currentActorDef.m_ai->m_aiEnabled = actorDefChildBlackboard.GetValue( "aiEnabled", true );
+				currentActorDef.m_ai->m_sightRadius = actorDefChildBlackboard.GetValue( "sightRadius", 0.f );
+				currentActorDef.m_ai->m_sightAngle = actorDefChildBlackboard.GetValue( "sightAngle", 0.f );
 			}
 
 			childElement = childElement->NextSiblingElement();
