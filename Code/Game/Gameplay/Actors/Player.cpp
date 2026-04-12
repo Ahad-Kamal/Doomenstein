@@ -8,15 +8,19 @@
 
 
 //-----------------------------------------------------------------------------------------------
-Player::Player( Vec3 const& startingPosition, EulerAngles const& orientation )
-	: Actor( startingPosition, orientation, false )
+Player::Player( Map* currentMap, ActorHandle actorToPossess )
+	: Controller( currentMap, actorToPossess )
 {
-}
+	Actor* possessedActor = GetActor();
+	ActorDefinition actorDef = *possessedActor->m_definition;
 
-//-----------------------------------------------------------------------------------------------
-Player::Player( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle )
-	: Actor( startingPosition, orientation, definition, actorHandle, false )
-{
+	Vec3 actorPosition = possessedActor->m_position;
+	actorPosition.z = actorDef.GetCameraView().m_eyeHeight;
+	m_position = actorPosition;
+	m_orientation = possessedActor->m_orientation;
+
+	m_camera = new Camera;
+	m_camera->SetPerspectiveView( 2.f, actorDef.GetCameraView().m_cameraFOVDegrees, 0.1f, 1000.f );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -40,8 +44,8 @@ void Player::Update( float deltaSeconds )
 
 	if( !m_isFreeFly )
 	{
-		g_game->m_worldCamera->SetPosition( m_position );
-		g_game->m_worldCamera->SetOrientation( m_orientation );
+		m_camera->SetPosition( m_position );
+		m_camera->SetOrientation( m_orientation );
 	}
 }
 
@@ -60,6 +64,9 @@ void Player::UpdateFromKeyboard( float deltaSeconds )
 		return;
 	}
 
+	Actor* possesedActor = GetActor();
+	ActorDefinition definition = *possesedActor->m_definition;
+
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
@@ -74,11 +81,11 @@ void Player::UpdateFromKeyboard( float deltaSeconds )
 	}
 
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
-	float speedFactor = m_definition->GetPhysics().m_walkSpeed;
+	float speedFactor = definition.GetPhysics().m_walkSpeed;
 
 	if( g_engine->m_input->IsKeyDown( KEYCODE_SHIFT ) )
 	{
-		speedFactor = m_definition->GetPhysics().m_runSpeed;
+		speedFactor = definition.GetPhysics().m_runSpeed;
 	}
 
 	m_velocity = Vec3();
@@ -118,26 +125,28 @@ void Player::UpdateFromController( float deltaSeconds )
 		return;
 	}
 
+	ActorDefinition definition = *GetActor()->m_definition;
+
 	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		m_orientation.m_yawDegrees -= controller.GetRightStick().GetPosition().x * 0.075f * ( m_definition->GetPhysics().m_turnSpeed * 0.016667f );
+		m_orientation.m_yawDegrees -= controller.GetRightStick().GetPosition().x * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f );
 	}
 
 	// Pitch
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		m_orientation.m_pitchDegrees -= controller.GetRightStick().GetPosition().y * 0.075f * ( m_definition->GetPhysics().m_turnSpeed * 0.016667f );
+		m_orientation.m_pitchDegrees -= controller.GetRightStick().GetPosition().y * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f );
 		m_orientation.m_pitchDegrees = GetClamped( m_orientation.m_pitchDegrees, -85.f, 85.f );
 	}
 
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
-	float speedFactor = m_definition->GetPhysics().m_walkSpeed;
+	float speedFactor = definition.GetPhysics().m_walkSpeed;
 
 	if( controller.GetButton( XboxButtonID::A ).m_isPressed )
 	{
-		speedFactor = m_definition->GetPhysics().m_runSpeed;
+		speedFactor = definition.GetPhysics().m_runSpeed;
 	}
 
 	// Left and Right
@@ -239,9 +248,9 @@ void Player::FreeFlyKeyboardControls( float deltaSeconds )
 		velocity.z -= deltaSeconds * speedFactor;
 	}
 
-	Vec3 currentCameraPosition = g_game->m_worldCamera->GetPosition();
-	g_game->m_worldCamera->SetPosition( currentCameraPosition + velocity );
-	g_game->m_worldCamera->SetOrientation( worldCameraOrientation );
+	Vec3 currentCameraPosition = m_camera->GetPosition();
+	m_camera->SetPosition( currentCameraPosition + velocity );
+	m_camera->SetOrientation( worldCameraOrientation );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -324,9 +333,9 @@ void Player::FreeFlyControllerControls( float deltaSeconds )
 		velocity.z -= deltaSeconds * speedFactor;
 	}
 
-	Vec3 currentCameraPosition = g_game->m_worldCamera->GetPosition();
-	g_game->m_worldCamera->SetPosition( currentCameraPosition + velocity );
-	g_game->m_worldCamera->SetOrientation( worldCameraOrientation );
+	Vec3 currentCameraPosition = m_camera->GetPosition();
+	m_camera->SetPosition( currentCameraPosition + velocity );
+	m_camera->SetOrientation( worldCameraOrientation );
 }
 
 //-----------------------------------------------------------------------------------------------

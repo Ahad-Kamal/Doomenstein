@@ -72,12 +72,10 @@ void Game::Startup()
 	std::string mapName = g_blackboard->GetValue( "defaultMap", "TestMap" );
 	m_currentMap = new Map( MapDefinition::GetMapDefFromName( mapName ) );
 
-	m_worldCamera = new Camera();
+	m_worldCamera = m_currentMap->m_player->m_camera;
 	m_screenCamera = new Camera();
 
-	m_worldCamera->SetPerspectiveView( 2.f, 60.f, 0.1f, 1000.f );
 	m_worldCamera->SetCameraToRenderTransform( Mat44::DirectXCameraToRenderMatrix );
-
 	m_screenCamera->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
 
 	g_bitmapFont = g_engine->m_render->CreateOrGetBitmapFont( "Data/Fonts/SquirrelFixedFont" );
@@ -112,9 +110,6 @@ void Game::Update()
 
 	UpdateEntities( deltaSeconds );
 	UpdateMap( deltaSeconds );
-
-	m_screenCamera->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
-	m_worldCamera->SetPerspectiveView( 2.f, 60.f, 0.1f, 100.f );
 }
 
 //-----------------------------------------------------------------------------------------------

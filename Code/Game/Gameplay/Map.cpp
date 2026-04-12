@@ -237,10 +237,9 @@ TileDefinitions* Map::GetTileDefinition( std::string name ) const
 //-----------------------------------------------------------------------------------------------
 void Map::Update( float deltaSeconds )
 {
+	m_player->Update( deltaSeconds );
 	UpdateActors( deltaSeconds );
 
-	/*FreeFlyKeyboardControls( deltaSeconds );
-	FreeFlyControllerControls( deltaSeconds );*/
 	MouseControls();
 
 	CollideActors();
@@ -267,8 +266,9 @@ void Map::SpawnPlayer()
 		{
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
-			m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles(), &actorDef, newActorHandle );
-			m_actors.push_back( m_player );
+			Actor* marine = new Actor( Vec3( 2.5f, 8.5f, 0.f ), EulerAngles(), &actorDef, newActorHandle );
+			m_actors.push_back( marine );
+			m_player = new Player( this, newActorHandle );
 		}
 
 	/*	if( name == "Demon" )
@@ -697,10 +697,10 @@ RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[m
 		Actor* actor = m_actors[ actorIndex ];
 
 		// Note: remove later //-----------------------------------------------------------------------------------------------
-		if( actor == m_player )
-		{
-			continue;
-		}
+		//if( actor == m_player )
+		//{
+		//	continue;
+		//}
 
 		raycastResults[ actorIndex ] = RaycastVsCylinder(start, direction, distance, actor->m_position, actor->m_physicsRadius, actor->m_physicsHeight);
 

@@ -10,6 +10,8 @@ class Map;
 class Controller
 {
 public:
+	Controller( Map* currentMap, ActorHandle actorToPosses = ActorHandle::INVALID );
+
 	void Possess( ActorHandle actorToPossess );
 	Actor* GetActor();
 
