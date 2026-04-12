@@ -87,13 +87,13 @@ void Actor::UpdatePhysics( [[maybe_unused]] float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Actor::AddForce( Vec3 force )
 {
-	m_velocity += force;
+	m_acceleration += force;
 }
 
 //-----------------------------------------------------------------------------------------------
 void Actor::AddImpulse( Vec3 impulse )
 {
-	m_acceleration += impulse;
+	m_velocity += impulse;
 }
 
 //-----------------------------------------------------------------------------------------------
