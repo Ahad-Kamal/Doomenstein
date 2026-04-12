@@ -59,10 +59,7 @@ public:
 	RaycastResult3D RaycastWorldZ( Vec3 const& start, Vec3 const& direction, float distance ) const;
 	RaycastResult3D RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
 
-	void FreeFlyKeyboardControls( float deltaSeconds );
-	void FreeFlyControllerControls( float deltaSeconds );
 	void MouseControls();
-
 
 public:
 	Player*	m_player = nullptr;
@@ -80,7 +77,4 @@ protected:
 	IndexBuffer* m_indexBuffer;
 	
 	unsigned int m_nextActorUID = 0;
-
-public:
-	bool m_isFreeFly = false;
 };

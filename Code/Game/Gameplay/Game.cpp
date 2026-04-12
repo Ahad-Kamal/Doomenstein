@@ -479,7 +479,7 @@ void Game::DebugDrawWorldBounds() const
 void Game::DebugAddDebugText() const
 {
 	AABB2 positionBox = AABB2( 1.f, 784.f, 800.f, 799.f );
-	std::string positionText = Stringf( "Position: %.2f, %.2f, %.2f", m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z );
+	std::string positionText = Stringf( "Position: %.2f, %.2f, %.2f", m_worldCamera->GetPosition().x, m_worldCamera->GetPosition().y, m_worldCamera->GetPosition().z );
 	DebugAddScreenText( positionText, positionBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
 
 	AABB2 timeBox = AABB2( 800.f, 784.f, 1599.f, 799.f );

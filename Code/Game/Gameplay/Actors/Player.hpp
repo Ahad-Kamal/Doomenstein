@@ -22,6 +22,8 @@ public:
 
 	void UpdateFromKeyboard( float deltaSeconds );
 	void UpdateFromController( float deltaSeconds );
+	void FreeFlyKeyboardControls( float deltaSeconds );
+	void FreeFlyControllerControls( float deltaSeconds );
 
 	Mat44 GetModelToWorldTransform() const;
 
@@ -31,4 +33,5 @@ public:
 //	EulerAngles m_orientation;
 	float	m_angualrVelocity = 0.f; // spin rate, in degrees per second
 	Rgba8	m_color = Rgba8::WHITE;
+	bool	m_isFreeFly = false;
 };
