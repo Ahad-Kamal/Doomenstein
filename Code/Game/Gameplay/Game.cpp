@@ -39,6 +39,10 @@ Game::~Game()
 {
 	delete m_currentMap;
 	m_currentMap = nullptr;
+
+	ActorDefinition::ClearActorDefs();
+	WeaponDefinition::ClearWeaponDefs();
+	MapDefinition::ClearMapDefs();
 }
 
 //-----------------------------------------------------------------------------------------------

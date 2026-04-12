@@ -188,6 +188,12 @@ void ActorDefinition::InitializeProjectileActorDefs()
 }
 
 //-----------------------------------------------------------------------------------------------
+void ActorDefinition::ClearActorDefs()
+{
+	s_actorDefs.clear();
+}
+
+//-----------------------------------------------------------------------------------------------
 std::string ActorDefinition::GetName() const
 {
 	return m_name;

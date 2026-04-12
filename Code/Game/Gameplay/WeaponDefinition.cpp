@@ -66,6 +66,12 @@ void WeaponDefinition::InitializeWeaponDefs()
 }
 
 //-----------------------------------------------------------------------------------------------
+void WeaponDefinition::ClearWeaponDefs()
+{
+	s_weaponDefs.clear();
+}
+
+//-----------------------------------------------------------------------------------------------
 std::string WeaponDefinition::GetName() const
 {
 	return m_name;

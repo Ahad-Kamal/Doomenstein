@@ -76,6 +76,12 @@ void MapDefinition::InitializeMapDefs()
 }
 
 //-----------------------------------------------------------------------------------------------
+void MapDefinition::ClearMapDefs()
+{
+	s_mapDefs.clear();
+}
+
+//-----------------------------------------------------------------------------------------------
 std::string MapDefinition::GetName() const
 {
 	return m_name;

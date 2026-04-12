@@ -38,6 +38,7 @@ class WeaponDefinition
 {
 public:
 	static void InitializeWeaponDefs();
+	static void ClearWeaponDefs();
 
 	std::string GetName() const;
 

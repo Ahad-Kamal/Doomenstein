@@ -25,6 +25,7 @@ class MapDefinition
 {
 public:
 	static void InitializeMapDefs();
+	static void ClearMapDefs();
 
 	std::string GetName() const;
 	Image* GetImage() const;
