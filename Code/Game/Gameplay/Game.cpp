@@ -152,13 +152,6 @@ void Game::Shutdown()
 }
 
 //-----------------------------------------------------------------------------------------------
-void Game::AddCameraShake( float shakeAmount )
-{
-	m_isShaking = true;
-	m_screenShakeAmount += shakeAmount;
-}
-
-//-----------------------------------------------------------------------------------------------
 void Game::SetGameMusicSpeed( float speed )
 {
 	g_engine->m_audio->SetSoundPlaybackSpeed( m_music, speed );
@@ -266,49 +259,6 @@ void Game::RenderEntities() const
 void Game::RenderMap() const
 {
 	m_currentMap->Render();
-}
-
-//-----------------------------------------------------------------------------------------------
-void Game::ClampCamera( Vec2& minView, Vec2& maxView )
-{
-	if( minView.x < 0.f )
-	{
-		minView.x = 0.f;
-		maxView.x = WORLD_VIEW_SIZE_X;
-	}
-	else if( maxView.x > WORLD_SIZE_X )
-	{
-		minView.x = WORLD_SIZE_X - WORLD_VIEW_SIZE_X;
-		maxView.x = WORLD_SIZE_X;
-	}
-	
-	if( minView.y < 0.f )
-	{
-		minView.y = 0.f;
-		maxView.y = WORLD_VIEW_SIZE_Y;
-	}
-	else if( maxView.y > WORLD_SIZE_Y )
-	{
-		minView.y = WORLD_SIZE_Y - WORLD_VIEW_SIZE_Y;
-		maxView.y = WORLD_SIZE_Y;
-	}
-}
-
-//-----------------------------------------------------------------------------------------------
-void Game::ShakeCamera( float deltaSeconds )
-{
-	float shakeX = g_rng->RollRandomFloatInRange( -m_screenShakeAmount, m_screenShakeAmount );
-	float shakeY = g_rng->RollRandomFloatInRange( -m_screenShakeAmount, m_screenShakeAmount );
-
-	m_worldCamera->Translate2D( Vec2( shakeX, shakeY ) );
-
-	m_screenShakeAmount -= SCREEN_SHAKE_REDUCTION * deltaSeconds;
-	m_screenShakeAmount = GetClamped( m_screenShakeAmount, 0.f, MAX_SCREEN_SHAKE_AMOUNT );
-
-	if( m_screenShakeAmount <= 0.f )
-	{
-		m_isShaking = false;
-	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -506,12 +456,6 @@ void Game::DebugAddDebugText() const
 	std::string lightingText = Stringf( "Sun Direction X: %.0f [F2 / F3 to change]\nSun Direction Y: %0.f [F4 / F5 to change]\nSun Intensity: %.2f [F6 / F7 to change]\n Ambient Intensity: %.2f [F8 / F9 to change]",
 		g_game->m_sunDirection.x, g_game->m_sunDirection.y, m_sunIntensity, m_ambientIntensity );
 	DebugAddScreenText( lightingText, lightingBox, 25.f, Vec2( 1.f, 0.f ), 0.f );
-}
-
-//-----------------------------------------------------------------------------------------------
-void Game::DeleteGarbageEntities()
-{
-
 }
 
 //-----------------------------------------------------------------------------------------------

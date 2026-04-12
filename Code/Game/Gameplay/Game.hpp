@@ -25,9 +25,6 @@ extern SpriteSheet* g_terrainSpriteSheet;
 extern BitmapFont* g_bitmapFont;
 extern NamedStrings* g_blackboard;
 
-//-----------------------------------------------------------------------------------------------
-constexpr float MAX_SCREEN_SHAKE_AMOUNT = 5.f;
-constexpr float SCREEN_SHAKE_REDUCTION = 5.f;
 
 //-----------------------------------------------------------------------------------------------
 class Game
@@ -39,8 +36,6 @@ public:
 	void Update();
 	void Render() const;
 	void Shutdown();
-
-	void AddCameraShake( float shakeAmount );
 
 	void SetGameMusicSpeed( float speed );
 
@@ -54,9 +49,6 @@ private:
 	void RenderEntities() const;
 	void RenderMap() const;
 
-	void ClampCamera( Vec2& minView, Vec2& maxView );
-	void ShakeCamera( float deltaSeconds );
-
 	void UpdateKeyboardInput();
 	void UpdateControllerInput();
 
@@ -65,8 +57,6 @@ private:
 	void DebugRenderEntities() const;
 	void DebugDrawWorldBounds() const;
 	void DebugAddDebugText() const;
-
-	void DeleteGarbageEntities();
 
 	void AddCommandsToDevConsole();
 	void AddControlsToDevConsole();

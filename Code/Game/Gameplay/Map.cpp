@@ -271,22 +271,22 @@ void Map::SpawnPlayer()
 			m_actors.push_back( m_player );
 		}
 
-		//if( name == "Demon" )
-		//{
-		//	ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
-		//	m_currentUID++;
-		//	Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), &actorDef, newActorHandle, true, Rgba8( 200, 0, 0 ) );
-		//	m_actors.push_back( staticActor1 );
+		if( name == "Demon" )
+		{
+			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
+			m_currentUID++;
+			Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), &actorDef, newActorHandle, true, Rgba8( 200, 0, 0 ) );
+			m_actors.push_back( staticActor1 );
 
-		//	//Actor* staticActor2 = new Actor( Vec3( 8.5f, 8.5f, 0.125f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
-		//	//m_actors.push_back( staticActor2 );
+			//Actor* staticActor2 = new Actor( Vec3( 8.5f, 8.5f, 0.125f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+			//m_actors.push_back( staticActor2 );
 
-		//	//Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
-		//	//m_actors.push_back( staticActor3 );
+			//Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+			//m_actors.push_back( staticActor3 );
 
-		//	//Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 200, 0 ) );
-		//	//m_actors.push_back( nonStaticActor );
-		//}
+			//Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 200, 0 ) );
+			//m_actors.push_back( nonStaticActor );
+		}
 	}
 	if( m_player == nullptr )
 	{
