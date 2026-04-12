@@ -50,8 +50,9 @@ void Game::Startup()
 	g_engine->m_render->BindShader( diffuseShader );
 
 	MapDefinition::InitializeMapDefs();
-	ActorDefinition::InitializeActorDefs();
 	WeaponDefinition::InitializeWeaponDefs();
+	ActorDefinition::InitializeProjectileActorDefs();
+	ActorDefinition::InitializeActorDefs();
 
 	Texture* terrainTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Terrain_8x8.png" );
 	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );
@@ -88,8 +89,6 @@ void Game::Startup()
 
 	m_worldCamera->SetPosition( m_currentMap->m_player->m_position );
 	m_worldCamera->SetOrientation( m_currentMap->m_player->m_orientation );
-
-	//AddDebugObjects();
 }
 
 //-----------------------------------------------------------------------------------------------

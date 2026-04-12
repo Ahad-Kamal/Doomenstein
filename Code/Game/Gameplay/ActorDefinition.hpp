@@ -55,6 +55,7 @@ class ActorDefinition
 {
 public:
 	static void InitializeActorDefs();
+	static void InitializeProjectileActorDefs();
 
 	std::string GetName() const;
 	std::string GetWeapon() const;

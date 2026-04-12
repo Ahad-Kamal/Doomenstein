@@ -10,7 +10,7 @@ std::vector<WeaponDefinition> WeaponDefinition::s_weaponDefs;
 //-----------------------------------------------------------------------------------------------
 void WeaponDefinition::InitializeWeaponDefs()
 {
-	// Read in ActorDefinitions.xml
+	// Read in WeaponDefinitions.xml
 	XmlDocument weaponDefs;
 	weaponDefs.LoadFile( "Data/Definitions/WeaponDefinitions.xml" );
 	int numWeaponDefs = weaponDefs.FirstChildElement()->ChildElementCount();
