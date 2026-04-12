@@ -14,48 +14,6 @@
 #include <vector>
 
 
-////-----------------------------------------------------------------------------------------------
-//Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, bool isStatic /* = true */, Rgba8 color /* = Rgba8::WHITE */)
-//	: m_position( startingPosition )
-//	, m_orientation( orientation )
-//	, m_isStatic( isStatic )
-//	, m_color( color )
-//	, m_definition( nullptr )
-//{
-//	m_physicsHeight = 0.75f;
-//	m_cosmeticHeight = 0.75f;
-//	m_physicsRadius = 0.35f;
-//	m_cosmeticRadius = 0.35f;
-//}
-//
-////-----------------------------------------------------------------------------------------------
-//Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float cosmeticHeight, float physicsRadius, float cosmeticRadius, bool isStatic /* = true */, Rgba8 color /* = Rgba8::WHITE */ )
-//	: m_position( startingPosition )
-//	, m_orientation( orientation )
-//	, m_physicsHeight( physicsHeight )
-//	, m_cosmeticHeight( cosmeticHeight )
-//	, m_physicsRadius( physicsRadius )
-//	, m_cosmeticRadius( cosmeticRadius )
-//	, m_isStatic( isStatic )
-//	, m_color( color )
-//	, m_definition( nullptr )
-//{
-//}
-//
-////-----------------------------------------------------------------------------------------------
-//Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float physicsRadius, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
-//	: m_position( startingPosition )
-//	, m_orientation( orientation )
-//	, m_physicsHeight( physicsHeight )
-//	, m_cosmeticHeight( physicsHeight )
-//	, m_physicsRadius( physicsRadius )
-//	, m_cosmeticRadius( physicsRadius )
-//	, m_isStatic( isStatic )
-//	, m_color( color )
-//	, m_definition( nullptr )
-//{
-//}
-
 //-----------------------------------------------------------------------------------------------
 Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, 
 	ActorHandle actorHandle, Map* owningMap, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
@@ -85,12 +43,14 @@ Actor::~Actor()
 //-----------------------------------------------------------------------------------------------
 void Actor::Update( [[maybe_unused]] float deltaSeconds )
 {
-	if( m_controller == m_map->m_player && !m_map->m_player->m_isFreeFly )
-	{
-		Vec3 position = m_map->m_player->m_position;
-		position.z = 0.f;
-		m_position = position;
-	}
+	//if( m_controller == m_map->m_player && !m_map->m_player->m_isFreeFly )
+	//{
+	//	/*Vec3 position = m_map->m_player->m_position;
+	//	position.z = 0.f;
+	//	m_position = position;*/
+	//}
+
+	UpdatePhysics( deltaSeconds );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -114,6 +74,26 @@ void Actor::Render() const
 
 	g_engine->m_render->SetRasterizerState( RasterizerMode::SOLID_CULL_BACK );
 	g_engine->m_render->SetRasterizerStateIfChanged();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Actor::UpdatePhysics( [[maybe_unused]] float deltaSeconds )
+{
+	m_position += m_velocity;
+	m_velocity += m_acceleration;
+	m_acceleration = Vec3();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Actor::AddForce( Vec3 force )
+{
+	m_velocity += force;
+}
+
+//-----------------------------------------------------------------------------------------------
+void Actor::AddImpulse( Vec3 impulse )
+{
+	m_acceleration += impulse;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -160,10 +140,14 @@ bool Actor::Event_OnPossessed( EventArgs& args )
 	std::string controller = args.GetValue( "ControllerType", "" );
 	if( controller == "Player" )
 	{
-		targetActor->m_controller = g_game->m_currentMap->m_player;
+		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player->m_actorHandle )
+		{
+			targetActor->m_controller = g_game->m_currentMap->m_player;
+			return true;
+		}
 	}
 
-	return true;
+	return false;
 }
 
 //-----------------------------------------------------------------------------------------------

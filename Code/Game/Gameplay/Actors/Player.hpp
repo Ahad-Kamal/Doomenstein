@@ -37,7 +37,7 @@ public:
 public:
 	Camera* m_camera;
 	Vec3	m_position;
-	Vec3	m_velocity;
+	//Vec3	m_velocity;
 	EulerAngles m_orientation;
 	bool	m_isFreeFly = false;
 };

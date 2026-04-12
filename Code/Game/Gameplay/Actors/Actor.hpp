@@ -2,7 +2,9 @@
 #include "Game/Framework/ActorHandle.hpp"
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/EulerAngles.hpp"
+#include "Engine/Core/Vertex.hpp"
 #include "Engine/Core/Rgba8.hpp"
+#include <vector>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -15,23 +17,21 @@ class Map;
 
 //-----------------------------------------------------------------------------------------------
 typedef NamedStrings EventArgs;
+typedef std::vector<Vertex> VertexList;
 
 //-----------------------------------------------------------------------------------------------
 class Actor
 {
 public:
-	// Note: to be deprecated
-	/*Actor( Vec3 const& startingPosition, EulerAngles const& orientation, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
-	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight,
-		float physicsRadius, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
-	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float cosmeticHeight,
-		float physicsRadius, float cosmeticRadius, bool isStatic = true, Rgba8 color = Rgba8::WHITE );*/
-	//
 	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle, Map* owningMap, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
 	~Actor();
 
 	virtual void Update( float deltaSeconds );
 	virtual void Render() const;
+
+	void UpdatePhysics( float deltaSeconds );
+	void AddForce( Vec3 force );
+	void AddImpulse( Vec3 impulse );
 
 	bool IsAlive() const;
 
@@ -42,12 +42,17 @@ public:
 	static bool Event_OnUnpossessed( EventArgs& args );
 
 public:
+	VertexList	m_vertexes;
 	ActorDefinition* m_definition;
-	Controller* m_controller = nullptr;
 	Map*		m_map;
+	
+	Controller* m_controller = nullptr;
+	Actor*		m_owner = nullptr;
 
 	ActorHandle m_actorHandle;
 	Vec3		m_position;
+	Vec3		m_velocity;
+	Vec3		m_acceleration;
 	EulerAngles m_orientation;
 	Rgba8		m_color;
 

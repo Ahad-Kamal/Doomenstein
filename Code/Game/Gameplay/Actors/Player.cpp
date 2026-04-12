@@ -35,8 +35,6 @@ Player::~Player()
 //-----------------------------------------------------------------------------------------------
 void Player::Update( float deltaSeconds )
 {
-	m_position += m_velocity;
-
 	if( g_game->m_currentState == GAME_STATE_PLAY )
 	{
 		UpdateInput( deltaSeconds );
@@ -65,6 +63,12 @@ void Player::UpdateCamera()
 {
 	if( !m_isFreeFly )
 	{
+		Actor* possessedActor = GetActor();
+		Vec3 actorPosition = possessedActor->m_position;
+		actorPosition.z = possessedActor->m_definition->GetCameraView().m_eyeHeight;
+		m_position = actorPosition;
+		m_orientation = possessedActor->m_orientation;
+
 		m_camera->SetPosition( m_position );
 		m_camera->SetOrientation( m_orientation );
 	}
@@ -92,19 +96,19 @@ void Player::Possess( ActorHandle actorToPossess )
 //-----------------------------------------------------------------------------------------------
 void Player::UpdateFromKeyboard( float deltaSeconds )
 {
-	if( m_isFreeFly )
-	{
-		m_velocity = Vec3();
-		return;
-	}
-
 	Actor* possesedActor = GetActor();
 	ActorDefinition definition = *possesedActor->m_definition;
+
+	if( m_isFreeFly )
+	{
+		possesedActor->m_velocity = Vec3();
+		return;
+	}
 
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
+		possesedActor->m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
 	}
 
 	// Pitch
@@ -122,57 +126,58 @@ void Player::UpdateFromKeyboard( float deltaSeconds )
 		speedFactor = definition.GetPhysics().m_runSpeed;
 	}
 
-	m_velocity = Vec3();
+	possesedActor->m_velocity = Vec3();
 
 	// Left and Right
 	if( g_engine->m_input->IsKeyDown( 'A' ) )
 	{
-		m_velocity.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		m_velocity.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
 
 	}
 	if( g_engine->m_input->IsKeyDown( 'D' ) )
 	{
-		m_velocity.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		m_velocity.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
 	}
 
 	// Forward and Back
 	if( g_engine->m_input->IsKeyDown( 'W' ) )
 	{
-		m_velocity.x += forwardVector.x * deltaSeconds * speedFactor;
-		m_velocity.y += forwardVector.y * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.x += forwardVector.x * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.y += forwardVector.y * deltaSeconds * speedFactor;
 	}
 	if( g_engine->m_input->IsKeyDown( 'S' ) )
 	{
-		m_velocity.x -= forwardVector.x * deltaSeconds * speedFactor;
-		m_velocity.y -= forwardVector.y * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.x -= forwardVector.x * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.y -= forwardVector.y * deltaSeconds * speedFactor;
 	}
 }
 
 //-----------------------------------------------------------------------------------------------
 void Player::UpdateFromController( float deltaSeconds )
 {
+	Actor* possesedActor = GetActor();
+	ActorDefinition definition = *GetActor()->m_definition;
+
 	if( m_isFreeFly )
 	{
-		m_velocity = Vec3();
+		possesedActor->m_velocity = Vec3();
 		return;
 	}
-
-	ActorDefinition definition = *GetActor()->m_definition;
 
 	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		m_orientation.m_yawDegrees -= controller.GetRightStick().GetPosition().x * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f );
+		possesedActor->m_orientation.m_yawDegrees -= controller.GetRightStick().GetPosition().x * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f );
 	}
 
 	// Pitch
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		m_orientation.m_pitchDegrees -= controller.GetRightStick().GetPosition().y * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f );
-		m_orientation.m_pitchDegrees = GetClamped( m_orientation.m_pitchDegrees, -85.f, 85.f );
+		possesedActor->m_orientation.m_pitchDegrees -= controller.GetRightStick().GetPosition().y * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f );
+		possesedActor->m_orientation.m_pitchDegrees = GetClamped( m_orientation.m_pitchDegrees, -85.f, 85.f );
 	}
 
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
@@ -186,26 +191,26 @@ void Player::UpdateFromController( float deltaSeconds )
 	// Left and Right
 	if( controller.GetLeftStick().GetPosition().x < 0.5f )
 	{
-		m_velocity.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		m_velocity.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
 
 	}
 	if( controller.GetLeftStick().GetPosition().x > -0.5f )
 	{
-		m_velocity.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		m_velocity.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
 	}
 
 	// Forward and Back
 	if( controller.GetLeftStick().GetPosition().y > 0.5f )
 	{
-		m_velocity.x += forwardVector.x * deltaSeconds * speedFactor;
-		m_velocity.y += forwardVector.y * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.x += forwardVector.x * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.y += forwardVector.y * deltaSeconds * speedFactor;
 	}
 	if( controller.GetLeftStick().GetPosition().y < -0.5f ) 
 	{
-		m_velocity.x -= forwardVector.x * deltaSeconds * speedFactor;
-		m_velocity.y -= forwardVector.y * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.x -= forwardVector.x * deltaSeconds * speedFactor;
+		possesedActor->m_velocity.y -= forwardVector.y * deltaSeconds * speedFactor;
 	}
 }
 
