@@ -1,4 +1,5 @@
 #pragma once
+#include "Game/Framework/ActorHandle.hpp"
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/EulerAngles.hpp"
 #include "Engine/Core/Rgba8.hpp"
@@ -12,12 +13,14 @@ class ActorDefinition;
 class Actor
 {
 public:
+	// Note: to be deprecated
 	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
 	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight,
 		float physicsRadius, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
 	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float cosmeticHeight,
 		float physicsRadius, float cosmeticRadius, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
-	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
+	//
+	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
 	~Actor();
 
 	virtual void Update( float deltaSeconds );
@@ -30,6 +33,7 @@ public:
 
 public:
 	ActorDefinition* m_definition;
+	ActorHandle m_actorHandle;
 	Vec3		m_position;
 	EulerAngles m_orientation;
 	Rgba8		m_color;

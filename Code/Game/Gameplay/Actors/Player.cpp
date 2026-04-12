@@ -14,8 +14,8 @@ Player::Player( Vec3 const& startingPosition, EulerAngles const& orientation )
 }
 
 //-----------------------------------------------------------------------------------------------
-Player::Player( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition )
-	: Actor( startingPosition, orientation, definition, false )
+Player::Player( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle )
+	: Actor( startingPosition, orientation, definition, actorHandle, false )
 {
 }
 

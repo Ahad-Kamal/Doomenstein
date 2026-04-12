@@ -31,7 +31,7 @@ Map::Map( MapDefinition* definition )
 	CreateBuffer();
 	CreateTiles();
 	CreateGeometry();
-	SpawnActors();
+	SpawnPlayer();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -257,7 +257,7 @@ void Map::UpdateActors( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::SpawnActors()
+void Map::SpawnPlayer()
 {
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
@@ -265,29 +265,33 @@ void Map::SpawnActors()
 		std::string name = actorDef.GetName();
 		if( name == "Marine" )
 		{
-			m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles(), &actorDef );
+			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
+			m_currentUID++;
+			m_player = new Player( Vec3( 2.5f, 8.5f, 0.5f ), EulerAngles(), &actorDef, newActorHandle );
 			m_actors.push_back( m_player );
 		}
+
+		//if( name == "Demon" )
+		//{
+		//	ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
+		//	m_currentUID++;
+		//	Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), &actorDef, newActorHandle, true, Rgba8( 200, 0, 0 ) );
+		//	m_actors.push_back( staticActor1 );
+
+		//	//Actor* staticActor2 = new Actor( Vec3( 8.5f, 8.5f, 0.125f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+		//	//m_actors.push_back( staticActor2 );
+
+		//	//Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
+		//	//m_actors.push_back( staticActor3 );
+
+		//	//Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 200, 0 ) );
+		//	//m_actors.push_back( nonStaticActor );
+		//}
 	}
 	if( m_player == nullptr )
 	{
 		ERROR_AND_DIE( "ERROR: Player could not be created, Player Actor Definition missing." );
 	}
-
-	//m_testActor = new Actor( Vec3( 5.5f, 8.5f, 0.f ), EulerAngles(), 0.125f, 0.0625f,  false, Rgba8( 0, 0, 200 ) );
-	//m_actors.push_back( m_testActor );
-
-	//Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
-	//m_actors.push_back( staticActor1 );
-
-	//Actor* staticActor2 = new Actor( Vec3( 8.5f, 8.5f, 0.125f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
-	//m_actors.push_back( staticActor2 );
-
-	//Actor* staticActor3 = new Actor( Vec3( 9.5f, 8.5f, 0.f ), EulerAngles(), true, Rgba8( 200, 0, 0 ) );
-	//m_actors.push_back( staticActor3 );
-
-	//Actor* nonStaticActor = new Actor( Vec3( 6.5f, 7.5f, 0.35f ), EulerAngles(), 0.25f, 0.125f, false, Rgba8( 0, 200, 0 ) );
-	//m_actors.push_back( nonStaticActor );
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -52,17 +52,18 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, floa
 }
 
 //-----------------------------------------------------------------------------------------------
-Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
+Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
 	: m_position( startingPosition )
 	, m_orientation( orientation )
 	, m_isStatic( isStatic )
 	, m_color( color )
 	, m_definition( definition )
+	, m_actorHandle( actorHandle )
 {
 	m_physicsHeight = definition->GetCollision().m_physicsHeight;
 	m_cosmeticHeight = definition->GetCollision().m_physicsHeight;
 	m_physicsRadius = definition->GetCollision().m_physicsRadius;
-	m_cosmeticHeight = definition->GetCollision().m_physicsRadius;
+	m_cosmeticRadius = definition->GetCollision().m_physicsRadius;
 }
 
 //-----------------------------------------------------------------------------------------------

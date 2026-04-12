@@ -46,7 +46,7 @@ public:
 
 	void Update( float deltaSeconds );
 	void UpdateActors( float deltaSeconds );
-	void SpawnActors();
+	void SpawnPlayer();
 	void CollideActors();
 	void CollideActors( Actor* actorA, Actor* actorB );
 	void CollideActorsWithMap();
@@ -76,5 +76,5 @@ protected:
 	VertexBuffer* m_vertexBuffer;
 	IndexBuffer* m_indexBuffer;
 	
-	unsigned int m_nextActorUID = 0;
+	unsigned int m_currentUID = 0;
 };

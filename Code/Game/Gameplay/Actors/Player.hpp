@@ -14,7 +14,7 @@ class Player : public Actor
 {
 public:
 	Player( Vec3 const& startingPosition, EulerAngles const& orientation );
-	Player( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition );
+	Player( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle );
 	~Player();
 
 	void Update( float deltaSeconds ) override;
