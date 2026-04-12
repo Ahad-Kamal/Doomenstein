@@ -1,4 +1,5 @@
 #pragma once
+#include "Game/Gameplay/Controller.hpp"
 #include "Engine/Core/Vertex_PCUTBN.hpp"
 #include <vector>
 #include <string>
@@ -23,6 +24,8 @@ class Player;
 
 class Map
 {
+	friend class Controller;
+
 public:
 	Map( MapDefinition* definition );
 	~Map();
