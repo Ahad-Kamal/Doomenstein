@@ -3,6 +3,7 @@
 #include "Engine/Core/XmlUtils.hpp"
 #include "Engine/Core/NamedStrings.hpp"
 #include "Engine/Core/Image.hpp"
+#include "Engine/Core/StringUtils.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -22,26 +23,52 @@ void MapDefinition::InitializeMapDefs()
 	{
 		NamedStrings mapDefBlackboard;
 		mapDefBlackboard.PopulateFromXmlElementAttributes( *currentElement );
+		MapDefinition& currentMapDef = s_mapDefs[ elementIndex ];
 
-		s_mapDefs[ elementIndex ].m_name = mapDefBlackboard.GetValue( "name", "" );
+		currentMapDef.m_name = mapDefBlackboard.GetValue( "name", "" );
 		std::string imagePath = mapDefBlackboard.GetValue( "image", "" );
 		std::string shaderPath = mapDefBlackboard.GetValue( "shader", "" );
 		std::string texturePath = mapDefBlackboard.GetValue( "spriteSheetTexture", "" );
-		s_mapDefs[ elementIndex ].m_spriteSheetCellCount = mapDefBlackboard.GetValue( "spriteSheetCellCount", IntVec2() );
+		currentMapDef.m_spriteSheetCellCount = mapDefBlackboard.GetValue( "spriteSheetCellCount", IntVec2() );
 
 		if( !imagePath.empty() )
 		{
-			s_mapDefs[ elementIndex ].m_image = new Image( imagePath.c_str() );
+			currentMapDef.m_image = new Image( imagePath.c_str() );
 		}
 		
 		if( !shaderPath.empty() )
 		{
-			s_mapDefs[ elementIndex ].m_shader = g_engine->m_render->CreateOrGetShader( shaderPath.c_str(), VertexType::VERTEX_PCUTBN );
+			currentMapDef.m_shader = g_engine->m_render->CreateOrGetShader( shaderPath.c_str(), VertexType::VERTEX_PCUTBN );
 		}
 
 		if( !texturePath.empty() )
 		{
-			s_mapDefs[ elementIndex ].m_spriteSheetTexture = g_engine->m_render->CreateOrGetTextureFromFile( texturePath.c_str() );
+			currentMapDef.m_spriteSheetTexture = g_engine->m_render->CreateOrGetTextureFromFile( texturePath.c_str() );
+		}
+
+		XmlElement* spawnInfoElement = currentElement->FirstChildElement()->FirstChildElement();
+		while( spawnInfoElement )
+		{
+			NamedStrings mapDefSpawnInfoBlackboard;
+			mapDefSpawnInfoBlackboard.PopulateFromXmlElementAttributes( *spawnInfoElement );
+			
+			SpawnInfo newSpawnInfo;
+			newSpawnInfo.m_actorName = mapDefSpawnInfoBlackboard.GetValue( "actor", "" );
+			
+			std::string position = mapDefSpawnInfoBlackboard.GetValue( "position", "0.0,0.0,0.0" );
+			Strings positionValues = SplitStringOnDelimiter( position, ',' );
+			newSpawnInfo.m_position = Vec3( stof( positionValues[ 0 ] ), stof( positionValues[ 1 ] ), stof( positionValues[ 2 ] ) );
+
+			std::string velocity = mapDefSpawnInfoBlackboard.GetValue( "velocity", "0.0,0.0,0.0" );
+			Strings velocityValues = SplitStringOnDelimiter( velocity, ',' );
+			newSpawnInfo.m_velocity = Vec3( stof( velocityValues[ 0 ] ), stof( velocityValues[ 1 ] ), stof( velocityValues[ 2 ] ) );
+
+			std::string orientation = mapDefSpawnInfoBlackboard.GetValue( "orientation", "0.0,0.0,0.0" );
+			Strings orientationValues = SplitStringOnDelimiter( orientation, ',' );
+			newSpawnInfo.m_orientation = EulerAngles( stof( orientationValues[ 0 ] ), stof( orientationValues[ 1 ] ), stof( orientationValues[ 2 ] ) );
+
+			currentMapDef.m_spawnPoints.push_back( newSpawnInfo );
+			spawnInfoElement = spawnInfoElement->NextSiblingElement();
 		}
 
 		currentElement = currentElement->NextSiblingElement();
