@@ -94,7 +94,7 @@ void Player::Possess( ActorHandle actorToPossess )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Player::UpdateFromKeyboard( float deltaSeconds )
+void Player::UpdateFromKeyboard( [[maybe_unused]] float deltaSeconds )
 {
 	Actor* possesedActor = GetActor();
 	ActorDefinition definition = *possesedActor->m_definition;
@@ -119,38 +119,32 @@ void Player::UpdateFromKeyboard( float deltaSeconds )
 	}
 
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
-	float speedFactor = definition.GetPhysics().m_walkSpeed;
+	float speedFactor = definition.GetPhysics().m_walkSpeed * 0.1f;
 
 	if( g_engine->m_input->IsKeyDown( KEYCODE_SHIFT ) )
 	{
-		speedFactor = definition.GetPhysics().m_runSpeed;
+		speedFactor = definition.GetPhysics().m_runSpeed * 0.1f;
 	}
-
-	possesedActor->m_velocity = Vec3();
 
 	// Left and Right
 	if( g_engine->m_input->IsKeyDown( 'A' ) )
 	{
-		possesedActor->m_velocity.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		possesedActor->m_velocity.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		possesedActor->AddImpulse( Vec3( forwardVector.GetRotated90DegreesAboutZ().x * speedFactor, forwardVector.GetRotated90DegreesAboutZ().y * speedFactor, 0.f ) );
 
 	}
 	if( g_engine->m_input->IsKeyDown( 'D' ) )
 	{
-		possesedActor->m_velocity.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		possesedActor->m_velocity.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		possesedActor->AddImpulse( Vec3( -forwardVector.GetRotated90DegreesAboutZ().x * speedFactor, -forwardVector.GetRotated90DegreesAboutZ().y * speedFactor, 0.f));
 	}
 
 	// Forward and Back
 	if( g_engine->m_input->IsKeyDown( 'W' ) )
 	{
-		possesedActor->m_velocity.x += forwardVector.x * deltaSeconds * speedFactor;
-		possesedActor->m_velocity.y += forwardVector.y * deltaSeconds * speedFactor;
+		possesedActor->AddImpulse( Vec3( forwardVector.x * speedFactor, forwardVector.y * speedFactor, 0.f ) );
 	}
 	if( g_engine->m_input->IsKeyDown( 'S' ) )
 	{
-		possesedActor->m_velocity.x -= forwardVector.x * deltaSeconds * speedFactor;
-		possesedActor->m_velocity.y -= forwardVector.y * deltaSeconds * speedFactor;
+		possesedActor->AddImpulse( Vec3( -forwardVector.x * speedFactor, -forwardVector.y * speedFactor, 0.f ) );
 	}
 }
 

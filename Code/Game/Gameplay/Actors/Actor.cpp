@@ -79,9 +79,13 @@ void Actor::Render() const
 //-----------------------------------------------------------------------------------------------
 void Actor::UpdatePhysics( [[maybe_unused]] float deltaSeconds )
 {
-	m_position += m_velocity;
-	m_velocity += m_acceleration;
-	m_acceleration = Vec3();
+	if( m_definition->GetPhysics().m_isSimulated )
+	{
+		AddForce( -m_velocity * m_definition->GetPhysics().m_drag );
+		m_position += m_velocity * deltaSeconds;
+		m_velocity += m_acceleration * deltaSeconds;
+		m_acceleration = Vec3();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
