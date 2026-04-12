@@ -1,69 +1,79 @@
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Game/Gameplay/ActorDefinition.hpp"
+#include "Game/Gameplay/Actors/Player.hpp"
+#include "Game/Gameplay/Game.hpp"
+#include "Game/Gameplay/Map.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Vertex.hpp"
 #include "Engine/Core/VertexUtils.hpp"
+#include "Engine/Core/NamedStrings.hpp"
+#include "Engine/Core/EventSystem.hpp"
 #include "Engine/Math/Mat44.hpp"
 #include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include <vector>
 
 
-//-----------------------------------------------------------------------------------------------
-Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, bool isStatic /* = true */, Rgba8 color /* = Rgba8::WHITE */)
-	: m_position( startingPosition )
-	, m_orientation( orientation )
-	, m_isStatic( isStatic )
-	, m_color( color )
-	, m_definition( nullptr )
-{
-	m_physicsHeight = 0.75f;
-	m_cosmeticHeight = 0.75f;
-	m_physicsRadius = 0.35f;
-	m_cosmeticRadius = 0.35f;
-}
+////-----------------------------------------------------------------------------------------------
+//Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, bool isStatic /* = true */, Rgba8 color /* = Rgba8::WHITE */)
+//	: m_position( startingPosition )
+//	, m_orientation( orientation )
+//	, m_isStatic( isStatic )
+//	, m_color( color )
+//	, m_definition( nullptr )
+//{
+//	m_physicsHeight = 0.75f;
+//	m_cosmeticHeight = 0.75f;
+//	m_physicsRadius = 0.35f;
+//	m_cosmeticRadius = 0.35f;
+//}
+//
+////-----------------------------------------------------------------------------------------------
+//Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float cosmeticHeight, float physicsRadius, float cosmeticRadius, bool isStatic /* = true */, Rgba8 color /* = Rgba8::WHITE */ )
+//	: m_position( startingPosition )
+//	, m_orientation( orientation )
+//	, m_physicsHeight( physicsHeight )
+//	, m_cosmeticHeight( cosmeticHeight )
+//	, m_physicsRadius( physicsRadius )
+//	, m_cosmeticRadius( cosmeticRadius )
+//	, m_isStatic( isStatic )
+//	, m_color( color )
+//	, m_definition( nullptr )
+//{
+//}
+//
+////-----------------------------------------------------------------------------------------------
+//Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float physicsRadius, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
+//	: m_position( startingPosition )
+//	, m_orientation( orientation )
+//	, m_physicsHeight( physicsHeight )
+//	, m_cosmeticHeight( physicsHeight )
+//	, m_physicsRadius( physicsRadius )
+//	, m_cosmeticRadius( physicsRadius )
+//	, m_isStatic( isStatic )
+//	, m_color( color )
+//	, m_definition( nullptr )
+//{
+//}
 
 //-----------------------------------------------------------------------------------------------
-Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float cosmeticHeight, float physicsRadius, float cosmeticRadius, bool isStatic /* = true */, Rgba8 color /* = Rgba8::WHITE */ )
-	: m_position( startingPosition )
-	, m_orientation( orientation )
-	, m_physicsHeight( physicsHeight )
-	, m_cosmeticHeight( cosmeticHeight )
-	, m_physicsRadius( physicsRadius )
-	, m_cosmeticRadius( cosmeticRadius )
-	, m_isStatic( isStatic )
-	, m_color( color )
-	, m_definition( nullptr )
-{
-}
-
-//-----------------------------------------------------------------------------------------------
-Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, float physicsHeight, float physicsRadius, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
-	: m_position( startingPosition )
-	, m_orientation( orientation )
-	, m_physicsHeight( physicsHeight )
-	, m_cosmeticHeight( physicsHeight )
-	, m_physicsRadius( physicsRadius )
-	, m_cosmeticRadius( physicsRadius )
-	, m_isStatic( isStatic )
-	, m_color( color )
-	, m_definition( nullptr )
-{
-}
-
-//-----------------------------------------------------------------------------------------------
-Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
+Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, 
+	ActorHandle actorHandle, Map* owningMap, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
 	: m_position( startingPosition )
 	, m_orientation( orientation )
 	, m_isStatic( isStatic )
 	, m_color( color )
 	, m_definition( definition )
 	, m_actorHandle( actorHandle )
+	, m_map( owningMap )
 {
 	m_physicsHeight = definition->GetCollision().m_physicsHeight;
 	m_cosmeticHeight = definition->GetCollision().m_physicsHeight;
 	m_physicsRadius = definition->GetCollision().m_physicsRadius;
 	m_cosmeticRadius = definition->GetCollision().m_physicsRadius;
+
+	SubscribeEventCallbackFunction( "Possess", Event_OnPossessed );
+	SubscribeEventCallbackFunction( "Unpossess", Event_OnUnpossessed );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -75,7 +85,12 @@ Actor::~Actor()
 //-----------------------------------------------------------------------------------------------
 void Actor::Update( [[maybe_unused]] float deltaSeconds )
 {
-
+	if( m_controller == m_map->m_player && !m_map->m_player->m_isFreeFly )
+	{
+		Vec3 position = m_map->m_player->m_position;
+		position.z = 0.f;
+		m_position = position;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -125,4 +140,49 @@ Mat44 Actor::GetModelToWorldTransform() const
 	modelMatrix.AppendTranslation3D( m_position );
 	modelMatrix.Append( m_orientation.GetAsMatrix_IFwd_JLeft_KUp() );
 	return modelMatrix;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool Actor::Event_OnPossessed( EventArgs& args )
+{
+	unsigned int actorIndex = args.GetValue( "ActorIndex", -1 );
+	if( actorIndex < 0 )
+	{
+		return false;
+	}
+
+	Actor* targetActor = g_game->m_currentMap->m_actors[ actorIndex ];
+	if( targetActor == nullptr )
+	{
+		return false;
+	}
+
+	std::string controller = args.GetValue( "ControllerType", "" );
+	if( controller == "Player" )
+	{
+		targetActor->m_controller = g_game->m_currentMap->m_player;
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool Actor::Event_OnUnpossessed( EventArgs& args )
+{
+	unsigned int actorIndex = args.GetValue( "ActorIndex", -1 );
+	if( actorIndex < 0 )
+	{
+		return false;
+	}
+
+	Actor* targetActor = g_game->m_currentMap->m_actors[ actorIndex ];
+	if( targetActor == nullptr )
+	{
+		return false;
+	}
+
+	// TO-DO: Have the actor switch back to the AI controller, if it exists //-----------------------------------------------------------------------------------------------
+	targetActor->m_controller = nullptr;
+
+	return false;
 }

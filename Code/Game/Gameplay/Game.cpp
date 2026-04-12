@@ -48,6 +48,8 @@ Game::~Game()
 //-----------------------------------------------------------------------------------------------
 void Game::Startup()
 {
+	g_game = this;
+
 	m_gameClock = new Clock( Clock::GetSystemClock() );
 
 	Shader* diffuseShader = g_engine->m_render->CreateOrGetShader( "Data/Shaders/Diffuse", VertexType::VERTEX_PCUTBN );
@@ -71,6 +73,7 @@ void Game::Startup()
 
 	std::string mapName = g_blackboard->GetValue( "defaultMap", "TestMap" );
 	m_currentMap = new Map( MapDefinition::GetMapDefFromName( mapName ) );
+	m_currentMap->SpawnPlayer();
 
 	m_worldCamera = m_currentMap->m_player->m_camera;
 	m_screenCamera = new Camera();

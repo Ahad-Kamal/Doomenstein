@@ -3,6 +3,9 @@
 #include "Game/Gameplay/Game.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Clock.hpp"
+#include "Engine/Core/NamedStrings.hpp"
+#include "Engine/Core/EventSystem.hpp"
+#include "Engine/Core/StringUtils.hpp"
 #include "Engine/Renderer/Camera.hpp"
 #include "Engine/Math/MathUtils.hpp"
 
@@ -36,12 +39,30 @@ void Player::Update( float deltaSeconds )
 
 	if( g_game->m_currentState == GAME_STATE_PLAY )
 	{
-		UpdateFromKeyboard( deltaSeconds );
-		UpdateFromController( deltaSeconds );
-		FreeFlyKeyboardControls( deltaSeconds );
-		FreeFlyControllerControls( deltaSeconds );
+		UpdateInput( deltaSeconds );
+		UpdateCamera();
 	}
+}
 
+//-----------------------------------------------------------------------------------------------
+void Player::Render() const
+{
+
+}
+
+//-----------------------------------------------------------------------------------------------
+void Player::UpdateInput( float deltaSeconds )
+{
+	UpdateFromKeyboard( deltaSeconds );
+	UpdateFromController( deltaSeconds );
+
+	FreeFlyKeyboardControls( deltaSeconds );
+	FreeFlyControllerControls( deltaSeconds );
+}
+
+//-----------------------------------------------------------------------------------------------
+void Player::UpdateCamera()
+{
 	if( !m_isFreeFly )
 	{
 		m_camera->SetPosition( m_position );
@@ -50,9 +71,22 @@ void Player::Update( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Player::Render() const
+void Player::Possess( ActorHandle actorToPossess )
 {
+	// Note: add logic notifying actor that its been unpossessed
+	if( m_actorHandle != actorToPossess )
+	{
+		EventArgs args;
+		args.SetValue( "ActorIndex", Stringf( "%u", m_actorHandle.GetIndex() ) );
+		FireEvent( "Unpossess", args );
+	}
 
+	// Note: add logic notifying actor that its been possessed
+	m_actorHandle = actorToPossess;
+	EventArgs args;
+	args.SetValue( "ActorIndex", Stringf( "%u", m_actorHandle.GetIndex() ) );
+	args.SetValue( "ControllerType", "Player" );
+	FireEvent( "Possess", args );
 }
 
 //-----------------------------------------------------------------------------------------------

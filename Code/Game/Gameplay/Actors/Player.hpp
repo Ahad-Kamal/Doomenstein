@@ -22,6 +22,11 @@ public:
 	void Update( float deltaSeconds );
 	void Render() const;
 
+	void UpdateInput( float deltaSeconds );
+	void UpdateCamera();
+
+	virtual void Possess( ActorHandle actorToPossess ) override;
+
 	void UpdateFromKeyboard( float deltaSeconds );
 	void UpdateFromController( float deltaSeconds );
 	void FreeFlyKeyboardControls( float deltaSeconds );

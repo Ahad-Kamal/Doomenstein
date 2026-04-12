@@ -1,5 +1,8 @@
 #include "Game/Gameplay/Controller.hpp"
 #include "Game/Gameplay/Map.hpp"
+#include "Engine/Core/NamedStrings.hpp"
+#include "Engine/Core/EventSystem.hpp"
+#include "Engine/Core/StringUtils.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -7,7 +10,6 @@ Controller::Controller( Map* currentMap, ActorHandle actorToPosses /*= ActorHand
 	: m_currentMap( currentMap )
 	, m_actorHandle( actorToPosses )
 {
-	// Note: add logic notifying actor that its been possessed
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -15,8 +17,11 @@ void Controller::Possess( ActorHandle actorToPossess )
 {
 	// Note: add logic notifying actor that its been unpossessed
 
-	m_actorHandle = actorToPossess;
 	// Note: add logic notifying actor that its been possessed
+	m_actorHandle = actorToPossess;
+	EventArgs args;
+	args.SetValue( "ActorIndex", Stringf( "%u", m_actorHandle.GetIndex() ) );
+	FireEvent( "Possess", args );
 }
 
 //-----------------------------------------------------------------------------------------------

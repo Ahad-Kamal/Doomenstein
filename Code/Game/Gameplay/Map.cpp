@@ -31,7 +31,6 @@ Map::Map( MapDefinition* definition )
 	CreateBuffer();
 	CreateTiles();
 	CreateGeometry();
-	SpawnPlayer();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -266,24 +265,22 @@ void Map::SpawnPlayer()
 		{
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
-			Actor* marine = new Actor( Vec3( 2.5f, 8.5f, 0.f ), EulerAngles(), &actorDef, newActorHandle );
+			Actor* marine = new Actor( Vec3( 2.5f, 8.5f, 0.f ), EulerAngles(), &actorDef, newActorHandle, this, false, Rgba8( 0, 200, 0 ) );
 			m_actors.push_back( marine );
-			m_player = new Player( this, newActorHandle );
-		}
 
-	/*	if( name == "Demon" )
-		{
-			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
-			m_currentUID++;
-			Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), &actorDef, newActorHandle, true, Rgba8( 200, 0, 0 ) );
-			m_actors.push_back( staticActor1 );
-		}*/
-	}
-	if( m_player == nullptr )
-	{
-		ERROR_AND_DIE( "ERROR: Player could not be created, Player Actor Definition missing." );
+			m_player = new Player( this, newActorHandle );
+			m_player->Possess( m_player->m_actorHandle );
+		}
 	}
 }
+//if( name == "Demon" )
+//{
+//	ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
+//	m_currentUID++;
+//	Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), &actorDef, newActorHandle, true, Rgba8( 200, 0, 0 ) );
+//	m_actors.push_back( staticActor1 );
+//}
+
 
 //-----------------------------------------------------------------------------------------------
 void Map::CollideActors()
