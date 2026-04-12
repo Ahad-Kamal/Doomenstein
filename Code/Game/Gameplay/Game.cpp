@@ -110,8 +110,6 @@ void Game::Update()
 	UpdateEntities( deltaSeconds );
 	UpdateMap( deltaSeconds );
 
-	DeleteGarbageEntities();
-
 	m_screenCamera->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
 	m_worldCamera->SetPerspectiveView( 2.f, 60.f, 0.1f, 100.f );
 }
