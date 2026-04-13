@@ -29,6 +29,8 @@ public:
 	virtual void Update( float deltaSeconds );
 	virtual void Render() const;
 
+	void RenderSetup();
+
 	void UpdatePhysics( float deltaSeconds );
 	void AddForce( Vec3 force );
 	void AddImpulse( Vec3 impulse );
@@ -43,6 +45,7 @@ public:
 
 public:
 	VertexList	m_vertexes;
+	VertexList	m_wireframeVertexes; // Note: delete this later
 	ActorDefinition* m_definition;
 	Map*		m_map;
 	

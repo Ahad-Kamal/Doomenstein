@@ -48,7 +48,10 @@ public:
 
 	void Update( float deltaSeconds );
 	void UpdateActors( float deltaSeconds );
+
 	void SpawnPlayer();
+	void SpawnActor();
+
 	void CollideActors();
 	void CollideActors( Actor* actorA, Actor* actorB );
 	void CollideActorsWithMap();

@@ -32,6 +32,8 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 
 	SubscribeEventCallbackFunction( "Possess", Event_OnPossessed );
 	SubscribeEventCallbackFunction( "Unpossess", Event_OnUnpossessed );
+
+	RenderSetup();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -43,42 +45,58 @@ Actor::~Actor()
 //-----------------------------------------------------------------------------------------------
 void Actor::Update( [[maybe_unused]] float deltaSeconds )
 {
-	//if( m_controller == m_map->m_player && !m_map->m_player->m_isFreeFly )
-	//{
-	//	/*Vec3 position = m_map->m_player->m_position;
-	//	position.z = 0.f;
-	//	m_position = position;*/
-	//}
-
 	UpdatePhysics( deltaSeconds );
 }
 
 //-----------------------------------------------------------------------------------------------
 void Actor::Render() const
 {
-	std::vector<Vertex> verts;
-	AddVertsForCylinder3D( verts, m_position, Vec3( m_position.x, m_position.y, m_position.z + m_cosmeticHeight ), m_cosmeticRadius, 16, m_color );
+	if( m_controller == m_map->m_player && !m_map->m_player->m_isFreeFly )
+	{
+		return;
+	}
+
+	Mat44 transformMatrix;
+	transformMatrix.AppendTranslation3D( m_position );
+	transformMatrix.AppendZRotation( m_orientation.m_yawDegrees );
+
+	VertexList tempVerts = m_vertexes;
+	VertexList tempWireframeVerts = m_wireframeVertexes;
+
+	TransformVertexArray3D( tempVerts, transformMatrix );
+	TransformVertexArray3D( tempWireframeVerts, transformMatrix );
 
 	g_engine->m_render->RenderSetup();
-	g_engine->m_render->DrawVertexArray( verts );
-
-	std::vector<Vertex> wireframeVerts;
-	Rgba8 lighterColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r + 150 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g + 150 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b + 150 ), 0.f, 255.f ) );
-	AddVertsForCylinder3D( wireframeVerts, m_position, Vec3( m_position.x, m_position.y, m_position.z + m_cosmeticHeight ), m_cosmeticRadius, 16, lighterColor );
+	g_engine->m_render->DrawVertexArray( tempVerts );
 
 	g_engine->m_render->SetRasterizerState( RasterizerMode::WIREFRAME_CULL_BACK );
 	g_engine->m_render->SetRasterizerStateIfChanged();
 
 	g_engine->m_render->RenderSetup();
-	g_engine->m_render->DrawVertexArray( wireframeVerts );
+	g_engine->m_render->DrawVertexArray( tempWireframeVerts );
 
 	g_engine->m_render->SetRasterizerState( RasterizerMode::SOLID_CULL_BACK );
 	g_engine->m_render->SetRasterizerStateIfChanged();
 }
 
 //-----------------------------------------------------------------------------------------------
+void Actor::RenderSetup()
+{
+	AddVertsForCylinder3D( m_vertexes, Vec3(), Vec3( 0.f, 0.f, 0.f + m_cosmeticHeight), m_cosmeticRadius, 16, m_color);
+	Vec3 arrowStart = Vec3( m_cosmeticRadius, 0.f, m_definition->GetCameraView().m_eyeHeight );
+	Vec3 arrowEnd =  Vec3( m_cosmeticRadius + 0.2f, 0.f, m_definition->GetCameraView().m_eyeHeight );
+	AddVertsForArrow3D( m_vertexes, arrowStart, arrowStart, arrowEnd, 0.1f, 16, m_color );
+
+	Rgba8 lighterColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r + 150 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g + 150 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b + 150 ), 0.f, 255.f ) );
+	AddVertsForCylinder3D( m_wireframeVertexes, Vec3(), Vec3( 0.f, 0.f, 0.f + m_cosmeticHeight), m_cosmeticRadius, 16, lighterColor );
+	AddVertsForArrow3D( m_wireframeVertexes, arrowStart, arrowStart, arrowEnd, 0.1f, 16, lighterColor );
+}
+
+//-----------------------------------------------------------------------------------------------
 void Actor::UpdatePhysics( [[maybe_unused]] float deltaSeconds )
 {
+	Vec3 prevPosition = m_position;
+
 	if( m_definition->GetPhysics().m_isSimulated )
 	{
 		AddForce( -m_velocity * m_definition->GetPhysics().m_drag );

@@ -31,6 +31,8 @@ Map::Map( MapDefinition* definition )
 	CreateBuffer();
 	CreateTiles();
 	CreateGeometry();
+
+	SpawnActor();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -273,14 +275,23 @@ void Map::SpawnPlayer()
 		}
 	}
 }
-//if( name == "Demon" )
-//{
-//	ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
-//	m_currentUID++;
-//	Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.25f ), EulerAngles(), &actorDef, newActorHandle, true, Rgba8( 200, 0, 0 ) );
-//	m_actors.push_back( staticActor1 );
-//}
 
+//-----------------------------------------------------------------------------------------------
+void Map::SpawnActor()
+{
+	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
+	{
+		ActorDefinition& actorDef = ActorDefinition::s_actorDefs[ actorDefIndex ];
+		std::string name = actorDef.GetName();
+		if( name == "Demon" )
+		{
+			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
+			m_currentUID++;
+			Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.f ), EulerAngles(), &actorDef, newActorHandle, this, true, Rgba8( 200, 0, 0 ) );
+			m_actors.push_back( staticActor1 );
+		}
+	}
+}
 
 //-----------------------------------------------------------------------------------------------
 void Map::CollideActors()
@@ -693,11 +704,11 @@ RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[m
 	{
 		Actor* actor = m_actors[ actorIndex ];
 
-		// Note: remove later //-----------------------------------------------------------------------------------------------
-		//if( actor == m_player )
-		//{
-		//	continue;
-		//}
+		// Ignore player, might remove later.
+		if( actor == m_player->GetActor() )
+		{
+			continue;
+		}
 
 		raycastResults[ actorIndex ] = RaycastVsCylinder(start, direction, distance, actor->m_position, actor->m_physicsRadius, actor->m_physicsHeight);
 

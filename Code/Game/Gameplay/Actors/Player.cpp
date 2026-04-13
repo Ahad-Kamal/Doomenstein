@@ -51,11 +51,28 @@ void Player::Render() const
 //-----------------------------------------------------------------------------------------------
 void Player::UpdateInput( float deltaSeconds )
 {
+	if( g_game->m_currentState != GAME_STATE_PLAY )
+	{
+		return;
+	}
+
 	UpdateFromKeyboard( deltaSeconds );
 	UpdateFromController( deltaSeconds );
 
 	FreeFlyKeyboardControls( deltaSeconds );
 	FreeFlyControllerControls( deltaSeconds );
+
+	if( g_engine->m_input->WasKeyJustPressed( 'N' ) )
+	{
+		unsigned int newIndex = m_actorHandle.GetIndex() + 1;
+		if( newIndex >= m_currentMap->m_actors.size() )
+		{
+			newIndex = 0;
+		}
+
+		ActorHandle handle = m_currentMap->m_actors[ newIndex ]->m_actorHandle;
+		Possess( handle );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -119,32 +136,34 @@ void Player::UpdateFromKeyboard( [[maybe_unused]] float deltaSeconds )
 	}
 
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();
-	float speedFactor = definition.GetPhysics().m_walkSpeed * 0.1f;
+	float speedFactor = definition.GetPhysics().m_walkSpeed ;
 
 	if( g_engine->m_input->IsKeyDown( KEYCODE_SHIFT ) )
 	{
-		speedFactor = definition.GetPhysics().m_runSpeed * 0.1f;
+		speedFactor = definition.GetPhysics().m_runSpeed ;
 	}
+
+	float force = speedFactor * definition.GetPhysics().m_drag;
 
 	// Left and Right
 	if( g_engine->m_input->IsKeyDown( 'A' ) )
 	{
-		possesedActor->AddImpulse( Vec3( forwardVector.GetRotated90DegreesAboutZ().x * speedFactor, forwardVector.GetRotated90DegreesAboutZ().y * speedFactor, 0.f ) );
+		possesedActor->AddForce( Vec3( forwardVector.GetRotated90DegreesAboutZ().x * force, forwardVector.GetRotated90DegreesAboutZ().y * force, 0.f ) );
 
 	}
 	if( g_engine->m_input->IsKeyDown( 'D' ) )
 	{
-		possesedActor->AddImpulse( Vec3( -forwardVector.GetRotated90DegreesAboutZ().x * speedFactor, -forwardVector.GetRotated90DegreesAboutZ().y * speedFactor, 0.f));
+		possesedActor->AddForce( Vec3( -forwardVector.GetRotated90DegreesAboutZ().x * force, -forwardVector.GetRotated90DegreesAboutZ().y * force, 0.f));
 	}
 
 	// Forward and Back
 	if( g_engine->m_input->IsKeyDown( 'W' ) )
 	{
-		possesedActor->AddImpulse( Vec3( forwardVector.x * speedFactor, forwardVector.y * speedFactor, 0.f ) );
+		possesedActor->AddForce( Vec3( forwardVector.x * force, forwardVector.y * force, 0.f ) );
 	}
 	if( g_engine->m_input->IsKeyDown( 'S' ) )
 	{
-		possesedActor->AddImpulse( Vec3( -forwardVector.x * speedFactor, -forwardVector.y * speedFactor, 0.f ) );
+		possesedActor->AddForce( Vec3( -forwardVector.x * force, -forwardVector.y * force, 0.f ) );
 	}
 }
 
