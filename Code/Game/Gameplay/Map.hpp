@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Gameplay/Controller.hpp"
 #include "Engine/Core/Vertex_PCUTBN.hpp"
+#include "Engine/Math/RaycastUtils.hpp"
 #include <vector>
 #include <string>
 
@@ -11,7 +12,6 @@ class Actor;
 class MapDefinition;
 class TileDefinitions;
 struct Tile;
-struct RaycastResult3D;
 struct IntVec2;
 struct AABB3;
 struct AABB2;
@@ -21,6 +21,17 @@ class Shader;
 class VertexBuffer;
 class IndexBuffer;
 class Player;
+
+//-----------------------------------------------------------------------------------------------
+struct WeaponRaycastResult : public RaycastResult3D
+{
+	Actor* m_impactedActor;
+
+	void operator=( RaycastResult3D const& raycastResult )
+	{
+		RaycastResult3D::operator=( raycastResult );
+	}
+};
 
 class Map
 {
@@ -63,8 +74,10 @@ public:
 	RaycastResult3D RaycastWorldXY( Vec3 const& start, Vec3 const& direction, float distance ) const;
 	RaycastResult3D RaycastWorldZ( Vec3 const& start, Vec3 const& direction, float distance ) const;
 	RaycastResult3D RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
+	WeaponRaycastResult WeaponRaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner ) const;
 
-	void MouseControls();
+	void DebugPossessNext();
+	void DebugRaycast();
 
 public:
 	Player*	m_player = nullptr;

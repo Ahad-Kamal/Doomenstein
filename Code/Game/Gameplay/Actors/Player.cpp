@@ -1,6 +1,7 @@
 #include "Game/Gameplay/Actors/Player.hpp"
 #include "Game/Gameplay/ActorDefinition.hpp"
 #include "Game/Gameplay/Game.hpp"
+#include "Game/Gameplay/Weapon.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Core/NamedStrings.hpp"
@@ -62,26 +63,10 @@ void Player::UpdateInput( float deltaSeconds )
 	FreeFlyKeyboardControls( deltaSeconds );
 	FreeFlyControllerControls( deltaSeconds );
 
-	if( g_engine->m_input->WasKeyJustPressed( 'N' ) )
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_MOUSE ) && !m_isFreeFly )
 	{
-		bool validPossess = false;
-		unsigned int newIndex = m_actorHandle.GetIndex() + 1;
-
-		while( !validPossess )
-		{
-			if( newIndex >= m_currentMap->m_actors.size() )
-			{
-				newIndex = 0;
-			}
-
-			if( m_currentMap->m_actors[ newIndex ]->m_definition->GetCanBePossesed() )
-			{
-				validPossess = true;
-			}
-		}
-
-		ActorHandle handle = m_currentMap->m_actors[ newIndex ]->m_actorHandle;
-		Possess( handle );
+		Actor* possessedActor = GetActor();
+		possessedActor->m_equippedWeapon->Fire( possessedActor );
 	}
 }
 

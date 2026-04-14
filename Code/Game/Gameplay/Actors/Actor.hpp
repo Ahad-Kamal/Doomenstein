@@ -51,6 +51,7 @@ public:
 	VertexList	m_wireframeVertexes; // Note: delete this later
 
 	Weapons		m_weapons;
+	Weapon*		m_equippedWeapon = nullptr;
 	Controller* m_controller = nullptr;
 	Actor*		m_owner = nullptr;
 	

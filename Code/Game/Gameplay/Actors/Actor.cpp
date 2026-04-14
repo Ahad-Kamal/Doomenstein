@@ -47,6 +47,10 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 			}
 		}
 	}
+	if( !m_weapons.empty() )
+	{
+		m_equippedWeapon = m_weapons[ 0 ];
+	}
 
 	SubscribeEventCallbackFunction( "Possess", Event_OnPossessed );
 	SubscribeEventCallbackFunction( "Unpossess", Event_OnUnpossessed );

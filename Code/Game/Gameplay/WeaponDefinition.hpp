@@ -5,6 +5,14 @@
 
 
 //-----------------------------------------------------------------------------------------------
+enum WeaponType
+{
+	WEAPON_TYPE_RAY,
+	WEAPON_TYPE_PROJECTILE,
+	WEAPON_TYPE_MELEE
+};
+
+//-----------------------------------------------------------------------------------------------
 struct RayWeapon
 {
 	FloatRange m_rayDamage = FloatRange( 0.f, 0.f );
@@ -41,14 +49,16 @@ public:
 	static void ClearWeaponDefs();
 
 	std::string GetName() const;
+	WeaponType GetType() const;
 
 public:
 	static std::vector<WeaponDefinition> s_weaponDefs;
 
 private:
-	std::string m_name;
-	float m_refireTime = 0.f;
 	RayWeapon m_ray;
 	ProjectileWeapon m_projectile;
 	MeleeWeapon m_melee;
+	std::string m_name;
+	float m_refireTime = 0.f;
+	WeaponType m_type;
 };

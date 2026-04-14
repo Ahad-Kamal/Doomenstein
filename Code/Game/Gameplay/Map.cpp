@@ -238,10 +238,11 @@ TileDefinitions* Map::GetTileDefinition( std::string name ) const
 //-----------------------------------------------------------------------------------------------
 void Map::Update( float deltaSeconds )
 {
+	DebugPossessNext();
 	m_player->Update( deltaSeconds );
 	UpdateActors( deltaSeconds );
 
-	MouseControls();
+	DebugRaycast();
 
 	CollideActors();
 	CollideActorsWithMap();
@@ -465,23 +466,23 @@ RaycastResult3D Map::RaycastAll( Vec3 const& start, Vec3 const& direction, float
 	RaycastResult3D raycastResult = RaycastResult3D();
 	RaycastResult3D raycastResultXY = RaycastWorldXY( start, direction, distance );
 	RaycastResult3D raycastResultZ = RaycastWorldZ( start, direction, distance );
-	RaycastResult3D raycastResultWorld = RaycastWorldActors( start, direction, distance, owner );
+	RaycastResult3D raycastResultActors = RaycastWorldActors( start, direction, distance, owner );
 
-	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultWorld.m_didImpact )
+	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultActors.m_didImpact )
 	{
 		return raycastResult;
 	}
-	if( raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultWorld.m_didImpact )
+	if( raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultActors.m_didImpact )
 	{
 		return raycastResultXY;
 	}
-	if( !raycastResultXY.m_didImpact && raycastResultZ.m_didImpact && !raycastResultWorld.m_didImpact )
+	if( !raycastResultXY.m_didImpact && raycastResultZ.m_didImpact && !raycastResultActors.m_didImpact )
 	{
 		return raycastResultZ;
 	}
-	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && raycastResultWorld.m_didImpact )
+	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && raycastResultActors.m_didImpact )
 	{
-		return raycastResultWorld;
+		return raycastResultActors;
 	}
 
 	raycastResult = raycastResultXY;
@@ -497,15 +498,15 @@ RaycastResult3D Map::RaycastAll( Vec3 const& start, Vec3 const& direction, float
 		}
 	}
 
-	if( !raycastResult.m_didImpact && raycastResultWorld.m_didImpact )
+	if( !raycastResult.m_didImpact && raycastResultActors.m_didImpact )
 	{
-		raycastResult = raycastResultWorld;
+		raycastResult = raycastResultActors;
 	}
-	else if( raycastResult.m_didImpact && raycastResultWorld.m_didImpact )
+	else if( raycastResult.m_didImpact && raycastResultActors.m_didImpact )
 	{
-		if( raycastResult.m_implactDist > raycastResultWorld.m_implactDist )
+		if( raycastResult.m_implactDist > raycastResultActors.m_implactDist )
 		{
-			raycastResult = raycastResultWorld;
+			raycastResult = raycastResultActors;
 		}
 	}
 
@@ -694,7 +695,7 @@ RaycastResult3D Map::RaycastWorldZ( Vec3 const& start, Vec3 const& direction, fl
 }
 
 //-----------------------------------------------------------------------------------------------
-RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[maybe_unused]] Vec3 const& direction, [[maybe_unused]] float distance, [[maybe_unused]] Actor* owner /*= nullptr */ ) const
+RaycastResult3D Map::RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner /*= nullptr*/ ) const
 {
 	RaycastResult3D result = RaycastResult3D();
 	std::vector<RaycastResult3D> raycastResults;
@@ -703,9 +704,7 @@ RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[m
 	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
 	{
 		Actor* actor = m_actors[ actorIndex ];
-
-		// Ignore player, might remove later.
-		if( actor == m_player->GetActor() )
+		if( actor == owner )
 		{
 			continue;
 		}
@@ -730,14 +729,96 @@ RaycastResult3D Map::RaycastWorldActors( [[maybe_unused]] Vec3 const& start, [[m
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::MouseControls()
+WeaponRaycastResult Map::WeaponRaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner ) const
+{
+	WeaponRaycastResult raycastResult = WeaponRaycastResult();
+	RaycastResult3D raycastResultXY = RaycastWorldXY( start, direction, distance );
+	RaycastResult3D raycastResultZ = RaycastWorldZ( start, direction, distance );
+	RaycastResult3D raycastResultActors = RaycastWorldActors( start, direction, distance, owner );
+
+	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultActors.m_didImpact )
+	{
+		return raycastResult;
+	}
+	if( raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultActors.m_didImpact )
+	{
+		raycastResult = raycastResultXY;
+		return raycastResult;
+	}
+	if( !raycastResultXY.m_didImpact && raycastResultZ.m_didImpact && !raycastResultActors.m_didImpact )
+	{
+		raycastResult = raycastResultZ;
+		return raycastResult;
+	}
+	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && raycastResultActors.m_didImpact )
+	{
+		raycastResult = raycastResultActors;
+		return raycastResult;
+	}
+
+	raycastResult = raycastResultXY;
+	if( !raycastResult.m_didImpact && raycastResultZ.m_didImpact )
+	{
+		raycastResult = raycastResultZ;
+	}
+	else if( raycastResult.m_didImpact && raycastResultZ.m_didImpact )
+	{
+		if( raycastResult.m_implactDist > raycastResultZ.m_implactDist )
+		{
+			raycastResult = raycastResultZ;
+		}
+	}
+
+	if( !raycastResult.m_didImpact && raycastResultActors.m_didImpact )
+	{
+		raycastResult = raycastResultActors;
+	}
+	else if( raycastResult.m_didImpact && raycastResultActors.m_didImpact )
+	{
+		if( raycastResult.m_implactDist > raycastResultActors.m_implactDist )
+		{
+			raycastResult = raycastResultActors;
+		}
+	}
+
+	return raycastResult;
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::DebugPossessNext()
+{
+	if( g_engine->m_input->WasKeyJustPressed( 'N' ) )
+	{
+		bool validPossess = false;
+		unsigned int newIndex = m_player->m_actorHandle.GetIndex() + 1;
+
+		while( !validPossess )
+		{
+			if( newIndex >= m_actors.size() )
+			{
+				newIndex = 0;
+			}
+
+			if( m_actors[ newIndex ]->m_definition->GetCanBePossesed() )
+			{
+				validPossess = true;
+			}
+		}
+
+		ActorHandle handle = m_actors[ newIndex ]->m_actorHandle;
+		m_player->Possess( handle );
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::DebugRaycast()
 {
 	if( g_game->m_currentState != GAME_STATE_PLAY )
 	{
 		return;
 	}
 
-	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_MOUSE ) )
+	/*if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_MOUSE ) )
 	{
 		Vec3 startPosition = m_player->m_position;
 		Vec3 direction = m_player->GetModelToWorldTransform().GetIBasis3D();
@@ -771,5 +852,5 @@ void Map::MouseControls()
 			Vec3 arrowEnd = raycast.m_impactPos + ( raycast.m_impactNormal * 0.3f );
 			DebugAddWorldArrow( arrowStart, arrowEnd, 0.03f, 10.f, Rgba8::BLUE, Rgba8::BLUE );
 		}
-	}
+	}*/
 }

@@ -61,6 +61,19 @@ void WeaponDefinition::InitializeWeaponDefs()
 			childElement = childElement->NextSiblingElement();
 		}
 
+		if( currentWeaponDef.m_ray.m_rayCount > 0 )
+		{
+			currentWeaponDef.m_type = WEAPON_TYPE_RAY;
+		}
+		else if( currentWeaponDef.m_projectile.m_projectileCount > 0 )
+		{
+			currentWeaponDef.m_type = WEAPON_TYPE_PROJECTILE;
+		}
+		else if( currentWeaponDef.m_melee.m_meleeCount > 0 )
+		{
+			currentWeaponDef.m_type = WEAPON_TYPE_MELEE;
+		}
+
 		currentElement = currentElement->NextSiblingElement();
 	}
 }
@@ -77,4 +90,9 @@ std::string WeaponDefinition::GetName() const
 	return m_name;
 }
 
+//-----------------------------------------------------------------------------------------------
+WeaponType WeaponDefinition::GetType() const
+{
+	return m_type;
+}
 
