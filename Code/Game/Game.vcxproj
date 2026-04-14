@@ -190,6 +190,7 @@
     <ClCompile Include="Gameplay\MapDefinition.cpp" />
     <ClCompile Include="Gameplay\Tile.cpp" />
     <ClCompile Include="Gameplay\TileDefinition.cpp" />
+    <ClCompile Include="Gameplay\Weapon.cpp" />
     <ClCompile Include="Gameplay\WeaponDefinition.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +207,7 @@
     <ClInclude Include="Gameplay\MapDefinition.hpp" />
     <ClInclude Include="Gameplay\Tile.hpp" />
     <ClInclude Include="Gameplay\TileDefinition.hpp" />
+    <ClInclude Include="Gameplay\Weapon.hpp" />
     <ClInclude Include="Gameplay\WeaponDefinition.hpp" />
   </ItemGroup>
   <ItemGroup>
