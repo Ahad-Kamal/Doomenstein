@@ -64,10 +64,20 @@ void Player::UpdateInput( float deltaSeconds )
 
 	if( g_engine->m_input->WasKeyJustPressed( 'N' ) )
 	{
+		bool validPossess = false;
 		unsigned int newIndex = m_actorHandle.GetIndex() + 1;
-		if( newIndex >= m_currentMap->m_actors.size() )
+
+		while( !validPossess )
 		{
-			newIndex = 0;
+			if( newIndex >= m_currentMap->m_actors.size() )
+			{
+				newIndex = 0;
+			}
+
+			if( m_currentMap->m_actors[ newIndex ]->m_definition->GetCanBePossesed() )
+			{
+				validPossess = true;
+			}
 		}
 
 		ActorHandle handle = m_currentMap->m_actors[ newIndex ]->m_actorHandle;

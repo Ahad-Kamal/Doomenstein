@@ -27,7 +27,6 @@ void ActorDefinition::InitializeActorDefs()
 
 		// Basic Info
 		currentActorDef.m_name = actorDefBlackboard.GetValue( "name", "" );
-		currentActorDef.m_weapon = actorDefBlackboard.GetValue( "weapon", "" );
 		currentActorDef.m_health = actorDefBlackboard.GetValue( "health", 1 );
 		currentActorDef.m_corpseLifetime = actorDefBlackboard.GetValue( "corpseLifetime", 0.f );
 		currentActorDef.m_isVisible = actorDefBlackboard.GetValue( "visible", false );
@@ -89,6 +88,21 @@ void ActorDefinition::InitializeActorDefs()
 				currentActorDef.m_ai.m_sightRadius = actorDefChildBlackboard.GetValue( "sightRadius", 0.f );
 				currentActorDef.m_ai.m_sightAngle = actorDefChildBlackboard.GetValue( "sightAngle", 0.f );
 			}
+			// Inventory
+			else if( attributeName == "Inventory" )
+			{
+				XmlElement* weaponElement = childElement->FirstChildElement();
+				while( weaponElement )
+				{
+					NamedStrings actorDefInventoryBlackboard;
+					actorDefInventoryBlackboard.PopulateFromXmlElementAttributes( *weaponElement );
+
+					std::string newWeapon = actorDefInventoryBlackboard.GetValue( "name", "" );
+					currentActorDef.m_weapons.push_back( newWeapon );
+
+					weaponElement = weaponElement->NextSiblingElement();
+				}
+			}
 
 			childElement = childElement->NextSiblingElement();
 		}
@@ -117,7 +131,6 @@ void ActorDefinition::InitializeProjectileActorDefs()
 
 		// Basic Info
 		currentActorDef.m_name = actorDefBlackboard.GetValue( "name", "" );
-		currentActorDef.m_weapon = actorDefBlackboard.GetValue( "weapon", "" );
 		currentActorDef.m_health = actorDefBlackboard.GetValue( "health", 1 );
 		currentActorDef.m_corpseLifetime = actorDefBlackboard.GetValue( "corpseLifetime", 0.f );
 		currentActorDef.m_isVisible = actorDefBlackboard.GetValue( "visible", false );
@@ -199,46 +212,55 @@ std::string ActorDefinition::GetName() const
 	return m_name;
 }
 
-std::string ActorDefinition::GetWeapon() const
+//-----------------------------------------------------------------------------------------------
+Strings ActorDefinition::GetWeapons() const
 {
-	return m_weapon;
+	return m_weapons;
 }
 
+//-----------------------------------------------------------------------------------------------
 Collision ActorDefinition::GetCollision() const
 {
 	return m_collision;
 }
 
+//-----------------------------------------------------------------------------------------------
 Physics ActorDefinition::GetPhysics() const
 {
 	return m_physics;
 }
 
+//-----------------------------------------------------------------------------------------------
 CameraView ActorDefinition::GetCameraView() const
 {
 	return m_cameraView;
 }
 
+//-----------------------------------------------------------------------------------------------
 AI ActorDefinition::GetAI() const
 {
 	return m_ai;
 }
 
+//-----------------------------------------------------------------------------------------------
 int ActorDefinition::GetHealth() const
 {
 	return m_health;
 }
 
+//-----------------------------------------------------------------------------------------------
 float ActorDefinition::GetCorpseLifetime() const
 {
 	return m_corpseLifetime;
 }
 
+//-----------------------------------------------------------------------------------------------
 bool ActorDefinition::GetIsVisible() const
 {
 	return m_isVisible;
 }
 
+//-----------------------------------------------------------------------------------------------
 bool ActorDefinition::GetCanBePossesed() const
 {
 	return m_canBePossessed;

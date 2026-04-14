@@ -14,10 +14,12 @@ class ActorDefinition;
 class NamedStrings;
 class Controller;
 class Map;
+class Weapon;
 
 //-----------------------------------------------------------------------------------------------
 typedef NamedStrings EventArgs;
 typedef std::vector<Vertex> VertexList;
+typedef std::vector<Weapon*> Weapons;
 
 //-----------------------------------------------------------------------------------------------
 class Actor
@@ -47,11 +49,13 @@ public:
 public:
 	VertexList	m_vertexes;
 	VertexList	m_wireframeVertexes; // Note: delete this later
-	ActorDefinition* m_definition;
-	Map*		m_map;
-	
+
+	Weapons		m_weapons;
 	Controller* m_controller = nullptr;
 	Actor*		m_owner = nullptr;
+	
+	ActorDefinition* m_definition;
+	Map*		m_map;
 
 	ActorHandle m_actorHandle;
 	Vec3		m_position;

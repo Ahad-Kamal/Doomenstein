@@ -5,6 +5,9 @@
 
 
 //-----------------------------------------------------------------------------------------------
+typedef std::vector<std::string> Strings;
+
+//-----------------------------------------------------------------------------------------------
 enum class Faction
 {
 	NEUTRAL,
@@ -59,7 +62,7 @@ public:
 	static void ClearActorDefs();
 
 	std::string GetName() const;
-	std::string GetWeapon() const;
+	Strings GetWeapons() const;
 	Collision GetCollision() const;
 	Physics GetPhysics() const;
 	CameraView GetCameraView() const;
@@ -73,8 +76,8 @@ public:
 	static std::vector<ActorDefinition> s_actorDefs;
 
 private:
+	Strings m_weapons;
 	std::string m_name;
-	std::string m_weapon;
 	Collision m_collision;
 	Physics m_physics;
 	CameraView m_cameraView;

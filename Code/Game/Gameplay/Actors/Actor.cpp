@@ -1,8 +1,10 @@
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Game/Gameplay/ActorDefinition.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
+#include "Game/Gameplay/Weapon.hpp"
 #include "Game/Gameplay/Game.hpp"
 #include "Game/Gameplay/Map.hpp"
+#include "Game/Gameplay/WeaponDefinition.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Vertex.hpp"
 #include "Engine/Core/VertexUtils.hpp"
@@ -31,6 +33,20 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 	m_cosmeticRadius = definition->GetCollision().m_physicsRadius;
 
 	m_health = definition->GetHealth();
+	for( unsigned int weaponIndex = 0; weaponIndex < m_definition->GetWeapons().size(); weaponIndex++ )
+	{
+		std::string weaponName = m_definition->GetWeapons()[ weaponIndex ];
+		for( unsigned int weaponDefIndex = 0; weaponDefIndex < WeaponDefinition::s_weaponDefs.size(); weaponDefIndex++ )
+		{
+			std::string name = WeaponDefinition::s_weaponDefs[ weaponDefIndex ].GetName();
+			if( weaponName == name )
+			{
+				Weapon* newWeapon = new Weapon( &WeaponDefinition::s_weaponDefs[ weaponDefIndex ] );
+				m_weapons.push_back( newWeapon );
+				break;
+			}
+		}
+	}
 
 	SubscribeEventCallbackFunction( "Possess", Event_OnPossessed );
 	SubscribeEventCallbackFunction( "Unpossess", Event_OnUnpossessed );
