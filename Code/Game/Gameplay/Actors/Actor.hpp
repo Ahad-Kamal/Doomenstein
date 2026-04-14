@@ -35,6 +35,7 @@ public:
 	void AddForce( Vec3 force );
 	void AddImpulse( Vec3 impulse );
 
+	void Damage( int incomingDamage );
 	bool IsAlive() const;
 
 	IntVec2 GetCoordsOfCurrentTile();
@@ -58,6 +59,8 @@ public:
 	Vec3		m_acceleration;
 	EulerAngles m_orientation;
 	Rgba8		m_color;
+
+	int			m_health;
 
 	float		m_physicsHeight;
 	float		m_cosmeticHeight;

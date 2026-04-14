@@ -30,6 +30,8 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 	m_physicsRadius = definition->GetCollision().m_physicsRadius;
 	m_cosmeticRadius = definition->GetCollision().m_physicsRadius;
 
+	m_health = definition->GetHealth();
+
 	SubscribeEventCallbackFunction( "Possess", Event_OnPossessed );
 	SubscribeEventCallbackFunction( "Unpossess", Event_OnUnpossessed );
 
@@ -116,6 +118,12 @@ void Actor::AddForce( Vec3 force )
 void Actor::AddImpulse( Vec3 impulse )
 {
 	m_velocity += impulse;
+}
+
+//-----------------------------------------------------------------------------------------------
+void Actor::Damage( int incomingDamage )
+{
+	m_health -= incomingDamage;
 }
 
 //-----------------------------------------------------------------------------------------------
