@@ -14,6 +14,17 @@
 Weapon::Weapon( WeaponDefinition* definition )
 	: m_definition( definition )
 {
+	if( m_definition->GetType() == WEAPON_TYPE_PROJECTILE )
+	{
+		std::string projectileName = m_definition->GetProjectileWeaponInfo().m_projectileActor;
+		for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex )
+		{
+			if( projectileName == ActorDefinition::s_actorDefs[ actorDefIndex ].GetName() )
+			{
+				m_projectileDefinition = &ActorDefinition::s_actorDefs[ actorDefIndex ];
+			}
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

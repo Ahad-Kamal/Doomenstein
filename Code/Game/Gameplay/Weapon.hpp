@@ -3,6 +3,7 @@
 
 //-----------------------------------------------------------------------------------------------
 class WeaponDefinition;
+class ActorDefinition;
 class Actor;
 struct Vec3;
 
@@ -17,4 +18,5 @@ public:
 
 public:
 	WeaponDefinition* m_definition;
+	ActorDefinition* m_projectileDefinition;
 };
