@@ -32,10 +32,11 @@ public:
 	virtual void Render() const;
 
 	void RenderSetup();
+	void SetColor( Rgba8 const& color );
 
 	void UpdatePhysics( float deltaSeconds );
-	void AddForce( Vec3 force );
-	void AddImpulse( Vec3 impulse );
+	void AddForce( Vec3 const& force );
+	void AddImpulse( Vec3 const&  impulse );
 
 	void Damage( int incomingDamage );
 	bool IsAlive() const;

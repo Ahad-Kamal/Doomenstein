@@ -734,7 +734,7 @@ WeaponRaycastResult Map::WeaponRaycastAll( Vec3 const& start, Vec3 const& direct
 	WeaponRaycastResult raycastResult = WeaponRaycastResult();
 	RaycastResult3D raycastResultXY = RaycastWorldXY( start, direction, distance );
 	RaycastResult3D raycastResultZ = RaycastWorldZ( start, direction, distance );
-	RaycastResult3D raycastResultActors = RaycastWorldActors( start, direction, distance, owner );
+	WeaponRaycastResult raycastResultActors = WeaponRaycastActors( start, direction, distance, owner );
 
 	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultActors.m_didImpact )
 	{
@@ -782,6 +782,45 @@ WeaponRaycastResult Map::WeaponRaycastAll( Vec3 const& start, Vec3 const& direct
 	}
 
 	return raycastResult;
+}
+
+//-----------------------------------------------------------------------------------------------
+WeaponRaycastResult Map::WeaponRaycastActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner /*= nullptr */ ) const
+{
+	WeaponRaycastResult result = WeaponRaycastResult();
+	std::vector<RaycastResult3D> raycastResults;
+	raycastResults.resize( m_actors.size() );
+
+	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
+	{
+		Actor* actor = m_actors[ actorIndex ];
+		if( actor == owner )
+		{
+			continue;
+		}
+
+		raycastResults[ actorIndex ] = RaycastVsCylinder( start, direction, distance, actor->m_position, actor->m_physicsRadius, actor->m_physicsHeight );
+
+		RaycastResult3D* raycast = &raycastResults[ actorIndex ];
+		if( !result.m_didImpact && raycast->m_didImpact )
+		{
+			result = *raycast;
+		}
+		else if( result.m_didImpact && raycast->m_didImpact )
+		{
+			if( result.m_implactDist > raycast->m_implactDist )
+			{
+				result = *raycast;
+			}
+		}
+
+		if( result.m_didImpact )
+		{
+			result.m_impactedActor = actor;
+		}
+	}
+
+	return result;
 }
 
 //-----------------------------------------------------------------------------------------------

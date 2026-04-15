@@ -75,6 +75,7 @@ public:
 	RaycastResult3D RaycastWorldZ( Vec3 const& start, Vec3 const& direction, float distance ) const;
 	RaycastResult3D RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
 	WeaponRaycastResult WeaponRaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner ) const;
+	WeaponRaycastResult WeaponRaycastActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
 
 	void DebugPossessNext();
 	void DebugRaycast();

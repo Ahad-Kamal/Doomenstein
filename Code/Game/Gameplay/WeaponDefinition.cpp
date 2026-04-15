@@ -96,3 +96,27 @@ WeaponType WeaponDefinition::GetType() const
 	return m_type;
 }
 
+//-----------------------------------------------------------------------------------------------
+float WeaponDefinition::GetRefireTime() const
+{
+	return m_refireTime;
+}
+
+//-----------------------------------------------------------------------------------------------
+RayWeapon WeaponDefinition::GetRayWeaponInfo() const
+{
+	return m_ray;
+}
+
+//-----------------------------------------------------------------------------------------------
+ProjectileWeapon WeaponDefinition::GetProjectileWeaponInfo() const
+{
+	return m_projectile;
+}
+
+//-----------------------------------------------------------------------------------------------
+MeleeWeapon WeaponDefinition::GetMeleeWeaponInfo() const
+{
+	return m_melee;
+}
+

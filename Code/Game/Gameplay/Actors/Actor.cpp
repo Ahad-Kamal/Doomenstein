@@ -115,6 +115,15 @@ void Actor::RenderSetup()
 }
 
 //-----------------------------------------------------------------------------------------------
+void Actor::SetColor( Rgba8 const& color )
+{
+	for( unsigned int vertIndex = 0; vertIndex < m_vertexes.size(); vertIndex++ )
+	{
+		m_vertexes[ vertIndex ].m_color = color;
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 void Actor::UpdatePhysics( [[maybe_unused]] float deltaSeconds )
 {
 	Vec3 prevPosition = m_position;
@@ -129,13 +138,13 @@ void Actor::UpdatePhysics( [[maybe_unused]] float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Actor::AddForce( Vec3 force )
+void Actor::AddForce( Vec3 const& force )
 {
 	m_acceleration += force;
 }
 
 //-----------------------------------------------------------------------------------------------
-void Actor::AddImpulse( Vec3 impulse )
+void Actor::AddImpulse( Vec3 const& impulse )
 {
 	m_velocity += impulse;
 }
@@ -144,6 +153,12 @@ void Actor::AddImpulse( Vec3 impulse )
 void Actor::Damage( int incomingDamage )
 {
 	m_health -= incomingDamage;
+
+	if( m_health <= 0 )
+	{
+		Rgba8 deadColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b - 100 ), 0.f, 255.f ) );
+		SetColor( deadColor );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

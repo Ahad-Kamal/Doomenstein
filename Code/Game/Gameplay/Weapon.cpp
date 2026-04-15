@@ -6,6 +6,8 @@
 #include "Engine/Core/DebugRender.hpp"
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/Mat44.hpp"
+#include "Engine/Math/MathUtils.hpp"
+#include <cmath>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -29,10 +31,18 @@ void Weapon::Fire( Actor* owner )
 
 		if( raycast.m_didImpact )
 		{
-			DebugAddWorldSphere( raycast.m_impactPos, 0.06f, 10.f );
+			/*DebugAddWorldSphere( raycast.m_impactPos, 0.06f, 10.f );
 			Vec3 arrowStart = raycast.m_impactPos;
 			Vec3 arrowEnd = raycast.m_impactPos + ( raycast.m_impactNormal * 0.3f );
-			DebugAddWorldArrow( arrowStart, arrowEnd, 0.03f, 10.f, Rgba8::BLUE, Rgba8::BLUE );
+			DebugAddWorldArrow( arrowStart, arrowEnd, 0.03f, 10.f, Rgba8::BLUE, Rgba8::BLUE );*/
+
+			if( raycast.m_impactedActor )
+			{
+				FloatRange damageRange = m_definition->GetRayWeaponInfo().m_rayDamage;
+				float calculatedDamage = RangeMapClamped( raycast.m_implactDist, 0.f, raycast.m_rayMaxLength, damageRange.m_min, damageRange.m_max );
+
+				raycast.m_impactedActor->Damage( static_cast<int>( roundf( calculatedDamage ) ) );
+			}
 		}
 	}
 }

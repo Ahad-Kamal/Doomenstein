@@ -50,6 +50,10 @@ public:
 
 	std::string GetName() const;
 	WeaponType GetType() const;
+	float GetRefireTime() const;
+	RayWeapon GetRayWeaponInfo() const;
+	ProjectileWeapon GetProjectileWeaponInfo() const;
+	MeleeWeapon GetMeleeWeaponInfo() const;
 
 public:
 	static std::vector<WeaponDefinition> s_weaponDefs;
