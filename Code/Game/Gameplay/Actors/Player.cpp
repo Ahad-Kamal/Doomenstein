@@ -57,17 +57,13 @@ void Player::UpdateInput( float deltaSeconds )
 		return;
 	}
 
-	UpdateFromKeyboard( deltaSeconds );
-	UpdateFromController( deltaSeconds );
+	FirstPersonKeyboardControls( deltaSeconds );
+	FirstPersonControllerControls( deltaSeconds );
 
 	FreeFlyKeyboardControls( deltaSeconds );
 	FreeFlyControllerControls( deltaSeconds );
 
-	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_MOUSE ) && !m_isFreeFly )
-	{
-		Actor* possessedActor = GetActor();
-		possessedActor->m_equippedWeapon->Fire( possessedActor );
-	}
+	WeaponKeyboardControls();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -106,7 +102,88 @@ void Player::Possess( ActorHandle actorToPossess )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Player::UpdateFromKeyboard( [[maybe_unused]] float deltaSeconds )
+void Player::SwitchWeapon( int weaponToSwitchTo )
+{
+	Actor* possessedActor = GetActor();
+	Weapons actorWeapons = possessedActor->m_weapons;
+
+	if( weaponToSwitchTo >= actorWeapons.size() )
+	{
+		weaponToSwitchTo = 0;
+	}
+	else if( weaponToSwitchTo <= -1 )
+	{
+		weaponToSwitchTo = actorWeapons.size() - 1;
+	}
+
+	possessedActor->m_equippedWeapon = actorWeapons[ weaponToSwitchTo ];
+}
+
+//-----------------------------------------------------------------------------------------------
+void Player::WeaponKeyboardControls()
+{
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_MOUSE ) && !m_isFreeFly )
+	{
+		Actor* possessedActor = GetActor();
+		possessedActor->m_equippedWeapon->Fire( possessedActor );
+	}
+
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_ARROW ) )
+	{
+		Actor* possessedActor = GetActor();
+		Weapons actorWeapons = possessedActor->m_weapons;
+		for( unsigned int weaponIndex = 0; weaponIndex < actorWeapons.size(); weaponIndex++ )
+		{
+			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
+			{
+				SwitchWeapon( weaponIndex - 1 );
+				break;
+			}
+		}
+	}
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_RIGHT_ARROW ) )
+	{
+		Actor* possessedActor = GetActor();
+		Weapons actorWeapons = possessedActor->m_weapons;
+		for( unsigned int weaponIndex = 0; weaponIndex < actorWeapons.size(); weaponIndex++ )
+		{
+			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
+			{
+				SwitchWeapon( weaponIndex + 1 );
+				break;
+			}
+		}
+	}
+	if( g_engine->m_input->WasKeyJustPressed( '1' ) )
+	{
+		Actor* possessedActor = GetActor();
+		Weapons actorWeapons = possessedActor->m_weapons;
+		for( unsigned int weaponIndex = 0; weaponIndex < actorWeapons.size(); weaponIndex++ )
+		{
+			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
+			{
+				SwitchWeapon( 0 );
+				break;
+			}
+		}
+	}
+	if( g_engine->m_input->WasKeyJustPressed( '2' ) )
+	{
+		Actor* possessedActor = GetActor();
+		Weapons actorWeapons = possessedActor->m_weapons;
+		for( unsigned int weaponIndex = 0; weaponIndex < actorWeapons.size(); weaponIndex++ )
+		{
+			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
+			{
+				SwitchWeapon( 1 );
+				break;
+			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 {
 	Actor* possesedActor = GetActor();
 	ActorDefinition definition = *possesedActor->m_definition;
@@ -163,7 +240,7 @@ void Player::UpdateFromKeyboard( [[maybe_unused]] float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Player::UpdateFromController( float deltaSeconds )
+void Player::FirstPersonControllerControls( float deltaSeconds )
 {
 	Actor* possesedActor = GetActor();
 	ActorDefinition definition = *GetActor()->m_definition;

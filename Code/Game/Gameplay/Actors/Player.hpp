@@ -26,9 +26,12 @@ public:
 	void UpdateCamera();
 
 	virtual void Possess( ActorHandle actorToPossess ) override;
+	void SwitchWeapon( int weaponToSwitchTo );
 
-	void UpdateFromKeyboard( float deltaSeconds );
-	void UpdateFromController( float deltaSeconds );
+	void WeaponKeyboardControls();
+
+	void FirstPersonKeyboardControls( float deltaSeconds );
+	void FirstPersonControllerControls( float deltaSeconds );
 	void FreeFlyKeyboardControls( float deltaSeconds );
 	void FreeFlyControllerControls( float deltaSeconds );
 

@@ -268,7 +268,7 @@ void Game::UpdateKeyboardInput()
 		return;
 	}
 
-	if( g_engine->m_input->WasKeyJustPressed( '1' ) )
+	/*if( g_engine->m_input->WasKeyJustPressed( '1' ) )
 	{
 		Vec3 endPosition = m_currentMap->m_player->m_position + ( m_currentMap->m_player->GetModelToWorldTransform().GetIBasis3D() * 20.f );
 		DebugAddWorldCylinder( Vec3( m_currentMap->m_player->m_position ), endPosition,
@@ -303,7 +303,7 @@ void Game::UpdateKeyboardInput()
 	{
 		DebugAddWorldWireCylinder( Vec3( m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z - 0.5f ), 
 			Vec3( m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z + 0.5f ), 0.5f, 10.f, Rgba8::WHITE, Rgba8::RED );
-	}
+	}*/
 
 	if( g_engine->m_input->WasKeyJustPressed( '7' ) )
 	{
