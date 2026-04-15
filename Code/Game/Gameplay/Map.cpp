@@ -162,7 +162,7 @@ bool Map::AreCoordsInBounds( int x, int y ) const
 {
 	IntVec2 boundsXY = m_definition->GetImage()->GetDimensions();
 
-	if( x >= 0.f && x <= static_cast<float>( boundsXY.x ) && y >= 0.f && y <= static_cast<float>( boundsXY.y ) )
+	if( x >= 0.f && x < static_cast<float>( boundsXY.x ) && y >= 0.f && y < static_cast<float>( boundsXY.y ) )
 	{
 		return true;
 	}
