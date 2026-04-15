@@ -36,7 +36,9 @@ public:
 
 	void UpdatePhysics( float deltaSeconds );
 	void AddForce( Vec3 const& force );
-	void AddImpulse( Vec3 const&  impulse );
+	void AddImpulse( Vec3 const& impulse );
+	void MoveInDirection( Vec3 const& direction, float speed );
+	void TurnInDirection( float yawDegrees );
 
 	void Damage( int incomingDamage );
 	bool IsAlive() const;

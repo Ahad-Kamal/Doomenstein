@@ -150,6 +150,20 @@ void Actor::AddImpulse( Vec3 const& impulse )
 }
 
 //-----------------------------------------------------------------------------------------------
+void Actor::MoveInDirection( Vec3 const& direction, float speed )
+{
+	float forceMagnitude = speed * m_definition->GetPhysics().m_drag;
+	Vec3 force = Vec3( direction.x * forceMagnitude, direction.y * forceMagnitude, direction.z * forceMagnitude );
+	AddForce( force );
+}
+
+//-----------------------------------------------------------------------------------------------
+void Actor::TurnInDirection( float yawDegrees )
+{
+	m_orientation.m_yawDegrees += yawDegrees;
+}
+
+//-----------------------------------------------------------------------------------------------
 void Actor::Damage( int incomingDamage )
 {
 	m_health -= incomingDamage;

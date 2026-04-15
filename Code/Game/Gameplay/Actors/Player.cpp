@@ -188,16 +188,16 @@ void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 	Actor* possesedActor = GetActor();
 	ActorDefinition definition = *possesedActor->m_definition;
 
-	if( m_isFreeFly )
-	{
-		possesedActor->m_velocity = Vec3();
-		return;
-	}
+	//if( m_isFreeFly )
+	//{
+	//	possesedActor->m_velocity = Vec3();
+	//	return;
+	//}
 
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		possesedActor->m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
+		possesedActor->TurnInDirection( -g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f );
 	}
 
 	// Pitch
@@ -215,27 +215,28 @@ void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 		speedFactor = definition.GetPhysics().m_runSpeed ;
 	}
 
-	float force = speedFactor * definition.GetPhysics().m_drag;
-
 	// Left and Right
 	if( g_engine->m_input->IsKeyDown( 'A' ) )
 	{
-		possesedActor->AddForce( Vec3( forwardVector.GetRotated90DegreesAboutZ().x * force, forwardVector.GetRotated90DegreesAboutZ().y * force, 0.f ) );
-
+		Vec3 direction = Vec3( forwardVector.GetRotated90DegreesAboutZ().x, forwardVector.GetRotated90DegreesAboutZ().y, 0.f );
+		possesedActor->MoveInDirection( direction, speedFactor );
 	}
 	if( g_engine->m_input->IsKeyDown( 'D' ) )
 	{
-		possesedActor->AddForce( Vec3( -forwardVector.GetRotated90DegreesAboutZ().x * force, -forwardVector.GetRotated90DegreesAboutZ().y * force, 0.f));
+		Vec3 direction = Vec3( -forwardVector.GetRotated90DegreesAboutZ().x, -forwardVector.GetRotated90DegreesAboutZ().y, 0.f );
+		possesedActor->MoveInDirection( direction, speedFactor );
 	}
 
 	// Forward and Back
 	if( g_engine->m_input->IsKeyDown( 'W' ) )
 	{
-		possesedActor->AddForce( Vec3( forwardVector.x * force, forwardVector.y * force, 0.f ) );
+		Vec3 direction = Vec3( forwardVector.x, forwardVector.y, 0.f );
+		possesedActor->MoveInDirection( direction, speedFactor );
 	}
 	if( g_engine->m_input->IsKeyDown( 'S' ) )
 	{
-		possesedActor->AddForce( Vec3( -forwardVector.x * force, -forwardVector.y * force, 0.f ) );
+		Vec3 direction = Vec3( -forwardVector.x, -forwardVector.y, 0.f );
+		possesedActor->MoveInDirection( direction, speedFactor );
 	}
 }
 
