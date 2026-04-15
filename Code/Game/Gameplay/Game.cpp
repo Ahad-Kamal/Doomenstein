@@ -73,7 +73,7 @@ void Game::Startup()
 
 	std::string mapName = g_blackboard->GetValue( "defaultMap", "TestMap" );
 	m_currentMap = new Map( MapDefinition::GetMapDefFromName( mapName ) );
-	m_currentMap->SpawnPlayer();
+	m_currentMap->SpawnPlayer( "Marine", Vec3(2.5f, 8.5f, 0.f), EulerAngles() );
 
 	m_worldCamera = m_currentMap->m_player->m_camera;
 	m_screenCamera = new Camera();

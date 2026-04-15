@@ -13,13 +13,14 @@
 #include "Engine/Math/IntVec3.hpp"
 #include "Engine/Math/AABB3.hpp"
 #include "Engine/Math/MathUtils.hpp"
+#include "Engine/Math/EulerAngles.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/VertexUtils.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Core/DebugRender.hpp"
-#include "Engine/Renderer/Camera.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
+#include "Engine/Renderer/Camera.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -32,7 +33,7 @@ Map::Map( MapDefinition* definition )
 	CreateTiles();
 	CreateGeometry();
 
-	SpawnActor();
+	SpawnActor( "Demon", Vec3( 7.5f, 8.5f, 0.f ), EulerAngles() );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -258,17 +259,17 @@ void Map::UpdateActors( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::SpawnPlayer()
+void Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation )
 {
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
 		ActorDefinition& actorDef = ActorDefinition::s_actorDefs[ actorDefIndex ];
 		std::string name = actorDef.GetName();
-		if( name == "Marine" )
+		if( name == actorName )
 		{
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
-			Actor* marine = new Actor( Vec3( 2.5f, 8.5f, 0.f ), EulerAngles(), &actorDef, newActorHandle, this, false, Rgba8( 0, 200, 0 ) );
+			Actor* marine = new Actor( position, orientation, &actorDef, newActorHandle, this, false, Rgba8( 0, 200, 0 ) );
 			m_actors.push_back( marine );
 
 			m_player = new Player( this, newActorHandle );
@@ -278,18 +279,18 @@ void Map::SpawnPlayer()
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::SpawnActor()
+void Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation )
 {
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
 		ActorDefinition& actorDef = ActorDefinition::s_actorDefs[ actorDefIndex ];
 		std::string name = actorDef.GetName();
-		if( name == "Demon" )
+		if( name == actorName )
 		{
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
-			Actor* staticActor1 = new Actor( Vec3( 7.5f, 8.5f, 0.f ), EulerAngles(), &actorDef, newActorHandle, this, true, Rgba8( 200, 0, 0 ) );
-			m_actors.push_back( staticActor1 );
+			Actor* newActor = new Actor( position, orientation, &actorDef, newActorHandle, this, true, Rgba8( 200, 0, 0 ) );
+			m_actors.push_back( newActor );
 		}
 	}
 }

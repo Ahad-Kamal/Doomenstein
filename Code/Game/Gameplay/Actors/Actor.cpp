@@ -158,6 +158,7 @@ void Actor::MoveInDirection( Vec3 const& direction, float speed )
 }
 
 //-----------------------------------------------------------------------------------------------
+// Note: NEEDS TO TAKE IN A DIRECTION INSTEAD //-----------------------------------------------------------------------------------------------
 void Actor::TurnInDirection( float yawDegrees )
 {
 	m_orientation.m_yawDegrees += yawDegrees;

@@ -21,6 +21,7 @@ class Shader;
 class VertexBuffer;
 class IndexBuffer;
 class Player;
+struct EulerAngles;
 
 //-----------------------------------------------------------------------------------------------
 struct WeaponRaycastResult : public RaycastResult3D
@@ -60,8 +61,8 @@ public:
 	void Update( float deltaSeconds );
 	void UpdateActors( float deltaSeconds );
 
-	void SpawnPlayer();
-	void SpawnActor();
+	void SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation );
+	void SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation );
 
 	void CollideActors();
 	void CollideActors( Actor* actorA, Actor* actorB );
