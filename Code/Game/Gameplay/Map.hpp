@@ -78,6 +78,8 @@ public:
 	WeaponRaycastResult WeaponRaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner ) const;
 	WeaponRaycastResult WeaponRaycastActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
 
+	void DeleteGarbageActors();
+
 	void DebugPossessNext();
 	void DebugRaycast();
 
