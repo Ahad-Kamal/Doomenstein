@@ -71,6 +71,7 @@ public:
 	float GetCorpseLifetime() const;
 	bool GetIsVisible() const;
 	bool GetCanBePossesed() const;
+	Faction GetFaction() const;
 
 public:
 	static std::vector<ActorDefinition> s_actorDefs;

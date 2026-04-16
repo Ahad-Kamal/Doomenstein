@@ -265,3 +265,9 @@ bool ActorDefinition::GetCanBePossesed() const
 {
 	return m_canBePossessed;
 }
+
+//-----------------------------------------------------------------------------------------------
+Faction ActorDefinition::GetFaction() const
+{
+	return m_faction;
+}

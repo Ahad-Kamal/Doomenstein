@@ -14,6 +14,7 @@
 #include "Engine/Math/AABB3.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/EulerAngles.hpp"
+#include "Engine/Math/FloatRange.hpp"
 #include "Engine/Core/Engine.hpp"
 #include "Engine/Core/VertexUtils.hpp"
 #include "Engine/Core/Image.hpp"
@@ -21,6 +22,7 @@
 #include "Engine/Core/DebugRender.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Renderer/Camera.hpp"
+#include <cmath>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -312,7 +314,7 @@ void Map::CollideActors()
 		Actor*& actorA = m_actors[ actorAIndex ];
 		if( actorA->IsAlive() )
 		{
-			for( unsigned int actorBIndex = 0; actorBIndex < m_actors.size(); actorBIndex++ )
+			for( unsigned int actorBIndex = actorAIndex; actorBIndex < m_actors.size(); actorBIndex++ )
 			{
 				Actor*& actorB = m_actors[ actorBIndex ];
 				if( actorB->IsAlive() )
@@ -357,16 +359,7 @@ void Map::CollideActors( Actor* actorA, Actor* actorB )
 
 	if( didImpact )
 	{
-		if( actorA->m_definition->GetCollision().m_dieOnCollide )
-		{
-			actorA->m_isDead = true;
-			actorA->m_isGarbage = true;
-		}
-		if( actorB->m_definition->GetCollision().m_dieOnCollide )
-		{
-			actorB->m_isDead = true;
-			actorB->m_isGarbage = true;
-		}
+		DamageActors( actorA, actorB );
 	}
 }
 
@@ -518,6 +511,38 @@ void Map::CollideActorWithMap( Actor* actor )
 		{
 			actor->m_isDead = true;
 			actor->m_isGarbage = true;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Map::DamageActors( Actor* actorA, Actor* actorB )
+{
+	if( actorA->m_definition->GetCollision().m_dieOnCollide )
+	{
+		actorA->m_isDead = true;
+		actorA->m_isGarbage = true;
+	}
+	if( actorB->m_definition->GetCollision().m_dieOnCollide )
+	{
+		actorB->m_isDead = true;
+		actorB->m_isGarbage = true;
+	}
+
+	if( actorA->m_definition->GetFaction() != actorB->m_definition->GetFaction() )
+	{
+		FloatRange actorADamageRange = actorA->m_definition->GetCollision().m_damageOnCollide;
+		if( actorADamageRange != FloatRange() )
+		{
+			float randomDamage = g_rng->RollRandomFloatInRange( actorADamageRange.m_min, actorADamageRange.m_max );
+			actorB->Damage( static_cast<int>( roundf( randomDamage ) ) );
+		}
+
+		FloatRange actorBDamageRange = actorB->m_definition->GetCollision().m_damageOnCollide;
+		if( actorBDamageRange != FloatRange() )
+		{
+			float randomDamage = g_rng->RollRandomFloatInRange( actorBDamageRange.m_min, actorBDamageRange.m_max );
+			actorA->Damage( static_cast<int>( roundf( randomDamage ) ) );
 		}
 	}
 }
