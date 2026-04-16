@@ -175,6 +175,7 @@ void Actor::Damage( int incomingDamage )
 
 	if( m_health <= 0 )
 	{
+		m_isDead = true;
 		Rgba8 deadColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b - 100 ), 0.f, 255.f ) );
 		SetColor( deadColor );
 	}

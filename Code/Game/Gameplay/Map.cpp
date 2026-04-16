@@ -337,6 +337,10 @@ void Map::CollideActors( Actor* actorA, Actor* actorB )
 	{
 		return;
 	}
+	if( actorA->m_isDead || actorB->m_isDead )
+	{
+		return;
+	}
 
 	bool didImpact = false;
 
