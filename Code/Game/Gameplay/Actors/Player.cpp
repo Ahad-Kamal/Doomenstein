@@ -60,8 +60,9 @@ void Player::UpdateInput( float deltaSeconds )
 	FirstPersonKeyboardControls( deltaSeconds );
 	FirstPersonControllerControls( deltaSeconds );
 
-	FreeFlyKeyboardControls( deltaSeconds );
-	FreeFlyControllerControls( deltaSeconds );
+	float systemDeltaTime = static_cast<float>( Clock::GetSystemClock().GetDeltaSeconds() );
+	FreeFlyKeyboardControls( systemDeltaTime );
+	FreeFlyControllerControls( systemDeltaTime );
 
 	WeaponKeyboardControls();
 }
@@ -188,11 +189,11 @@ void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 	Actor* possesedActor = GetActor();
 	ActorDefinition definition = *possesedActor->m_definition;
 
-	//if( m_isFreeFly )
-	//{
-	//	possesedActor->m_velocity = Vec3();
-	//	return;
-	//}
+	if( m_isFreeFly )
+	{
+		possesedActor->m_velocity = Vec3();
+		return;
+	}
 
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )

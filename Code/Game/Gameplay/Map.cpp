@@ -33,7 +33,7 @@ Map::Map( MapDefinition* definition )
 	CreateTiles();
 	CreateGeometry();
 
-	SpawnActor( "Demon", Vec3( 7.5f, 8.5f, 0.f ), EulerAngles() );
+	SpawnActor( "Demon", Vec3( 7.5f, 8.5f, 0.f ), EulerAngles(), Rgba8( 200, 0, 0 ) );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -259,7 +259,7 @@ void Map::UpdateActors( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation )
+void Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color /*= Rgba8::WHITE*/ )
 {
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
@@ -269,17 +269,18 @@ void Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles 
 		{
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
-			Actor* marine = new Actor( position, orientation, &actorDef, newActorHandle, this, false, Rgba8( 0, 200, 0 ) );
+			Actor* marine = new Actor( position, orientation, &actorDef, newActorHandle, this, false, color );
 			m_actors.push_back( marine );
 
 			m_player = new Player( this, newActorHandle );
 			m_player->Possess( m_player->m_actorHandle );
+			break;
 		}
 	}
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation )
+Actor* Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color /*= Rgba8::WHITE*/ )
 {
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
@@ -289,10 +290,13 @@ void Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles c
 		{
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
-			Actor* newActor = new Actor( position, orientation, &actorDef, newActorHandle, this, true, Rgba8( 200, 0, 0 ) );
+			Actor* newActor = new Actor( position, orientation, &actorDef, newActorHandle, this, true, color );
 			m_actors.push_back( newActor );
+			return newActor;
 		}
 	}
+
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -319,6 +323,10 @@ void Map::CollideActors()
 void Map::CollideActors( Actor* actorA, Actor* actorB )
 {
 	if( actorA == actorB )
+	{
+		return;
+	}
+	if( actorA->m_owner == actorB || actorB->m_owner == actorA )
 	{
 		return;
 	}

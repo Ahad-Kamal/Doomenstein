@@ -106,12 +106,16 @@ void Actor::RenderSetup()
 {
 	AddVertsForCylinder3D( m_vertexes, Vec3(), Vec3( 0.f, 0.f, 0.f + m_cosmeticHeight), m_cosmeticRadius, 16, m_color);
 	Vec3 arrowStart = Vec3( m_cosmeticRadius, 0.f, m_definition->GetCameraView().m_eyeHeight );
-	Vec3 arrowEnd =  Vec3( m_cosmeticRadius + 0.2f, 0.f, m_definition->GetCameraView().m_eyeHeight );
-	AddVertsForArrow3D( m_vertexes, arrowStart, arrowStart, arrowEnd, 0.1f, 16, m_color );
+	Vec3 arrowEnd =  Vec3( m_cosmeticRadius + 0.075f, 0.f, m_definition->GetCameraView().m_eyeHeight );
 
 	Rgba8 lighterColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r + 150 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g + 150 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b + 150 ), 0.f, 255.f ) );
 	AddVertsForCylinder3D( m_wireframeVertexes, Vec3(), Vec3( 0.f, 0.f, 0.f + m_cosmeticHeight), m_cosmeticRadius, 16, lighterColor );
-	AddVertsForArrow3D( m_wireframeVertexes, arrowStart, arrowStart, arrowEnd, 0.1f, 16, lighterColor );
+
+	if( m_definition->GetName() != "PlasmaProjectile" )
+	{
+		AddVertsForArrow3D( m_vertexes, arrowStart, arrowStart, arrowEnd, m_cosmeticRadius * 0.33f, 16, m_color );
+		AddVertsForArrow3D( m_wireframeVertexes, arrowStart, arrowStart, arrowEnd, m_cosmeticRadius * 0.33f, 16, lighterColor );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

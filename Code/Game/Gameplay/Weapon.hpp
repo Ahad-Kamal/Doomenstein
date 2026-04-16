@@ -14,9 +14,9 @@ public:
 	Weapon( WeaponDefinition* definition );
 
 	void Fire( Actor* owner );
-	Vec3 GetRandomDirectionInCone() const;
+	Vec3 GetRandomDirectionInCone( Vec3 const& forward, float yAxisOffset, float zAxisOffset ) const;
 
 public:
 	WeaponDefinition* m_definition;
-	ActorDefinition* m_projectileDefinition;
+	ActorDefinition* m_projectileDefinition = nullptr;
 };
