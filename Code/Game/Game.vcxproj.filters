@@ -61,6 +61,9 @@
     <ClCompile Include="Gameplay\Weapon.cpp">
       <Filter>Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="Gameplay\Actors\AI.cpp">
+      <Filter>Gameplay\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\App.hpp">
@@ -107,6 +110,9 @@
     </ClInclude>
     <ClInclude Include="Gameplay\Weapon.hpp">
       <Filter>Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Gameplay\Actors\AI.hpp">
+      <Filter>Gameplay\Actors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

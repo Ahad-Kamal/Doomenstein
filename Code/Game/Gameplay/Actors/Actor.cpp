@@ -231,6 +231,14 @@ bool Actor::Event_OnPossessed( EventArgs& args )
 			return true;
 		}
 	}
+	// AI possession
+	else
+	{
+		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player->m_actorHandle )
+		{
+
+		}
+	}
 
 	return false;
 }
