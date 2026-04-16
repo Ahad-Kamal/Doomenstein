@@ -6,6 +6,7 @@ class WeaponDefinition;
 class ActorDefinition;
 class Actor;
 struct Vec3;
+struct EulerAngles;
 
 //-----------------------------------------------------------------------------------------------
 class Weapon
@@ -14,7 +15,7 @@ public:
 	Weapon( WeaponDefinition* definition );
 
 	void Fire( Actor* owner );
-	Vec3 GetRandomDirectionInCone( Vec3 const& forward, float yAxisOffset, float zAxisOffset ) const;
+	EulerAngles GetRandomDirectionInCone( EulerAngles const& orientation, float yawOffset, float pitchOffset ) const;
 
 public:
 	WeaponDefinition* m_definition;

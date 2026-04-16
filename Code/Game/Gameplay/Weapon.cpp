@@ -8,6 +8,7 @@
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/Mat44.hpp"
 #include "Engine/Math/MathUtils.hpp"
+#include "Engine/Math/EulerAngles.hpp"
 #include <cmath>
 
 
@@ -63,25 +64,22 @@ void Weapon::Fire( Actor* owner )
 
 	if( weaponType == WEAPON_TYPE_PROJECTILE )
 	{
-		Vec3 forwardDirection = owner->m_orientation.GetForwardDir_IFwd_JLeft_KUp();
+		EulerAngles projectileDirection = owner->m_orientation;
 		float cone = m_definition->GetProjectileWeaponInfo().m_projectileCone;
-		//forwardDirection = GetRandomDirectionInCone( forwardDirection, cone, cone );
+		projectileDirection = GetRandomDirectionInCone( projectileDirection, cone, cone );
 
 		Vec3 projectileSpawnPosition = Vec3( owner->m_position.x, owner->m_position.y, owner->m_position.z + owner->m_definition->GetCameraView().m_eyeHeight );
-		Actor* newProjectile = owner->m_map->SpawnActor( m_projectileDefinition->GetName(), projectileSpawnPosition, EulerAngles(), Rgba8( 0, 0, 200 ) );
+		Actor* newProjectile = owner->m_map->SpawnActor( m_projectileDefinition->GetName(), projectileSpawnPosition, EulerAngles(), Rgba8(0, 0, 200));
 		newProjectile->m_owner = owner;
-		newProjectile->AddImpulse( forwardDirection * m_definition->GetProjectileWeaponInfo().m_projectileSpeed );
+		newProjectile->AddImpulse( projectileDirection.GetForwardDir_IFwd_JLeft_KUp() * m_definition->GetProjectileWeaponInfo().m_projectileSpeed );
 	}
 }
 
 //-----------------------------------------------------------------------------------------------
-Vec3 Weapon::GetRandomDirectionInCone( Vec3 const& forward, float yAxisOffset, float zAxisOffset ) const
+EulerAngles Weapon::GetRandomDirectionInCone( EulerAngles const& orientation, float yawOffset, float pitchOffset ) const
 {
-	yAxisOffset *= 0.5f;
-	zAxisOffset *= 0.5f;
+	float randomYawOffset = g_rng->RollRandomFloatInRange( -yawOffset, yawOffset );
+	float randomPitchOffset = g_rng->RollRandomFloatInRange( -pitchOffset, pitchOffset );
 
-	float randomYOffset = g_rng->RollRandomFloatInRange( -yAxisOffset, yAxisOffset );
-	float randomZOffset = g_rng->RollRandomFloatInRange( -zAxisOffset, zAxisOffset );
-
-	return Vec3( forward.x, forward.y + randomYOffset, forward.z + randomZOffset );
+	return EulerAngles( orientation.m_yawDegrees + randomYawOffset, orientation.m_pitchDegrees + randomPitchOffset, orientation.m_rollDegrees );
 }
