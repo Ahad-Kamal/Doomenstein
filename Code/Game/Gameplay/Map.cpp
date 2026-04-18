@@ -303,12 +303,36 @@ Actor* Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
 			Actor* newActor = new Actor( position, orientation, &actorDef, newActorHandle, this, !actorDef.GetPhysics().m_isSimulated, color );
-			m_actors.push_back( newActor );
+
+			int slotToInsert = GetFirstNullActorSlot();
+			if( slotToInsert < 0 )
+			{
+				m_actors.push_back( newActor );
+			}
+			else
+			{
+				m_actors[ slotToInsert ] = newActor;
+			}
+
 			return newActor;
 		}
 	}
 
 	return nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+int Map::GetFirstNullActorSlot()
+{
+	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
+	{
+		if( m_actors[ actorIndex ] == nullptr )
+		{
+			return actorIndex;
+		}
+	}
+
+	return -1;
 }
 
 //-----------------------------------------------------------------------------------------------
