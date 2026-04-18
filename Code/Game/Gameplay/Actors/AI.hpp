@@ -13,6 +13,8 @@ public:
 	AI( Map* currentMap, ActorHandle actorToPossess );
 
 	void Update( float deltaSeconds );
+
+	virtual void Possess( ActorHandle actorToPossess ) override;
 	void DamagedBy( ActorHandle target );
 
 public:

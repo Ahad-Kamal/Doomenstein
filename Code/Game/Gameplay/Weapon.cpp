@@ -41,7 +41,7 @@ void Weapon::Fire( Actor* owner )
 		startPosition.z = owner->m_definition->GetCameraView().m_eyeHeight * 0.9f;
 		Vec3 direction = owner->GetModelToWorldTransform().GetIBasis3D();
 
-		WeaponRaycastResult raycast = owner->m_map->WeaponRaycastAll( startPosition, direction, m_definition->GetRayWeaponInfo().m_rayRange, owner );
+		ActorRaycastResult raycast = owner->m_map->ActorRaycastAll( startPosition, direction, m_definition->GetRayWeaponInfo().m_rayRange, owner );
 
 		if( raycast.m_didImpact )
 		{

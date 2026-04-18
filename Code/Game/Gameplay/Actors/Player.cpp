@@ -198,7 +198,8 @@ void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		possesedActor->TurnInDirection( -g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f );
+		//possesedActor->TurnInDirection( -g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f );
+		possesedActor->m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
 	}
 
 	// Pitch

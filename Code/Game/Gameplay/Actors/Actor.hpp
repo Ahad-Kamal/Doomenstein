@@ -15,6 +15,7 @@ class NamedStrings;
 class Controller;
 class Map;
 class Weapon;
+class AI;
 
 //-----------------------------------------------------------------------------------------------
 typedef NamedStrings EventArgs;
@@ -38,7 +39,7 @@ public:
 	void AddForce( Vec3 const& force );
 	void AddImpulse( Vec3 const& impulse );
 	void MoveInDirection( Vec3 const& direction, float speed );
-	void TurnInDirection( float yawDegrees );
+	void TurnInDirection( Vec3 const& direction, float maxAmt );
 
 	void Damage( int incomingDamage );
 	bool IsAlive() const;
@@ -56,6 +57,7 @@ public:
 	Weapons		m_weapons;
 	Weapon*		m_equippedWeapon = nullptr;
 	Controller* m_controller = nullptr;
+	AI*			m_ai = nullptr;
 	Actor*		m_owner = nullptr;
 	
 	ActorDefinition* m_definition;

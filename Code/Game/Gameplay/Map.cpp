@@ -35,7 +35,7 @@ Map::Map( MapDefinition* definition )
 	CreateTiles();
 	CreateGeometry();
 
-	SpawnActor( "Demon", Vec3( 7.5f, 8.5f, 0.f ), EulerAngles(), Rgba8( 200, 0, 0 ) );
+	SpawnActor( "Demon", Vec3( 7.5f, 4.5f, 0.f ), EulerAngles(), Rgba8( 200, 0, 0 ) );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -304,6 +304,63 @@ Actor* Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles
 	}
 
 	return nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+Actor* Map::GetActorByHandle( ActorHandle actorHandle )
+{
+	Actor* actor = m_actors[ actorHandle.GetIndex() ];
+	if( actor->m_actorHandle != actorHandle )
+	{
+		return nullptr;
+	}
+
+	return actor;
+}
+
+//-----------------------------------------------------------------------------------------------
+ActorHandle Map::GetNearestVisibleEnemy( Actor* searchingActor )
+{
+	ActorHandle nearestActor = ActorHandle();
+	float nearestDist = FLT_MAX;
+
+	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
+	{
+		Actor*& enemyActor = m_actors[ actorIndex ];
+		if( enemyActor == nullptr )
+		{
+			continue;
+		}
+
+		Faction actorFaction = enemyActor->m_definition->GetFaction();
+		if( actorFaction == Faction::NEUTRAL )
+		{
+			continue;
+		}
+		if( actorFaction == searchingActor->m_definition->GetFaction() )
+		{
+			continue;
+		}
+
+		float distanceSqrd = GetDistanceSquared3D( searchingActor->m_position, enemyActor->m_position );
+
+		AIControl aiSettings = searchingActor->m_definition->GetAI();
+		bool isEnemyInSector = IsPointInsideOrientedSector2D( Vec2( enemyActor->m_position ), Vec2( searchingActor->m_position ), searchingActor->m_orientation.m_yawDegrees, aiSettings.m_sightAngle, aiSettings.m_sightRadius );
+
+		ActorRaycastResult actorRaycast = ActorRaycastAll( searchingActor->m_position, ( enemyActor->m_position - searchingActor->m_position ).GetNormalized(), aiSettings.m_sightRadius, searchingActor );
+		if( !isEnemyInSector || actorRaycast.m_impactedActor != enemyActor )
+		{
+			continue;
+		}
+
+		if( distanceSqrd < nearestDist )
+		{
+			nearestActor = enemyActor->m_actorHandle;
+			nearestDist = distanceSqrd;
+		}
+	}
+
+	return nearestActor;
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -840,12 +897,12 @@ RaycastResult3D Map::RaycastWorldActors( Vec3 const& start, Vec3 const& directio
 }
 
 //-----------------------------------------------------------------------------------------------
-WeaponRaycastResult Map::WeaponRaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner ) const
+ActorRaycastResult Map::ActorRaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner ) const
 {
-	WeaponRaycastResult raycastResult = WeaponRaycastResult();
+	ActorRaycastResult raycastResult = ActorRaycastResult();
 	RaycastResult3D raycastResultXY = RaycastWorldXY( start, direction, distance );
 	RaycastResult3D raycastResultZ = RaycastWorldZ( start, direction, distance );
-	WeaponRaycastResult raycastResultActors = WeaponRaycastActors( start, direction, distance, owner );
+	ActorRaycastResult raycastResultActors = ActorRaycastActors( start, direction, distance, owner );
 
 	if( !raycastResultXY.m_didImpact && !raycastResultZ.m_didImpact && !raycastResultActors.m_didImpact )
 	{
@@ -896,9 +953,9 @@ WeaponRaycastResult Map::WeaponRaycastAll( Vec3 const& start, Vec3 const& direct
 }
 
 //-----------------------------------------------------------------------------------------------
-WeaponRaycastResult Map::WeaponRaycastActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner /*= nullptr */ ) const
+ActorRaycastResult Map::ActorRaycastActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner /*= nullptr */ ) const
 {
-	WeaponRaycastResult result = WeaponRaycastResult();
+	ActorRaycastResult result = ActorRaycastResult();
 	std::vector<RaycastResult3D> raycastResults;
 	raycastResults.resize( m_actors.size() );
 

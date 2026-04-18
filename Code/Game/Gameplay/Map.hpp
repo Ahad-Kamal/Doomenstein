@@ -24,7 +24,7 @@ class Player;
 struct EulerAngles;
 
 //-----------------------------------------------------------------------------------------------
-struct WeaponRaycastResult : public RaycastResult3D
+struct ActorRaycastResult : public RaycastResult3D
 {
 	Actor* m_impactedActor;
 
@@ -52,6 +52,7 @@ public:
 	bool AreCoordsInBounds( int x, int y ) const;
 	bool IsPointInSolid( IntVec2 const& position ) const;
 	bool IsPointInSolid( Vec3 const& position ) const;
+
 	Tile const* GetTile( int x, int y ) const;
 	int	 GetTileIndexFromCoords( int x, int y ) const;
 	int	 GetTileIndexFromCoords( IntVec2 coords ) const;
@@ -63,6 +64,9 @@ public:
 
 	void SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color = Rgba8::WHITE );
 	Actor* SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color = Rgba8::WHITE );
+
+	Actor* GetActorByHandle( ActorHandle actorHandle );
+	ActorHandle GetNearestVisibleEnemy( Actor* searchingActor );
 
 	void CollideActors();
 	void CollideActors( Actor* actorA, Actor* actorB );
@@ -77,8 +81,8 @@ public:
 	RaycastResult3D RaycastWorldXY( Vec3 const& start, Vec3 const& direction, float distance ) const;
 	RaycastResult3D RaycastWorldZ( Vec3 const& start, Vec3 const& direction, float distance ) const;
 	RaycastResult3D RaycastWorldActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
-	WeaponRaycastResult WeaponRaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner ) const;
-	WeaponRaycastResult WeaponRaycastActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
+	ActorRaycastResult ActorRaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner ) const;
+	ActorRaycastResult ActorRaycastActors( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;
 
 	void DeleteGarbageActors();
 

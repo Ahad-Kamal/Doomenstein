@@ -46,7 +46,7 @@ struct CameraView
 };
 
 //-----------------------------------------------------------------------------------------------
-struct AI
+struct AIControl
 {
 	float m_sightRadius = 0.f;
 	float m_sightAngle = 0.f;
@@ -66,7 +66,7 @@ public:
 	Collision GetCollision() const;
 	Physics GetPhysics() const;
 	CameraView GetCameraView() const;
-	AI GetAI() const;
+	AIControl GetAI() const;
 	int GetHealth() const;
 	float GetCorpseLifetime() const;
 	bool GetIsVisible() const;
@@ -82,7 +82,7 @@ private:
 	Collision m_collision;
 	Physics m_physics;
 	CameraView m_cameraView;
-	AI m_ai;
+	AIControl m_ai;
 	Faction m_faction = Faction::NEUTRAL;
 	int m_health = 1;
 	float m_corpseLifetime = 0.f;

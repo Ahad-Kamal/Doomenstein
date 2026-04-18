@@ -237,7 +237,7 @@ CameraView ActorDefinition::GetCameraView() const
 }
 
 //-----------------------------------------------------------------------------------------------
-AI ActorDefinition::GetAI() const
+AIControl ActorDefinition::GetAI() const
 {
 	return m_ai;
 }

@@ -1,6 +1,7 @@
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Game/Gameplay/ActorDefinition.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
+#include "Game/Gameplay/Actors/AI.hpp"
 #include "Game/Gameplay/Weapon.hpp"
 #include "Game/Gameplay/Game.hpp"
 #include "Game/Gameplay/Map.hpp"
@@ -14,6 +15,8 @@
 #include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include <vector>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -51,6 +54,11 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 	{
 		m_equippedWeapon = m_weapons[ 0 ];
 	}
+	if( m_definition->GetAI().m_aiEnabled )
+	{
+		m_ai = new AI( m_map, m_actorHandle );
+		m_controller = m_ai;
+	}
 
 	SubscribeEventCallbackFunction( "Possess", Event_OnPossessed );
 	SubscribeEventCallbackFunction( "Unpossess", Event_OnUnpossessed );
@@ -68,6 +76,11 @@ Actor::~Actor()
 void Actor::Update( [[maybe_unused]] float deltaSeconds )
 {
 	UpdatePhysics( deltaSeconds );
+	if( m_controller == m_ai )
+	{
+		//TurnInDirection( Vec3( -1.f, 0.f, 0.f ), 5.f * deltaSeconds );
+		m_ai->Update( deltaSeconds );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -162,10 +175,15 @@ void Actor::MoveInDirection( Vec3 const& direction, float speed )
 }
 
 //-----------------------------------------------------------------------------------------------
-// Note: NEEDS TO TAKE IN A DIRECTION INSTEAD //-----------------------------------------------------------------------------------------------
-void Actor::TurnInDirection( float yawDegrees )
+void Actor::TurnInDirection( Vec3 const& direction, float maxAmt )
 {
-	m_orientation.m_yawDegrees += yawDegrees;
+	float currentYaw = m_orientation.m_yawDegrees;
+	Vec3 directionNormalized = direction.GetNormalized();
+	float targetYawRadians = atan2f( directionNormalized.y, directionNormalized.x );
+	float targetYaw = ConvertRadiansToDegrees( targetYawRadians );
+	
+	float turnAmt = GetShortestAngularDispDegrees( currentYaw, targetYaw );
+	m_orientation.m_yawDegrees += GetClamped( turnAmt, -maxAmt, maxAmt );
 }
 
 //-----------------------------------------------------------------------------------------------
