@@ -69,13 +69,23 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 //-----------------------------------------------------------------------------------------------
 Actor::~Actor()
 {
-
+	if( m_controller != m_map->m_player )
+	{
+		delete m_controller;
+	}
+	else
+	{
+		delete m_ai;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
 void Actor::Update( [[maybe_unused]] float deltaSeconds )
 {
-	UpdatePhysics( deltaSeconds );
+	if( !m_isDead )
+	{
+		UpdatePhysics( deltaSeconds );
+	}
 	if( m_ai != nullptr && m_ai == m_controller )
 	{
 		m_ai->Update( deltaSeconds );
@@ -85,7 +95,7 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Actor::Render() const
 {
-	if( m_controller == m_map->m_player && !m_map->m_player->m_isFreeFly )
+	if( m_controller == m_map->m_player && m_map->m_player->m_cameraMode == CAMERA_MODE_FIRST_PERSON )
 	{
 		return;
 	}

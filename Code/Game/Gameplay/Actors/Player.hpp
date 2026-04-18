@@ -7,6 +7,13 @@
 #include "Game/Framework/ActorHandle.hpp"
 
 
+enum CameraMode
+{
+	CAMERA_MODE_FIRST_PERSON,
+	CAMERA_MODE_FREE_FLY
+};
+
+
 //-----------------------------------------------------------------------------------------------
 struct Mat44;
 class ActorDefinition;
@@ -26,21 +33,22 @@ public:
 	void UpdateCamera();
 
 	virtual void Possess( ActorHandle actorToPossess ) override;
-	void SwitchWeapon( int weaponToSwitchTo );
 
+	void SwitchWeapon( int weaponToSwitchTo );
 	void WeaponKeyboardControls();
 
 	void FirstPersonKeyboardControls( float deltaSeconds );
 	void FirstPersonControllerControls( float deltaSeconds );
 	void FreeFlyKeyboardControls( float deltaSeconds );
 	void FreeFlyControllerControls( float deltaSeconds );
+	void SwitchCameraMode();
 
 	Mat44 GetModelToWorldTransform() const;
 
 public:
 	Camera* m_camera;
 	Vec3	m_position;
-	//Vec3	m_velocity;
 	EulerAngles m_orientation;
-	bool	m_isFreeFly = false;
+	//bool	m_isFreeFly = false;
+	CameraMode m_cameraMode = CAMERA_MODE_FIRST_PERSON;
 };

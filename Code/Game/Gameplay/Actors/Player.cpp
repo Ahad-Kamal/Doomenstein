@@ -70,7 +70,7 @@ void Player::UpdateInput( float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Player::UpdateCamera()
 {
-	if( !m_isFreeFly )
+	if( m_cameraMode == CAMERA_MODE_FIRST_PERSON )
 	{
 		Actor* possessedActor = GetActor();
 		Vec3 actorPosition = possessedActor->m_position;
@@ -123,7 +123,7 @@ void Player::SwitchWeapon( int weaponToSwitchTo )
 //-----------------------------------------------------------------------------------------------
 void Player::WeaponKeyboardControls()
 {
-	if( g_engine->m_input->IsKeyDown( KEYCODE_LEFT_MOUSE ) && !m_isFreeFly )
+	if( g_engine->m_input->IsKeyDown( KEYCODE_LEFT_MOUSE ) && m_cameraMode == CAMERA_MODE_FIRST_PERSON )
 	{
 		Actor* possessedActor = GetActor();
 		possessedActor->Attack();
@@ -183,7 +183,7 @@ void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 	Actor* possesedActor = GetActor();
 	ActorDefinition definition = *possesedActor->m_definition;
 
-	if( m_isFreeFly )
+	if( m_cameraMode == CAMERA_MODE_FREE_FLY )
 	{
 		possesedActor->m_velocity = Vec3();
 		return;
@@ -241,7 +241,7 @@ void Player::FirstPersonControllerControls( float deltaSeconds )
 	Actor* possesedActor = GetActor();
 	ActorDefinition definition = *GetActor()->m_definition;
 
-	if( m_isFreeFly )
+	if( m_cameraMode == CAMERA_MODE_FREE_FLY )
 	{
 		possesedActor->m_velocity = Vec3();
 		return;
@@ -303,7 +303,7 @@ void Player::FreeFlyKeyboardControls( float deltaSeconds )
 		return;
 	}
 
-	if( !m_isFreeFly )
+	if( m_cameraMode == CAMERA_MODE_FIRST_PERSON )
 	{
 		return;
 	}
@@ -383,10 +383,10 @@ void Player::FreeFlyControllerControls( float deltaSeconds )
 
 	if( g_engine->m_input->WasKeyJustPressed( 'F' ) )
 	{
-		m_isFreeFly = !m_isFreeFly;
+		SwitchCameraMode();
 	}
 
-	if( !m_isFreeFly )
+	if( m_cameraMode == CAMERA_MODE_FIRST_PERSON )
 	{
 		return;
 	}
@@ -456,6 +456,19 @@ void Player::FreeFlyControllerControls( float deltaSeconds )
 	Vec3 currentCameraPosition = m_camera->GetPosition();
 	m_camera->SetPosition( currentCameraPosition + velocity );
 	m_camera->SetOrientation( worldCameraOrientation );
+}
+
+//-----------------------------------------------------------------------------------------------
+void Player::SwitchCameraMode()
+{
+	if( m_cameraMode == CAMERA_MODE_FIRST_PERSON )
+	{
+		m_cameraMode = CAMERA_MODE_FREE_FLY;
+	}
+	else if( m_cameraMode == CAMERA_MODE_FREE_FLY )
+	{
+		m_cameraMode = CAMERA_MODE_FIRST_PERSON;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
