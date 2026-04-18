@@ -38,13 +38,15 @@ public:
 	void UpdatePhysics( float deltaSeconds );
 	void AddForce( Vec3 const& force );
 	void AddImpulse( Vec3 const& impulse );
+	void AddDirection( float yawDegrees );
 	void MoveInDirection( Vec3 const& direction, float speed );
 	void TurnInDirection( Vec3 const& direction, float maxAmt );
 
 	void Damage( int incomingDamage );
+	void EquipWeapon( int weaponToSwitchTo );
 	bool IsAlive() const;
 
-	IntVec2 GetCoordsOfCurrentTile();
+	IntVec2 GetCoordsOfCurrentTile() const;
 	Mat44 GetModelToWorldTransform() const;
 
 	static bool Event_OnPossessed( EventArgs& args );

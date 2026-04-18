@@ -137,7 +137,7 @@ void Player::WeaponKeyboardControls()
 		{
 			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
 			{
-				SwitchWeapon( weaponIndex - 1 );
+				possessedActor->EquipWeapon( weaponIndex - 1 );
 				break;
 			}
 		}
@@ -150,7 +150,7 @@ void Player::WeaponKeyboardControls()
 		{
 			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
 			{
-				SwitchWeapon( weaponIndex + 1 );
+				possessedActor->EquipWeapon( weaponIndex + 1 );
 				break;
 			}
 		}
@@ -159,26 +159,20 @@ void Player::WeaponKeyboardControls()
 	{
 		Actor* possessedActor = GetActor();
 		Weapons actorWeapons = possessedActor->m_weapons;
-		for( unsigned int weaponIndex = 0; weaponIndex < actorWeapons.size(); weaponIndex++ )
+		
+		if( !possessedActor->m_weapons.empty() )
 		{
-			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
-			{
-				SwitchWeapon( 0 );
-				break;
-			}
+			possessedActor->EquipWeapon( 0 );
 		}
 	}
 	if( g_engine->m_input->WasKeyJustPressed( '2' ) )
 	{
 		Actor* possessedActor = GetActor();
 		Weapons actorWeapons = possessedActor->m_weapons;
-		for( unsigned int weaponIndex = 0; weaponIndex < actorWeapons.size(); weaponIndex++ )
+		
+		if( possessedActor->m_weapons.size() > 1 )
 		{
-			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
-			{
-				SwitchWeapon( 1 );
-				break;
-			}
+			possessedActor->EquipWeapon( 1 );
 		}
 	}
 }
@@ -198,8 +192,7 @@ void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		//possesedActor->TurnInDirection( -g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f );
-		possesedActor->m_orientation.m_yawDegrees -= g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f;
+		possesedActor->AddDirection( -g_engine->m_input->m_cursorState.m_cursorClientDelta.x * 0.075f );
 	}
 
 	// Pitch

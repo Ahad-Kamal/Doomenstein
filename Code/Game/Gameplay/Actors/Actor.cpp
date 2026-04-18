@@ -166,6 +166,12 @@ void Actor::AddImpulse( Vec3 const& impulse )
 }
 
 //-----------------------------------------------------------------------------------------------
+void Actor::AddDirection( float yawDegrees )
+{
+	m_orientation.m_yawDegrees += yawDegrees;
+}
+
+//-----------------------------------------------------------------------------------------------
 void Actor::MoveInDirection( Vec3 const& direction, float speed )
 {
 	float forceMagnitude = speed * m_definition->GetPhysics().m_drag;
@@ -199,6 +205,21 @@ void Actor::Damage( int incomingDamage )
 }
 
 //-----------------------------------------------------------------------------------------------
+void Actor::EquipWeapon( int weaponToSwitchTo )
+{
+	if( weaponToSwitchTo >= static_cast<int>( m_weapons.size() ) )
+	{
+		weaponToSwitchTo = 0;
+	}
+	else if( weaponToSwitchTo <= -1 )
+	{
+		weaponToSwitchTo = static_cast<int>( m_weapons.size() ) - 1;
+	}
+
+	m_equippedWeapon = m_weapons[ weaponToSwitchTo ];
+}
+
+//-----------------------------------------------------------------------------------------------
 bool Actor::IsAlive() const
 {
 	if( this == nullptr )
@@ -210,7 +231,7 @@ bool Actor::IsAlive() const
 }
 
 //-----------------------------------------------------------------------------------------------
-IntVec2 Actor::GetCoordsOfCurrentTile()
+IntVec2 Actor::GetCoordsOfCurrentTile() const
 {
 	return IntVec2( RoundDownToInt( m_position.x ), RoundDownToInt( m_position.y ) );
 }
