@@ -315,6 +315,12 @@ Actor* Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles
 Actor* Map::GetActorByHandle( ActorHandle actorHandle )
 {
 	Actor* actor = m_actors[ actorHandle.GetIndex() ];
+
+	if( actor == nullptr )
+	{
+		return nullptr;
+	}
+
 	if( actor->m_actorHandle != actorHandle )
 	{
 		return nullptr;

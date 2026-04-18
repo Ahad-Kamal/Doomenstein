@@ -76,7 +76,7 @@ Actor::~Actor()
 void Actor::Update( [[maybe_unused]] float deltaSeconds )
 {
 	UpdatePhysics( deltaSeconds );
-	if( m_controller == m_ai && m_definition->GetAI().m_aiEnabled )
+	if( m_ai != nullptr && m_ai == m_controller )
 	{
 		m_ai->Update( deltaSeconds );
 	}
@@ -192,9 +192,14 @@ void Actor::TurnInDirection( Vec3 const& direction, float maxAmt )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Actor::Damage( int incomingDamage )
+void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 {
 	m_health -= incomingDamage;
+
+	if( m_ai != nullptr && m_ai == m_controller )
+	{
+		m_ai->m_targetActorHandle = damagingActor;
+	}
 
 	if( m_health <= 0 )
 	{
@@ -220,7 +225,15 @@ void Actor::OnCollide( Actor* collidingActor )
 		if( collidingActorDamageRange != FloatRange() )
 		{
 			float randomDamage = g_rng->RollRandomFloatInRange( collidingActorDamageRange.m_min, collidingActorDamageRange.m_max );
-			Damage( static_cast<int>( roundf( randomDamage ) ) );
+
+			if( collidingActor->m_owner != nullptr )
+			{
+				Damage( static_cast<int>( roundf( randomDamage ) ), collidingActor->m_owner->m_actorHandle );
+			}
+			else
+			{
+				Damage( static_cast<int>( roundf( randomDamage ) ), collidingActor->m_actorHandle );
+			}
 		}
 
 		float collidingActorImpulse = collidingActorDef.GetCollision().m_impulseOnCollide;

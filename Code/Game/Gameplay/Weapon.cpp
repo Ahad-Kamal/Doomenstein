@@ -52,7 +52,7 @@ void Weapon::Fire( Actor* owner )
 				FloatRange damageRange = m_definition->GetRayWeaponInfo().m_rayDamage;
 				float calculatedDamage = RangeMapClamped( raycast.m_implactDist, 0.f, raycast.m_rayMaxLength, damageRange.m_min, damageRange.m_max );
 
-				raycast.m_impactedActor->Damage( static_cast<int>( roundf( calculatedDamage ) ) );
+				raycast.m_impactedActor->Damage( static_cast<int>( roundf( calculatedDamage ) ), owner->m_actorHandle );
 			}
 		}
 		else
