@@ -76,9 +76,8 @@ Actor::~Actor()
 void Actor::Update( [[maybe_unused]] float deltaSeconds )
 {
 	UpdatePhysics( deltaSeconds );
-	if( m_controller == m_ai )
+	if( m_controller == m_ai && m_definition->GetAI().m_aiEnabled )
 	{
-		//TurnInDirection( Vec3( -1.f, 0.f, 0.f ), 5.f * deltaSeconds );
 		m_ai->Update( deltaSeconds );
 	}
 }
@@ -221,7 +220,8 @@ Mat44 Actor::GetModelToWorldTransform() const
 {
 	Mat44 modelMatrix;
 	modelMatrix.AppendTranslation3D( m_position );
-	modelMatrix.Append( m_orientation.GetAsMatrix_IFwd_JLeft_KUp() );
+	//modelMatrix.Append( m_orientation.GetAsMatrix_IFwd_JLeft_KUp() );
+	modelMatrix.AppendZRotation( m_orientation.m_yawDegrees );
 	return modelMatrix;
 }
 
@@ -277,7 +277,14 @@ bool Actor::Event_OnUnpossessed( EventArgs& args )
 	}
 
 	// TO-DO: Have the actor switch back to the AI controller, if it exists //-----------------------------------------------------------------------------------------------
-	targetActor->m_controller = nullptr;
+	if( targetActor->m_definition->GetAI().m_aiEnabled )
+	{
+		targetActor->m_controller = targetActor->m_ai;
+	}
+	else
+	{
+		targetActor->m_controller = nullptr;
+	}
 
 	return false;
 }

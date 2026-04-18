@@ -1029,9 +1029,13 @@ void Map::DebugPossessNext()
 				newIndex = 0;
 			}
 
-			if( m_actors[ newIndex ]->m_definition->GetCanBePossesed() )
+			if( m_actors[ newIndex ] != nullptr && m_actors[ newIndex ]->m_definition->GetCanBePossesed() )
 			{
 				validPossess = true;
+			}
+			else
+			{
+				newIndex += 1;
 			}
 		}
 
