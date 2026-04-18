@@ -425,7 +425,8 @@ void Map::CollideActors( Actor* actorA, Actor* actorB )
 
 	if( didImpact )
 	{
-		DamageActors( actorA, actorB );
+		actorA->OnCollide( actorB );
+		actorB->OnCollide( actorA );
 	}
 }
 
@@ -577,38 +578,6 @@ void Map::CollideActorWithMap( Actor* actor )
 		{
 			actor->m_isDead = true;
 			actor->m_isGarbage = true;
-		}
-	}
-}
-
-//-----------------------------------------------------------------------------------------------
-void Map::DamageActors( Actor* actorA, Actor* actorB )
-{
-	if( actorA->m_definition->GetCollision().m_dieOnCollide )
-	{
-		actorA->m_isDead = true;
-		actorA->m_isGarbage = true;
-	}
-	if( actorB->m_definition->GetCollision().m_dieOnCollide )
-	{
-		actorB->m_isDead = true;
-		actorB->m_isGarbage = true;
-	}
-
-	if( actorA->m_definition->GetFaction() != actorB->m_definition->GetFaction() )
-	{
-		FloatRange actorADamageRange = actorA->m_definition->GetCollision().m_damageOnCollide;
-		if( actorADamageRange != FloatRange() )
-		{
-			float randomDamage = g_rng->RollRandomFloatInRange( actorADamageRange.m_min, actorADamageRange.m_max );
-			actorB->Damage( static_cast<int>( roundf( randomDamage ) ) );
-		}
-
-		FloatRange actorBDamageRange = actorB->m_definition->GetCollision().m_damageOnCollide;
-		if( actorBDamageRange != FloatRange() )
-		{
-			float randomDamage = g_rng->RollRandomFloatInRange( actorBDamageRange.m_min, actorBDamageRange.m_max );
-			actorA->Damage( static_cast<int>( roundf( randomDamage ) ) );
 		}
 	}
 }

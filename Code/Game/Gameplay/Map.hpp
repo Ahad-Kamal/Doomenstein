@@ -73,8 +73,6 @@ public:
 	void CollideActorsWithMap();
 	void CollideActorWithMap( Actor* actor );
 
-	void DamageActors( Actor* actorA, Actor* actorB );
-
 	void Render();
 
 	RaycastResult3D RaycastAll( Vec3 const& start, Vec3 const& direction, float distance, Actor* owner = nullptr ) const;

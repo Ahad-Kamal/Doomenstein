@@ -16,6 +16,12 @@ AI::AI( Map* currentMap, ActorHandle actorToPossess )
 //-----------------------------------------------------------------------------------------------
 void AI::Update( [[maybe_unused]] float deltaSeconds )
 {
+	Actor* possessedActor = GetActor();
+	if( !possessedActor->IsAlive() )
+	{
+		return;
+	}
+
 	if( m_targetActorHandle == ActorHandle::INVALID )
 	{
 		ActorHandle enemyHandle = m_currentMap->GetClosestVisibleEnemy( GetActor() );
@@ -26,7 +32,6 @@ void AI::Update( [[maybe_unused]] float deltaSeconds )
 	}
 	else
 	{
-		Actor* possessedActor = m_currentMap->GetActorByHandle( m_actorHandle );
 		Actor* targetActor = m_currentMap->GetActorByHandle( m_targetActorHandle );
 		Physics possesedActorPhysics = possessedActor->m_definition->GetPhysics();
 		AIControl possesedActorAI = possessedActor->m_definition->GetAI();

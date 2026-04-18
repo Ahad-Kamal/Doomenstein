@@ -205,6 +205,35 @@ void Actor::Damage( int incomingDamage )
 }
 
 //-----------------------------------------------------------------------------------------------
+void Actor::OnCollide( Actor* collidingActor )
+{
+	if( m_definition->GetCollision().m_dieOnCollide )
+	{
+		m_isDead = true;
+		m_isGarbage = true;
+	}
+
+	ActorDefinition collidingActorDef = *collidingActor->m_definition;
+	if( m_definition->GetFaction() != collidingActorDef.GetFaction() )
+	{
+		FloatRange collidingActorDamageRange = collidingActorDef.GetCollision().m_damageOnCollide;
+		if( collidingActorDamageRange != FloatRange() )
+		{
+			float randomDamage = g_rng->RollRandomFloatInRange( collidingActorDamageRange.m_min, collidingActorDamageRange.m_max );
+			Damage( static_cast<int>( roundf( randomDamage ) ) );
+		}
+
+		float collidingActorImpulse = collidingActorDef.GetCollision().m_impulseOnCollide;
+		if( collidingActorImpulse > 0.f )
+		{
+			Vec3 direction = ( m_position - collidingActor->m_position ).GetNormalized();
+			direction.z = 0.f;
+			AddImpulse( direction * collidingActorImpulse );
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
 void Actor::EquipWeapon( int weaponToSwitchTo )
 {
 	if( weaponToSwitchTo >= static_cast<int>( m_weapons.size() ) )

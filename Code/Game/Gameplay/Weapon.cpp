@@ -68,7 +68,7 @@ void Weapon::Fire( Actor* owner )
 		float cone = m_definition->GetProjectileWeaponInfo().m_projectileCone;
 		projectileDirection = GetRandomDirectionInCone( projectileDirection, cone, cone );
 
-		Vec3 projectileSpawnPosition = Vec3( owner->m_position.x, owner->m_position.y, owner->m_position.z + owner->m_definition->GetCameraView().m_eyeHeight );
+		Vec3 projectileSpawnPosition = Vec3( owner->m_position.x, owner->m_position.y, owner->m_position.z + owner->m_definition->GetCameraView().m_eyeHeight * 0.85f );
 		Actor* newProjectile = owner->m_map->SpawnActor( m_projectileDefinition->GetName(), projectileSpawnPosition, EulerAngles(), Rgba8(0, 0, 200));
 		newProjectile->m_owner = owner;
 		newProjectile->AddImpulse( projectileDirection.GetForwardDir_IFwd_JLeft_KUp() * m_definition->GetProjectileWeaponInfo().m_projectileSpeed );
