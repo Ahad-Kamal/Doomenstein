@@ -192,6 +192,12 @@ void Actor::TurnInDirection( Vec3 const& direction, float maxAmt )
 }
 
 //-----------------------------------------------------------------------------------------------
+void Actor::Attack()
+{
+	m_equippedWeapon->Fire( this );
+}
+
+//-----------------------------------------------------------------------------------------------
 void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 {
 	m_health -= incomingDamage;

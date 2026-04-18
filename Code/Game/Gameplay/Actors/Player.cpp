@@ -123,10 +123,10 @@ void Player::SwitchWeapon( int weaponToSwitchTo )
 //-----------------------------------------------------------------------------------------------
 void Player::WeaponKeyboardControls()
 {
-	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_MOUSE ) && !m_isFreeFly )
+	if( g_engine->m_input->IsKeyDown( KEYCODE_LEFT_MOUSE ) && !m_isFreeFly )
 	{
 		Actor* possessedActor = GetActor();
-		possessedActor->m_equippedWeapon->Fire( possessedActor );
+		possessedActor->Attack();
 	}
 
 	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_LEFT_ARROW ) )

@@ -42,6 +42,7 @@ public:
 	void MoveInDirection( Vec3 const& direction, float speed );
 	void TurnInDirection( Vec3 const& direction, float maxAmt );
 
+	void Attack();
 	void Damage( int incomingDamage, ActorHandle damagingActor );
 	void OnCollide( Actor* collidingActor );
 	void EquipWeapon( int weaponToSwitchTo );

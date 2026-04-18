@@ -5,6 +5,7 @@
 #include "Game/Gameplay/Game.hpp"
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Engine/Core/DebugRender.hpp"
+#include "Engine/Core/Timer.hpp"
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/Mat44.hpp"
 #include "Engine/Math/MathUtils.hpp"
@@ -27,11 +28,20 @@ Weapon::Weapon( WeaponDefinition* definition )
 			}
 		}
 	}
+
+	m_cooldownTimer = new Timer( m_definition->GetRefireTime(), g_game->m_gameClock );
+	m_cooldownTimer->Start();
+	m_cooldownTimer->ElaspePeriod();
 }
 
 //-----------------------------------------------------------------------------------------------
 void Weapon::Fire( Actor* owner )
 {
+	if( !m_cooldownTimer->DecrementPeriodIfElapsed() )
+	{
+		return;
+	}
+
 	WeaponType weaponType = m_definition->GetType();
 	if( weaponType == WEAPON_TYPE_RAY )
 	{
@@ -69,6 +79,8 @@ void Weapon::Fire( Actor* owner )
 		projectileDirection = GetRandomDirectionInCone( projectileDirection, cone, cone );
 
 		Vec3 projectileSpawnPosition = Vec3( owner->m_position.x, owner->m_position.y, owner->m_position.z + owner->m_definition->GetCameraView().m_eyeHeight * 0.85f );
+		projectileSpawnPosition.x += owner->m_cosmeticRadius * CosDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
+		projectileSpawnPosition.y += owner->m_cosmeticRadius * SinDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
 		Actor* newProjectile = owner->m_map->SpawnActor( m_projectileDefinition->GetName(), projectileSpawnPosition, EulerAngles(), Rgba8(0, 0, 200));
 		newProjectile->m_owner = owner;
 		newProjectile->AddImpulse( projectileDirection.GetForwardDir_IFwd_JLeft_KUp() * m_definition->GetProjectileWeaponInfo().m_projectileSpeed );

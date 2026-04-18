@@ -429,6 +429,10 @@ void Map::CollideActors( Actor* actorA, Actor* actorB )
 	{
 		return;
 	}
+	if( actorA->m_definition->GetFaction() == Faction::NEUTRAL && actorB->m_definition->GetFaction() == Faction::NEUTRAL )
+	{
+		return;
+	}
 	if( actorA->m_isDead || actorB->m_isDead )
 	{
 		return;

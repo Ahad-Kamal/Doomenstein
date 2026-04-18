@@ -7,6 +7,7 @@ class ActorDefinition;
 class Actor;
 struct Vec3;
 struct EulerAngles;
+class Timer;
 
 //-----------------------------------------------------------------------------------------------
 class Weapon
@@ -20,4 +21,5 @@ public:
 public:
 	WeaponDefinition* m_definition;
 	ActorDefinition* m_projectileDefinition = nullptr;
+	Timer* m_cooldownTimer;
 };
