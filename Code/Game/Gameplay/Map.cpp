@@ -289,6 +289,11 @@ void Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles 
 //-----------------------------------------------------------------------------------------------
 Actor* Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color /*= Rgba8::WHITE*/ )
 {
+	if( m_currentUID >= ActorHandle::MAX_ACTOR_UID )
+	{
+		ERROR_AND_DIE( "ERROR: Actor limit reached" );
+	}
+
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
 		ActorDefinition& actorDef = ActorDefinition::s_actorDefs[ actorDefIndex ];
@@ -319,7 +324,7 @@ Actor* Map::GetActorByHandle( ActorHandle actorHandle )
 }
 
 //-----------------------------------------------------------------------------------------------
-ActorHandle Map::GetNearestVisibleEnemy( Actor* searchingActor )
+ActorHandle Map::GetClosestVisibleEnemy( Actor* searchingActor )
 {
 	ActorHandle nearestActor = ActorHandle();
 	float nearestDist = FLT_MAX;

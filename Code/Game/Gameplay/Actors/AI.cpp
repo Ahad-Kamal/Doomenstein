@@ -3,6 +3,7 @@
 #include "Game/Gameplay/Map.hpp"
 #include "Game/Gameplay/ActorDefinition.hpp"
 #include "Game/Framework/ActorHandle.hpp"
+#include "Engine/Math/MathUtils.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -17,7 +18,7 @@ void AI::Update( [[maybe_unused]] float deltaSeconds )
 {
 	if( m_targetActorHandle == ActorHandle::INVALID )
 	{
-		ActorHandle enemyHandle = m_currentMap->GetNearestVisibleEnemy( GetActor() );
+		ActorHandle enemyHandle = m_currentMap->GetClosestVisibleEnemy( GetActor() );
 		if( enemyHandle != ActorHandle::INVALID )
 		{
 			m_targetActorHandle = enemyHandle;
@@ -27,10 +28,18 @@ void AI::Update( [[maybe_unused]] float deltaSeconds )
 	{
 		Actor* possessedActor = m_currentMap->GetActorByHandle( m_actorHandle );
 		Actor* targetActor = m_currentMap->GetActorByHandle( m_targetActorHandle );
-
 		Physics possesedActorPhysics = possessedActor->m_definition->GetPhysics();
+		AIControl possesedActorAI = possessedActor->m_definition->GetAI();
+
 		possessedActor->TurnInDirection( targetActor->m_position - possessedActor->m_position, possesedActorPhysics.m_turnSpeed * deltaSeconds );
-		possessedActor->MoveInDirection( possessedActor->m_orientation.GetForwardDir_IFwd_JLeft_KUp(), possesedActorPhysics.m_walkSpeed );
+		if( GetDistanceSquared3D( possessedActor->m_position, targetActor->m_position ) > ( possesedActorAI.m_sightRadius * possesedActorAI.m_sightRadius * 0.002f ) )
+		{
+			possessedActor->MoveInDirection( possessedActor->m_orientation.GetForwardDir_IFwd_JLeft_KUp(), possesedActorPhysics.m_runSpeed );
+		}
+		else
+		{
+			possessedActor->MoveInDirection( possessedActor->m_orientation.GetForwardDir_IFwd_JLeft_KUp(), possesedActorPhysics.m_walkSpeed );
+		}
 	}
 }
 

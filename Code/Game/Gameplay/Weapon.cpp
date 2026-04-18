@@ -45,7 +45,7 @@ void Weapon::Fire( Actor* owner )
 
 		if( raycast.m_didImpact )
 		{
-			DebugAddWorldCylinder( startPosition, raycast.m_impactPos, 0.01f, 10.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
+			DebugAddWorldCylinder( startPosition, raycast.m_impactPos, 0.01f, 1.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
 
 			if( raycast.m_impactedActor )
 			{
