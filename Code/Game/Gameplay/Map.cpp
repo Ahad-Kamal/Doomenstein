@@ -283,7 +283,7 @@ void Map::UpdateActors( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color /*= Rgba8::WHITE*/ )
+Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color /*= Rgba8::WHITE*/ )
 {
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
@@ -296,11 +296,20 @@ void Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles 
 			Actor* marine = new Actor( position, orientation, &actorDef, newActorHandle, this, false, color );
 			m_actors.push_back( marine );
 
-			m_player = new Player( this, newActorHandle );
-			m_player->Possess( m_player->m_actorHandle );
-			break;
+			if( !m_player )
+			{
+				m_player = new Player( this, newActorHandle );
+				m_player->Possess( m_player->m_actorHandle );
+			}
+			else
+			{
+				m_player->Possess( newActorHandle );
+			}
+			return marine;
 		}
 	}
+
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------------------------

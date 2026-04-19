@@ -63,7 +63,7 @@ public:
 	void Update( float deltaSeconds );
 	void UpdateActors( float deltaSeconds );
 
-	void SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color = Rgba8::WHITE );
+	Actor* SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color = Rgba8::WHITE );
 	Actor* SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color = Rgba8::WHITE );
 	int GetFirstNullActorSlot();
 	SpawnInfo GetRandomSpawnPoint( Faction faction );

@@ -96,9 +96,8 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 
 			if( m_controller == m_map->m_player )
 			{
-				EventArgs args;
-				args.SetValue( "ActorIndex", Stringf( "%u", m_actorHandle.GetIndex() ) );
-				FireEvent( "Unpossess", args );
+				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
+				Actor* newPlayerActor = m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation, Rgba8( 0, 200, 0 ) );				
 			}
 		}
 		else if( m_controller == m_map->m_player )
