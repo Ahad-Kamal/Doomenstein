@@ -1050,11 +1050,6 @@ ActorRaycastResult Map::ActorRaycastActors( Vec3 const& start, Vec3 const& direc
 				result.m_impactedActor = actor;
 			}
 		}
-
-		/*if( result.m_didImpact )
-		{
-			result.m_impactedActor = actor;
-		}*/
 	}
 
 	return result;
