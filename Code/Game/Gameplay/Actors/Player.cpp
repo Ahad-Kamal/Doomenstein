@@ -119,7 +119,7 @@ void Player::SwitchWeapon( int weaponToSwitchTo )
 	Actor* possessedActor = GetActor();
 	Weapons actorWeapons = possessedActor->m_weapons;
 
-	if( weaponToSwitchTo >= actorWeapons.size() )
+	if( weaponToSwitchTo >= static_cast<int>( actorWeapons.size() ) )
 	{
 		weaponToSwitchTo = 0;
 	}
