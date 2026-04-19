@@ -45,6 +45,13 @@ void AI::Update( [[maybe_unused]] float deltaSeconds )
 		{
 			possessedActor->MoveInDirection( possessedActor->m_orientation.GetForwardDir_IFwd_JLeft_KUp(), possesedActorPhysics.m_walkSpeed );
 		}
+
+		possessedActor->Attack();
+
+		if( !targetActor->IsAlive() )
+		{
+			m_targetActorHandle = ActorHandle::INVALID;
+		}
 	}
 }
 

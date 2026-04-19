@@ -53,37 +53,68 @@ void Weapon::Fire( Actor* owner )
 
 		ActorRaycastResult raycast = owner->m_map->ActorRaycastAll( startPosition, direction, m_definition->GetRayWeaponInfo().m_rayRange, owner );
 
-		if( raycast.m_didImpact )
+		RayWeapon rayDef = m_definition->GetRayWeaponInfo();
+		for( int rayCount = 0; rayCount < rayDef.m_rayCount; rayCount++ )
 		{
-			DebugAddWorldCylinder( startPosition, raycast.m_impactPos, 0.01f, 1.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
-
-			if( raycast.m_impactedActor )
+			if( raycast.m_didImpact )
 			{
-				FloatRange damageRange = m_definition->GetRayWeaponInfo().m_rayDamage;
-				float calculatedDamage = RangeMapClamped( raycast.m_implactDist, 0.f, raycast.m_rayMaxLength, damageRange.m_min, damageRange.m_max );
+				DebugAddWorldCylinder( startPosition, raycast.m_impactPos, 0.01f, 1.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
 
-				raycast.m_impactedActor->Damage( static_cast<int>( roundf( calculatedDamage ) ), owner->m_actorHandle );
+				if( raycast.m_impactedActor )
+				{
+					FloatRange damageRange = rayDef.m_rayDamage;
+					float calculatedDamage = g_rng->RollRandomFloatInRange( damageRange.m_min, damageRange.m_max );
+
+					raycast.m_impactedActor->Damage( static_cast<int>( roundf( calculatedDamage ) ), owner->m_actorHandle );
+				}
 			}
-		}
-		else
-		{
-			Vec3 endPosition = startPosition + ( direction * 10.f );
-			DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
+			else
+			{
+				Vec3 endPosition = startPosition + ( direction * 10.f );
+				DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
+			}
 		}
 	}
 
 	if( weaponType == WEAPON_TYPE_PROJECTILE )
 	{
 		EulerAngles projectileDirection = owner->m_orientation;
-		float cone = m_definition->GetProjectileWeaponInfo().m_projectileCone;
-		projectileDirection = GetRandomDirectionInCone( projectileDirection, cone, cone );
+		ProjectileWeapon projectileDef = m_definition->GetProjectileWeaponInfo();
+		float cone = projectileDef.m_projectileCone;
 
-		Vec3 projectileSpawnPosition = Vec3( owner->m_position.x, owner->m_position.y, owner->m_position.z + owner->m_definition->GetCameraView().m_eyeHeight * 0.85f );
-		projectileSpawnPosition.x += owner->m_cosmeticRadius * CosDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
-		projectileSpawnPosition.y += owner->m_cosmeticRadius * SinDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
-		Actor* newProjectile = owner->m_map->SpawnActor( m_projectileDefinition->GetName(), projectileSpawnPosition, EulerAngles(), Rgba8(0, 0, 200));
-		newProjectile->m_owner = owner;
-		newProjectile->AddImpulse( projectileDirection.GetForwardDir_IFwd_JLeft_KUp() * m_definition->GetProjectileWeaponInfo().m_projectileSpeed );
+		for( int projectileCount = 0; projectileCount < projectileDef.m_projectileCount; projectileCount++ )
+		{
+			projectileDirection = GetRandomDirectionInCone( projectileDirection, cone, cone );
+
+			Vec3 projectileSpawnPosition = Vec3( owner->m_position.x, owner->m_position.y, owner->m_position.z + owner->m_definition->GetCameraView().m_eyeHeight * 0.85f );
+			projectileSpawnPosition.x += owner->m_cosmeticRadius * CosDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
+			projectileSpawnPosition.y += owner->m_cosmeticRadius * SinDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
+			Actor* newProjectile = owner->m_map->SpawnActor( m_projectileDefinition->GetName(), projectileSpawnPosition, EulerAngles(), Rgba8(0, 0, 200));
+			newProjectile->m_owner = owner;
+			newProjectile->AddImpulse( projectileDirection.GetForwardDir_IFwd_JLeft_KUp() * projectileDef.m_projectileSpeed );
+		}
+	}
+
+	if( weaponType == WEAPON_TYPE_MELEE )
+	{
+		// Note this wont work if the owner does not have an ai controller
+		ActorHandle targetActorHandle = owner->m_map->GetClosestVisibleEnemy( owner );
+
+		if( targetActorHandle == ActorHandle::INVALID )
+		{
+			return;
+		}
+
+		Actor* targetActor = owner->m_map->GetActorByHandle( targetActorHandle );
+
+		MeleeWeapon meleeDef = m_definition->GetMeleeWeaponInfo();
+		if( IsPointInsideOrientedSector2D( Vec2( targetActor->m_position ), Vec2( owner->m_position ), owner->m_orientation.m_yawDegrees, meleeDef.m_meleeArc, meleeDef.m_meleeRange ) )
+		{
+			FloatRange damageRange = meleeDef.m_meleeDamage;
+
+			float calculatedDamage = g_rng->RollRandomFloatInRange( damageRange.m_min, damageRange.m_max );
+			targetActor->Damage( static_cast<int>( roundf( calculatedDamage ) ), owner->m_actorHandle );
+		}
 	}
 }
 
