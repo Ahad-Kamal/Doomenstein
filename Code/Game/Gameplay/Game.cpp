@@ -429,9 +429,13 @@ void Game::DebugDrawWorldBounds() const
 //-----------------------------------------------------------------------------------------------
 void Game::DebugAddDebugText() const
 {
-	AABB2 positionBox = AABB2( 1.f, 784.f, 800.f, 799.f );
+	/*AABB2 positionBox = AABB2( 1.f, 784.f, 800.f, 799.f );
 	std::string positionText = Stringf( "Position: %.2f, %.2f, %.2f", m_worldCamera->GetPosition().x, m_worldCamera->GetPosition().y, m_worldCamera->GetPosition().z );
-	DebugAddScreenText( positionText, positionBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
+	DebugAddScreenText( positionText, positionBox, 15.f, Vec2( 0.f, 1.f ), 0.f );*/
+
+	AABB2 healthBox = AABB2( 1.f, 784.f, 800.f, 799.f );
+	std::string healthText = Stringf( "Health: %d", m_currentMap->GetActorByHandle( m_currentMap->m_player->m_actorHandle )->m_health );
+	DebugAddScreenText( healthText, healthBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
 
 	AABB2 timeBox = AABB2( 800.f, 784.f, 1599.f, 799.f );
 	float totalSeconds = static_cast<float>( Clock::GetSystemClock().GetTotalSeconds() );
@@ -453,10 +457,10 @@ void Game::DebugAddDebugText() const
 	//	DebugAddScreenText( cameraText, cameraTextbox, 15.f, Vec2( 0.5f, 0.5f ), 0.f );
 	//}
 
-	AABB2 lightingBox = AABB2( 800.f, 739.f, 1599.f, 784.f );
+	/*AABB2 lightingBox = AABB2( 800.f, 739.f, 1599.f, 784.f );
 	std::string lightingText = Stringf( "Sun Direction X: %.0f [F2 / F3 to change]\nSun Direction Y: %0.f [F4 / F5 to change]\nSun Intensity: %.2f [F6 / F7 to change]\n Ambient Intensity: %.2f [F8 / F9 to change]",
 		g_game->m_sunDirection.x, g_game->m_sunDirection.y, m_sunIntensity, m_ambientIntensity );
-	DebugAddScreenText( lightingText, lightingBox, 25.f, Vec2( 1.f, 0.f ), 0.f );
+	DebugAddScreenText( lightingText, lightingBox, 25.f, Vec2( 1.f, 0.f ), 0.f );*/
 }
 
 //-----------------------------------------------------------------------------------------------
