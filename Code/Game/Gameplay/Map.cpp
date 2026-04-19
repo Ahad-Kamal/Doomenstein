@@ -354,6 +354,24 @@ Actor* Map::GetActorByHandle( ActorHandle actorHandle )
 }
 
 //-----------------------------------------------------------------------------------------------
+Actor* Map::GetActorByIndex( int actorIndex )
+{
+	Actor* actor = m_actors[ actorIndex ];
+
+	if( actor == nullptr )
+	{
+		return nullptr;
+	}
+
+	if( actor->m_actorHandle == ActorHandle::INVALID )
+	{
+		return nullptr;
+	}
+
+	return actor;
+}
+
+//-----------------------------------------------------------------------------------------------
 ActorHandle Map::GetClosestVisibleEnemy( Actor* searchingActor )
 {
 	ActorHandle nearestActor = ActorHandle();

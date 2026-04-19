@@ -132,7 +132,7 @@ void ActorDefinition::InitializeProjectileActorDefs()
 		// Basic Info
 		currentActorDef.m_name = actorDefBlackboard.GetValue( "name", "" );
 		currentActorDef.m_health = actorDefBlackboard.GetValue( "health", 1 );
-		currentActorDef.m_corpseLifetime = actorDefBlackboard.GetValue( "corpseLifetime", 0.f );
+		currentActorDef.m_corpseLifetime = static_cast<double>( actorDefBlackboard.GetValue( "corpseLifetime", 0.f ) );
 		currentActorDef.m_isVisible = actorDefBlackboard.GetValue( "visible", false );
 		currentActorDef.m_canBePossessed = actorDefBlackboard.GetValue( "canBePossessed", false );
 		std::string faction = actorDefBlackboard.GetValue( "faction", "neutral" );
@@ -249,7 +249,7 @@ int ActorDefinition::GetHealth() const
 }
 
 //-----------------------------------------------------------------------------------------------
-float ActorDefinition::GetCorpseLifetime() const
+double ActorDefinition::GetCorpseLifetime() const
 {
 	return m_corpseLifetime;
 }

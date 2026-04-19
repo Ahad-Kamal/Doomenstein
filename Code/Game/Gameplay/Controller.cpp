@@ -18,6 +18,8 @@ void Controller::Possess( ActorHandle actorToPossess )
 	// Note: add logic notifying actor that its been unpossessed
 
 	// Note: add logic notifying actor that its been possessed
+
+	// Note: This code might be unused entirely
 	m_actorHandle = actorToPossess;
 	EventArgs args;
 	args.SetValue( "ActorIndex", Stringf( "%u", m_actorHandle.GetIndex() ) );
@@ -27,7 +29,6 @@ void Controller::Possess( ActorHandle actorToPossess )
 //-----------------------------------------------------------------------------------------------
 Actor* Controller::GetActor()
 {
-	int actorIndex = m_actorHandle.GetIndex();
-	Actor* possesedActor = m_currentMap->m_actors[ actorIndex ];
+	Actor* possesedActor = m_currentMap->GetActorByHandle( m_actorHandle );
 	return possesedActor;
 }

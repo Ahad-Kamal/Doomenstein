@@ -57,6 +57,11 @@ void Player::UpdateInput( float deltaSeconds )
 		return;
 	}
 
+	if( g_engine->m_input->WasKeyJustPressed( 'F' ) )
+	{
+		SwitchCameraMode();
+	}
+
 	FirstPersonKeyboardControls( deltaSeconds );
 	FirstPersonControllerControls( deltaSeconds );
 
@@ -74,7 +79,12 @@ void Player::UpdateCamera()
 	{
 		Actor* possessedActor = GetActor();
 		Vec3 actorPosition = possessedActor->m_position;
-		actorPosition.z = possessedActor->m_definition->GetCameraView().m_eyeHeight;
+
+		if( possessedActor->IsAlive() )
+		{
+			actorPosition.z = possessedActor->m_definition->GetCameraView().m_eyeHeight;
+		}
+
 		m_position = actorPosition;
 		m_orientation = possessedActor->m_orientation;
 
@@ -181,13 +191,20 @@ void Player::WeaponKeyboardControls()
 void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 {
 	Actor* possesedActor = GetActor();
-	ActorDefinition definition = *possesedActor->m_definition;
+
+	if( !possesedActor )
+	{
+		m_cameraMode = CAMERA_MODE_FREE_FLY;
+		return;
+	}
 
 	if( m_cameraMode == CAMERA_MODE_FREE_FLY )
 	{
 		possesedActor->m_velocity = Vec3();
 		return;
 	}
+
+	ActorDefinition definition = *possesedActor->m_definition;
 
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
@@ -239,13 +256,20 @@ void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 void Player::FirstPersonControllerControls( float deltaSeconds )
 {
 	Actor* possesedActor = GetActor();
-	ActorDefinition definition = *GetActor()->m_definition;
+
+	if( !possesedActor )
+	{
+		m_cameraMode = CAMERA_MODE_FREE_FLY;
+		return;
+	}
 
 	if( m_cameraMode == CAMERA_MODE_FREE_FLY )
 	{
 		possesedActor->m_velocity = Vec3();
 		return;
 	}
+
+	ActorDefinition definition = *GetActor()->m_definition;
 
 	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
 	// Yaw
@@ -379,11 +403,6 @@ void Player::FreeFlyControllerControls( float deltaSeconds )
 	if( g_game->m_currentState != GAME_STATE_PLAY )
 	{
 		return;
-	}
-
-	if( g_engine->m_input->WasKeyJustPressed( 'F' ) )
-	{
-		SwitchCameraMode();
 	}
 
 	if( m_cameraMode == CAMERA_MODE_FIRST_PERSON )

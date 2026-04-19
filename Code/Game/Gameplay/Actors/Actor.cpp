@@ -11,6 +11,8 @@
 #include "Engine/Core/VertexUtils.hpp"
 #include "Engine/Core/NamedStrings.hpp"
 #include "Engine/Core/EventSystem.hpp"
+#include "Engine/Core/Timer.hpp"
+#include "Engine/Core/StringUtils.hpp"
 #include "Engine/Math/Mat44.hpp"
 #include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/MathUtils.hpp"
@@ -85,6 +87,29 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 	if( !m_isDead )
 	{
 		UpdatePhysics( deltaSeconds );
+	}
+	else
+	{
+		if( m_deathTimer->HasPeriodElapsed() )
+		{
+			m_isGarbage = true;
+
+			if( m_controller == m_map->m_player )
+			{
+				EventArgs args;
+				args.SetValue( "ActorIndex", Stringf( "%u", m_actorHandle.GetIndex() ) );
+				FireEvent( "Unpossess", args );
+			}
+		}
+		else if( m_controller == m_map->m_player )
+		{
+			float eyeHeight = m_definition->GetCameraView().m_eyeHeight;
+			float deathTime = static_cast<float>( m_deathTimer->GetElaspedFraction() ) * 2.f;
+			float zValue = Interpolate( eyeHeight, 0.f, deathTime );
+			zValue = RangeMapClamped( zValue, 1.f, 0.f, eyeHeight, 0.f );
+
+			m_position.z = zValue;
+		}
 	}
 	if( m_ai != nullptr && m_ai == m_controller )
 	{
@@ -222,6 +247,9 @@ void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 		m_isDead = true;
 		Rgba8 deadColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b - 100 ), 0.f, 255.f ) );
 		SetColor( deadColor );
+
+		m_deathTimer = new Timer( m_definition->GetCorpseLifetime(), g_game->m_gameClock );
+		m_deathTimer->Start();
 	}
 }
 
@@ -313,7 +341,7 @@ bool Actor::Event_OnPossessed( EventArgs& args )
 		return false;
 	}
 
-	Actor* targetActor = g_game->m_currentMap->m_actors[ actorIndex ];
+	Actor* targetActor = g_game->m_currentMap->GetActorByIndex( actorIndex );
 	if( targetActor == nullptr )
 	{
 		return false;
@@ -349,13 +377,12 @@ bool Actor::Event_OnUnpossessed( EventArgs& args )
 		return false;
 	}
 
-	Actor* targetActor = g_game->m_currentMap->m_actors[ actorIndex ];
+	Actor* targetActor = g_game->m_currentMap->GetActorByIndex( actorIndex );
 	if( targetActor == nullptr )
 	{
 		return false;
 	}
 
-	// TO-DO: Have the actor switch back to the AI controller, if it exists //-----------------------------------------------------------------------------------------------
 	if( targetActor->m_definition->GetAI().m_aiEnabled )
 	{
 		targetActor->m_controller = targetActor->m_ai;
@@ -365,5 +392,5 @@ bool Actor::Event_OnUnpossessed( EventArgs& args )
 		targetActor->m_controller = nullptr;
 	}
 
-	return false;
+	return true;
 }

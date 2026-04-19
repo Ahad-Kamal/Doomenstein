@@ -49,6 +49,5 @@ public:
 	Camera* m_camera;
 	Vec3	m_position;
 	EulerAngles m_orientation;
-	//bool	m_isFreeFly = false;
 	CameraMode m_cameraMode = CAMERA_MODE_FIRST_PERSON;
 };

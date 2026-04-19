@@ -67,6 +67,7 @@ public:
 	int GetFirstNullActorSlot();
 
 	Actor* GetActorByHandle( ActorHandle actorHandle );
+	Actor* GetActorByIndex( int actorIndex );
 	ActorHandle GetClosestVisibleEnemy( Actor* searchingActor );
 
 	void CollideActors();
@@ -90,10 +91,10 @@ public:
 
 public:
 	Player*	m_player = nullptr;
-	std::vector<Actor*> m_actors;
 
 protected:
 	MapDefinition const* m_definition = nullptr;
+	std::vector<Actor*> m_actors;
 	std::vector<Tile> m_tiles;
 
 	std::vector<Vertex_PCUTBN> m_vertexes;

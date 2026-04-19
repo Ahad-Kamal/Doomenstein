@@ -68,7 +68,7 @@ public:
 	CameraView GetCameraView() const;
 	AIControl GetAI() const;
 	int GetHealth() const;
-	float GetCorpseLifetime() const;
+	double GetCorpseLifetime() const;
 	bool GetIsVisible() const;
 	bool GetCanBePossesed() const;
 	Faction GetFaction() const;
@@ -85,7 +85,7 @@ private:
 	AIControl m_ai;
 	Faction m_faction = Faction::NEUTRAL;
 	int m_health = 1;
-	float m_corpseLifetime = 0.f;
+	double m_corpseLifetime = 0.0;
 	bool m_isVisible = false;
 	bool m_canBePossessed = false;
 };
