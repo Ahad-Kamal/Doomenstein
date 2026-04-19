@@ -71,7 +71,7 @@ void MapDefinition::InitializeMapDefs()
 			spawnInfoElement = spawnInfoElement->NextSiblingElement();
 		}
 
-		currentElement = currentElement->NextSiblingElement();
+ 		currentElement = currentElement->NextSiblingElement();
 	}
 }
 
@@ -109,6 +109,12 @@ Texture* MapDefinition::GetSpriteSheetTexture() const
 IntVec2 MapDefinition::GetSpriteSheetCellCount() const
 {
 	return m_spriteSheetCellCount;
+}
+
+//-----------------------------------------------------------------------------------------------
+std::vector<SpawnInfo> MapDefinition::GetSpawnPoints() const
+{
+	return m_spawnPoints;
 }
 
 //-----------------------------------------------------------------------------------------------

@@ -1,5 +1,4 @@
 #include "Game/Gameplay/Map.hpp"
-#include "Game/Gameplay/MapDefinition.hpp"
 #include "Game/Gameplay/Tile.hpp"
 #include "Game/Gameplay/TileDefinition.hpp"
 #include "Game/Gameplay/Game.hpp"
@@ -35,7 +34,25 @@ Map::Map( MapDefinition* definition )
 	CreateTiles();
 	CreateGeometry();
 
-	SpawnActor( "Demon", Vec3( 7.5f, 4.5f, 0.f ), EulerAngles(), Rgba8( 200, 0, 0 ) );
+	std::vector<SpawnInfo> spawnPoints = m_definition->GetSpawnPoints();
+	for( unsigned int spawnIndex = 0; spawnIndex < spawnPoints.size(); spawnIndex++ )
+	{
+		SpawnInfo spawnPoint = spawnPoints[ spawnIndex ];
+		if( spawnPoint.m_actorName == "SpawnPoint" )
+		{
+			m_marineSpawnPoints.push_back( spawnPoint );
+		}
+		else if( spawnPoint.m_actorName == "Demon" )
+		{
+			m_demonSpawnPoints.push_back( spawnPoint );
+		}
+	}
+
+	for( unsigned int demonIndex = 0; demonIndex < m_demonSpawnPoints.size(); demonIndex++ )
+	{
+		SpawnInfo demonSpawn = m_demonSpawnPoints[ demonIndex ];
+		SpawnActor( "Demon", demonSpawn.m_position, demonSpawn.m_orientation, Rgba8( 200, 0, 0 ) );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -333,6 +350,26 @@ int Map::GetFirstNullActorSlot()
 	}
 
 	return -1;
+}
+
+//-----------------------------------------------------------------------------------------------
+SpawnInfo Map::GetRandomSpawnPoint( Faction faction )
+{
+	if( faction == Faction::MARINE )
+	{
+		int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_marineSpawnPoints.size() - 1 ) );
+		SpawnInfo startingSpawn = m_marineSpawnPoints[ randomSpawnIndex ];
+		return startingSpawn;
+	}
+
+	if( faction == Faction::DEMON )
+	{
+		int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_demonSpawnPoints.size() - 1 ) );
+		SpawnInfo startingSpawn = m_demonSpawnPoints[ randomSpawnIndex ];
+		return startingSpawn;
+	}
+
+	return SpawnInfo();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -1003,19 +1040,21 @@ ActorRaycastResult Map::ActorRaycastActors( Vec3 const& start, Vec3 const& direc
 		if( !result.m_didImpact && raycast->m_didImpact )
 		{
 			result = *raycast;
+			result.m_impactedActor = actor;
 		}
 		else if( result.m_didImpact && raycast->m_didImpact )
 		{
 			if( result.m_implactDist > raycast->m_implactDist )
 			{
 				result = *raycast;
+				result.m_impactedActor = actor;
 			}
 		}
 
-		if( result.m_didImpact )
+		/*if( result.m_didImpact )
 		{
 			result.m_impactedActor = actor;
-		}
+		}*/
 	}
 
 	return result;

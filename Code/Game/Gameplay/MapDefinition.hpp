@@ -32,6 +32,7 @@ public:
 	Shader* GetShader() const;
 	Texture* GetSpriteSheetTexture() const;
 	IntVec2 GetSpriteSheetCellCount() const;
+	std::vector<SpawnInfo> GetSpawnPoints() const;
 
 	static MapDefinition* GetMapDefFromName( std::string name );
 

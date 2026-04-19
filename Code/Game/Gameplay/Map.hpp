@@ -1,5 +1,7 @@
 #pragma once
 #include "Game/Gameplay/Controller.hpp"
+#include "Game/Gameplay/MapDefinition.hpp"
+#include "Game/Gameplay/ActorDefinition.hpp"
 #include "Engine/Core/Vertex_PCUTBN.hpp"
 #include "Engine/Math/RaycastUtils.hpp"
 #include <vector>
@@ -9,7 +11,6 @@
 //-----------------------------------------------------------------------------------------------
 class Game;
 class Actor;
-class MapDefinition;
 class TileDefinitions;
 struct Tile;
 struct IntVec2;
@@ -65,6 +66,7 @@ public:
 	void SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color = Rgba8::WHITE );
 	Actor* SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color = Rgba8::WHITE );
 	int GetFirstNullActorSlot();
+	SpawnInfo GetRandomSpawnPoint( Faction faction );
 
 	Actor* GetActorByHandle( ActorHandle actorHandle );
 	Actor* GetActorByIndex( int actorIndex );
@@ -93,6 +95,8 @@ public:
 	Player*	m_player = nullptr;
 
 protected:
+	std::vector<SpawnInfo> m_marineSpawnPoints;
+	std::vector<SpawnInfo> m_demonSpawnPoints;
 	MapDefinition const* m_definition = nullptr;
 	std::vector<Actor*> m_actors;
 	std::vector<Tile> m_tiles;
