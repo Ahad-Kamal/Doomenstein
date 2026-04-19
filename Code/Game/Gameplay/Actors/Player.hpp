@@ -36,6 +36,7 @@ public:
 
 	void SwitchWeapon( int weaponToSwitchTo );
 	void WeaponKeyboardControls();
+	void WeaponControllerControls();
 
 	void FirstPersonKeyboardControls( float deltaSeconds );
 	void FirstPersonControllerControls( float deltaSeconds );

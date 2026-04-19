@@ -70,6 +70,7 @@ void Player::UpdateInput( float deltaSeconds )
 	FreeFlyControllerControls( systemDeltaTime );
 
 	WeaponKeyboardControls();
+	WeaponControllerControls();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -180,6 +181,65 @@ void Player::WeaponKeyboardControls()
 		Actor* possessedActor = GetActor();
 		Weapons actorWeapons = possessedActor->m_weapons;
 		
+		if( possessedActor->m_weapons.size() > 1 )
+		{
+			possessedActor->EquipWeapon( 1 );
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Player::WeaponControllerControls()
+{
+	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
+
+	if( controller.GetRightTrigger() && m_cameraMode == CAMERA_MODE_FIRST_PERSON )
+	{
+		Actor* possessedActor = GetActor();
+		possessedActor->Attack();
+	}
+
+	if( controller.WasButtonJustPressed( XboxButtonID::D_PAD_DOWN ) )
+	{
+		Actor* possessedActor = GetActor();
+		Weapons actorWeapons = possessedActor->m_weapons;
+		for( unsigned int weaponIndex = 0; weaponIndex < actorWeapons.size(); weaponIndex++ )
+		{
+			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
+			{
+				possessedActor->EquipWeapon( weaponIndex - 1 );
+				break;
+			}
+		}
+	}
+	if( controller.WasButtonJustPressed( XboxButtonID::D_PAD_UP ) )
+	{
+		Actor* possessedActor = GetActor();
+		Weapons actorWeapons = possessedActor->m_weapons;
+		for( unsigned int weaponIndex = 0; weaponIndex < actorWeapons.size(); weaponIndex++ )
+		{
+			if( possessedActor->m_equippedWeapon == actorWeapons[ weaponIndex ] )
+			{
+				possessedActor->EquipWeapon( weaponIndex + 1 );
+				break;
+			}
+		}
+	}
+	if( controller.WasButtonJustPressed( XboxButtonID::X ) )
+	{
+		Actor* possessedActor = GetActor();
+		Weapons actorWeapons = possessedActor->m_weapons;
+
+		if( !possessedActor->m_weapons.empty() )
+		{
+			possessedActor->EquipWeapon( 0 );
+		}
+	}
+	if( controller.WasButtonJustPressed( XboxButtonID::Y ) )
+	{
+		Actor* possessedActor = GetActor();
+		Weapons actorWeapons = possessedActor->m_weapons;
+
 		if( possessedActor->m_weapons.size() > 1 )
 		{
 			possessedActor->EquipWeapon( 1 );
