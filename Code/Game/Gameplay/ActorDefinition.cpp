@@ -31,6 +31,7 @@ void ActorDefinition::InitializeActorDefs()
 		currentActorDef.m_corpseLifetime = actorDefBlackboard.GetValue( "corpseLifetime", 0.f );
 		currentActorDef.m_isVisible = actorDefBlackboard.GetValue( "visible", false );
 		currentActorDef.m_canBePossessed = actorDefBlackboard.GetValue( "canBePossessed", false );
+		currentActorDef.m_dieOnSpawn = actorDefBlackboard.GetValue( "dieOnSpawn", false );
 		std::string faction = actorDefBlackboard.GetValue( "faction", "neutral" );
 		if( faction == "Marine" || faction == "marine" )
 		{
@@ -103,10 +104,55 @@ void ActorDefinition::InitializeActorDefs()
 					weaponElement = weaponElement->NextSiblingElement();
 				}
 			}
+			// Visuals
+			else if( attributeName == "Visuals" )
+			{
+				currentActorDef.m_visuals.m_size = actorDefChildBlackboard.GetValue( "size", Vec2( 1.f, 1.f ) );
+				currentActorDef.m_visuals.m_pivot = actorDefChildBlackboard.GetValue( "pivot", Vec2( 0.5f, 0.5f ) );
+				currentActorDef.m_visuals.m_cellCount = actorDefChildBlackboard.GetValue( "cellCount", IntVec2( 1, 1 ) );
+				currentActorDef.m_visuals.m_shader = actorDefChildBlackboard.GetValue( "shader", "Default" );
+				currentActorDef.m_visuals.m_spriteSheet = actorDefChildBlackboard.GetValue( "spriteSheet", "Default" );
+				currentActorDef.m_visuals.m_renderLit = actorDefChildBlackboard.GetValue( "renderLit", false );
+				currentActorDef.m_visuals.m_renderRounded = actorDefChildBlackboard.GetValue( "renderRounded", false );
+				std::string billboardString = actorDefChildBlackboard.GetValue( "billboardType", "NONE" );
+				currentActorDef.m_visuals.m_billboardType = GetBillboardTypeFromString( billboardString );
 
+				XmlElement* animGroupElement = childElement->FirstChildElement();
+				while( animGroupElement )
+				{
+					AnimationGroup newAnimGroup;
+					NamedStrings actorDefAnimGroupBlackboard;
+					actorDefAnimGroupBlackboard.PopulateFromXmlElementAttributes( *animGroupElement );
+
+					newAnimGroup.m_name = actorDefAnimGroupBlackboard.GetValue( "name", "" );
+					newAnimGroup.m_secondsPerFrame = actorDefAnimGroupBlackboard.GetValue( "secondsPerFrame", 1.f );
+					std::string playbackString = actorDefAnimGroupBlackboard.GetValue( "playbackMode", "ONCE" );
+					newAnimGroup.m_playbackMode = GetPlaybackTypeFromString( playbackString );
+
+					XmlElement* animElement = animGroupElement->FirstChildElement();
+					while( animElement )
+					{
+						Animation newAnim;
+						NamedStrings actorDefAnimBlackboard;
+						actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
+						newAnim.m_vector = actorDefAnimBlackboard.GetValue( "vector", Vec3( 1.f, 0.f, 0.f ) );
+
+						XmlElement* animChildElement = animElement->FirstChildElement();
+						NamedStrings actorDefAnimChildBlackboard;
+						actorDefAnimChildBlackboard.PopulateFromXmlElementAttributes( *animChildElement );
+						newAnim.m_startFrame = actorDefAnimChildBlackboard.GetValue( "startFrame", 0 );
+						newAnim.m_endFrame = actorDefAnimChildBlackboard.GetValue( "endFrame", 0 );
+
+						newAnimGroup.m_animations.push_back( newAnim );
+						animElement = animElement->NextSiblingElement();
+					}
+
+					currentActorDef.m_visuals.m_animationGroups.push_back( newAnimGroup );
+					animGroupElement = animGroupElement->NextSiblingElement();
+				}
+			}
 			childElement = childElement->NextSiblingElement();
 		}
-
 		currentElement = currentElement->NextSiblingElement();
 	}
 }
@@ -135,6 +181,7 @@ void ActorDefinition::InitializeProjectileActorDefs()
 		currentActorDef.m_corpseLifetime = static_cast<double>( actorDefBlackboard.GetValue( "corpseLifetime", 0.f ) );
 		currentActorDef.m_isVisible = actorDefBlackboard.GetValue( "visible", false );
 		currentActorDef.m_canBePossessed = actorDefBlackboard.GetValue( "canBePossessed", false );
+		currentActorDef.m_dieOnSpawn = actorDefBlackboard.GetValue( "dieOnSpawn", false );
 		std::string faction = actorDefBlackboard.GetValue( "faction", "neutral" );
 		if( faction == "Marine" || faction == "marine" )
 		{
@@ -179,23 +226,55 @@ void ActorDefinition::InitializeProjectileActorDefs()
 				currentActorDef.m_physics.m_isSimulated = actorDefChildBlackboard.GetValue( "simulated", false );
 				currentActorDef.m_physics.m_isFlying = actorDefChildBlackboard.GetValue( "flying", false );
 			}
-			// CameraView
-			else if( attributeName == "Camera" )
+			// Visuals
+			else if( attributeName == "Visuals" )
 			{
-				currentActorDef.m_cameraView.m_eyeHeight = actorDefChildBlackboard.GetValue( "eyeHeight", 0.f );
-				currentActorDef.m_cameraView.m_cameraFOVDegrees = actorDefChildBlackboard.GetValue( "cameraFOV", 60.f );
-			}
-			// AI
-			else if( attributeName == "AI" )
-			{
-				currentActorDef.m_ai.m_aiEnabled = actorDefChildBlackboard.GetValue( "aiEnabled", true );
-				currentActorDef.m_ai.m_sightRadius = actorDefChildBlackboard.GetValue( "sightRadius", 0.f );
-				currentActorDef.m_ai.m_sightAngle = actorDefChildBlackboard.GetValue( "sightAngle", 0.f );
-			}
+				currentActorDef.m_visuals.m_size = actorDefChildBlackboard.GetValue( "size", Vec2( 1.f, 1.f ) );
+				currentActorDef.m_visuals.m_pivot = actorDefChildBlackboard.GetValue( "pivot", Vec2( 0.5f, 0.5f ) );
+				currentActorDef.m_visuals.m_cellCount = actorDefChildBlackboard.GetValue( "cellCount", IntVec2( 1, 1 ) );
+				currentActorDef.m_visuals.m_shader = actorDefChildBlackboard.GetValue( "shader", "Default" );
+				currentActorDef.m_visuals.m_spriteSheet = actorDefChildBlackboard.GetValue( "spriteSheet", "Default" );
+				currentActorDef.m_visuals.m_renderLit = actorDefChildBlackboard.GetValue( "renderLit", false );
+				currentActorDef.m_visuals.m_renderRounded = actorDefChildBlackboard.GetValue( "renderRounded", false );
+				std::string billboardString = actorDefChildBlackboard.GetValue( "billboardType", "NONE" );
+				currentActorDef.m_visuals.m_billboardType = GetBillboardTypeFromString( billboardString );
 
+				XmlElement* animGroupElement = childElement->FirstChildElement();
+				while( animGroupElement )
+				{
+					AnimationGroup newAnimGroup;
+					NamedStrings actorDefAnimGroupBlackboard;
+					actorDefAnimGroupBlackboard.PopulateFromXmlElementAttributes( *animGroupElement );
+
+					newAnimGroup.m_name = actorDefAnimGroupBlackboard.GetValue( "name", "" );
+					newAnimGroup.m_secondsPerFrame = actorDefAnimGroupBlackboard.GetValue( "secondsPerFrame", 1.f );
+					std::string playbackString = actorDefAnimGroupBlackboard.GetValue( "playbackMode", "ONCE" );
+					newAnimGroup.m_playbackMode = GetPlaybackTypeFromString( playbackString );
+
+					XmlElement* animElement = animGroupElement->FirstChildElement();
+					while( animElement )
+					{
+						Animation newAnim;
+						NamedStrings actorDefAnimBlackboard;
+						actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
+						newAnim.m_vector = actorDefAnimBlackboard.GetValue( "vector", Vec3( 1.f, 0.f, 0.f ) );
+
+						XmlElement* animChildElement = animElement->FirstChildElement();
+						NamedStrings actorDefAnimChildBlackboard;
+						actorDefAnimChildBlackboard.PopulateFromXmlElementAttributes( *animChildElement );
+						newAnim.m_startFrame = actorDefAnimChildBlackboard.GetValue( "startFrame", 0 );
+						newAnim.m_endFrame = actorDefAnimChildBlackboard.GetValue( "endFrame", 0 );
+
+						newAnimGroup.m_animations.push_back( newAnim );
+						animElement = animElement->NextSiblingElement();
+					}
+
+					currentActorDef.m_visuals.m_animationGroups.push_back( newAnimGroup );
+					animGroupElement = animGroupElement->NextSiblingElement();
+				}
+			}
 			childElement = childElement->NextSiblingElement();
 		}
-
 		currentElement = currentElement->NextSiblingElement();
 	}
 }
@@ -243,6 +322,12 @@ AIControl ActorDefinition::GetAI() const
 }
 
 //-----------------------------------------------------------------------------------------------
+Visuals ActorDefinition::GetVisuals() const
+{
+	return m_visuals;
+}
+
+//-----------------------------------------------------------------------------------------------
 int ActorDefinition::GetHealth() const
 {
 	return m_health;
@@ -264,6 +349,12 @@ bool ActorDefinition::GetIsVisible() const
 bool ActorDefinition::GetCanBePossesed() const
 {
 	return m_canBePossessed;
+}
+
+//-----------------------------------------------------------------------------------------------
+bool ActorDefinition::GetDieOnSpawn() const
+{
+	return m_dieOnSpawn;
 }
 
 //-----------------------------------------------------------------------------------------------
