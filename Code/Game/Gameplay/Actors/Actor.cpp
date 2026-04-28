@@ -19,6 +19,7 @@
 #include <vector>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "Engine/Renderer/Camera.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -127,15 +128,15 @@ void Actor::Render() const
 	Mat44 transformMatrix;
 	transformMatrix.AppendTranslation3D( m_position );
 	transformMatrix.AppendZRotation( m_orientation.m_yawDegrees );
-
-	//VertexPCUTBNList tempVerts = m_vertexes;
 	
 	VertexBuffer vertexBuffer = VertexBuffer( g_engine->m_render->GetDevice(), 12, sizeof( Vertex_PCUTBN ) );
 	IndexBuffer indexBuffer = IndexBuffer( g_engine->m_render->GetDevice(), 12 );
 	vertexBuffer.Create();
 	indexBuffer.Create();
 
-	g_engine->m_render->RenderSetup( nullptr, BlendMode::ALPHA, transformMatrix );
+	Mat44 billboardTransform = GetBillboardTransform( BillboardType::WORLD_UP_FACING, m_map->m_player->m_camera->GetCameraToWorldTransform(), m_position );
+
+	g_engine->m_render->RenderSetup( nullptr, BlendMode::ALPHA, billboardTransform );
 	g_engine->m_render->DrawVertexArray( m_vertexes, m_indexes, &vertexBuffer, &indexBuffer );
 
 	g_engine->m_render->SetRasterizerState( RasterizerMode::WIREFRAME_CULL_BACK );
