@@ -137,15 +137,21 @@ void Actor::Render() const
 	vertexBuffer.Create();
 	indexBuffer.Create();
 
-	// Get BillboardTransform
+	// Get Billboard Transform
 	Mat44 billboardTransform = GetBillboardTransform( BillboardType::WORLD_UP_FACING, m_map->m_player->m_camera->GetCameraToWorldTransform(), m_position );
 
-	// Get UVs
+	// Create Anim Def
 	Visuals visuals = m_definition->GetVisuals();
 	AnimationGroup animGroup = visuals.m_animationGroups[ 0 ];
 	Animation animation = animGroup.m_animations[ 0 ];
-	float framesPerSecond = 1.f / animGroup.m_secondsPerFrame;
+	float framesPerSecond = 0.f;
+	if( m_currentAnim != AnimState::IDLE )
+	{
+		framesPerSecond = 1.f / animGroup.m_secondsPerFrame;
+	}
 	SpriteAnimDefinition spriteAnim = SpriteAnimDefinition( *visuals.m_spriteSheet, animation.m_startFrame, animation.m_endFrame, framesPerSecond, animGroup.m_playbackMode );
+
+	// Get UVs
 	Texture* texture = nullptr;
 	AABB2 uvBox = AABB2( 0.f, 0.f, 1.f, 1.f );
 	if( visuals.m_spriteSheet != nullptr )

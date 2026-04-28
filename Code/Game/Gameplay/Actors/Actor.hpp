@@ -6,6 +6,7 @@
 #include "Engine/Core/Vertex_PCUTBN.hpp"
 #include "Engine/Core/Rgba8.hpp"
 #include <vector>
+#include <string>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -25,6 +26,16 @@ typedef std::vector<Vertex> VertexList;
 typedef std::vector<Vertex_PCUTBN> VertexPCUTBNList;
 typedef std::vector<unsigned int> IndexList;
 typedef std::vector<Weapon*> Weapons;
+
+//-----------------------------------------------------------------------------------------------
+enum class AnimState
+{
+	IDLE,
+	WALK,
+	ATTACK,
+	HURT,
+	DEATH
+};
 
 //-----------------------------------------------------------------------------------------------
 class Actor
@@ -60,8 +71,10 @@ public:
 
 public:
 	//VertexPCUTBNList m_vertexes;
-	VertexList	m_wireframeVertexes; // Note: delete this later
 	//IndexList	m_indexes;
+	VertexList	m_wireframeVertexes; // Note: delete this later
+
+	AnimState	m_currentAnim = AnimState::WALK;
 
 	Weapons		m_weapons;
 	Weapon*		m_equippedWeapon = nullptr;
