@@ -159,8 +159,9 @@ void Actor::Render() const
 	// Add Verts
 	VertexPCUTBNList verts;
 	IndexList indexes;
-	AddVertsForDoubleQuad3D( verts, indexes, Vec3( 0.f, -m_physicsRadius, 0.f ), Vec3( 0.f, m_physicsRadius, 0.f ), 
-		Vec3( 0.f, m_physicsRadius, m_physicsHeight ), Vec3( 0.f, -m_physicsRadius, m_physicsHeight ), m_color, uvBox );
+	float halfXSize = visuals.m_size.x * 0.5f;
+	AddVertsForDoubleQuad3D( verts, indexes, Vec3( 0.f, -halfXSize, 0.f ), Vec3( 0.f, halfXSize, 0.f ), 
+		Vec3( 0.f, halfXSize, visuals.m_size.y ), Vec3( 0.f, -halfXSize, visuals.m_size.y ), m_color, uvBox );
 
 	// Draw Sprite
 	g_engine->m_render->RenderSetup( texture, BlendMode::ALPHA, billboardTransform );
