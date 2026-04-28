@@ -51,7 +51,7 @@ Map::Map( MapDefinition* definition )
 	for( unsigned int demonIndex = 0; demonIndex < m_demonSpawnPoints.size(); demonIndex++ )
 	{
 		SpawnInfo demonSpawn = m_demonSpawnPoints[ demonIndex ];
-		SpawnActor( "Demon", demonSpawn.m_position, demonSpawn.m_orientation, Rgba8( 200, 0, 0 ) );
+		SpawnActor( "Demon", demonSpawn.m_position, demonSpawn.m_orientation );
 	}
 }
 

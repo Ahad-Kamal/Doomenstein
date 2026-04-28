@@ -55,13 +55,15 @@ void Game::Startup()
 	Shader* diffuseShader = g_engine->m_render->CreateOrGetShader( "Data/Shaders/Diffuse", VertexType::VERTEX_PCUTBN );
 	g_engine->m_render->BindShader( diffuseShader );
 
+	Texture* terrainTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Terrain_8x8.png" );
+	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );
+
+
 	MapDefinition::InitializeMapDefs();
 	WeaponDefinition::InitializeWeaponDefs();
 	ActorDefinition::InitializeProjectileActorDefs();
 	ActorDefinition::InitializeActorDefs();
 
-	Texture* terrainTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Terrain_8x8.png" );
-	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );
 	TileDefinitions::InitializeTileDefs();
 
 	g_blackboard = new NamedStrings();
@@ -75,7 +77,7 @@ void Game::Startup()
 	m_currentMap = new Map( MapDefinition::GetMapDefFromName( mapName ) );
 
 	SpawnInfo startingSpawn = m_currentMap->GetRandomSpawnPoint( Faction::MARINE );
-	m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation, Rgba8( 0, 200, 0 ) );
+	m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation );
 
 	m_worldCamera = m_currentMap->m_player->m_camera;
 	m_screenCamera = new Camera();

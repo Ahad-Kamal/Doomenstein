@@ -59,9 +59,9 @@ public:
 	static bool Event_OnUnpossessed( EventArgs& args );
 
 public:
-	VertexPCUTBNList m_vertexes;
+	//VertexPCUTBNList m_vertexes;
 	VertexList	m_wireframeVertexes; // Note: delete this later
-	IndexList	m_indexes;
+	//IndexList	m_indexes;
 
 	Weapons		m_weapons;
 	Weapon*		m_equippedWeapon = nullptr;
@@ -78,7 +78,7 @@ public:
 	Vec3		m_velocity;
 	Vec3		m_acceleration;
 	EulerAngles m_orientation;
-	Rgba8		m_color;
+	Rgba8		m_color = Rgba8::WHITE;
 
 	int			m_health;
 

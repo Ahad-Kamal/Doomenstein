@@ -20,6 +20,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Engine/Renderer/Camera.hpp"
+#include "Engine/Core/Clock.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -125,20 +126,47 @@ void Actor::Render() const
 		return;
 	}
 
+	// Create Transform Matrix
 	Mat44 transformMatrix;
 	transformMatrix.AppendTranslation3D( m_position );
 	transformMatrix.AppendZRotation( m_orientation.m_yawDegrees );
 	
+	// Create Vertex and Index Buffers
 	VertexBuffer vertexBuffer = VertexBuffer( g_engine->m_render->GetDevice(), 12, sizeof( Vertex_PCUTBN ) );
 	IndexBuffer indexBuffer = IndexBuffer( g_engine->m_render->GetDevice(), 12 );
 	vertexBuffer.Create();
 	indexBuffer.Create();
 
+	// Get BillboardTransform
 	Mat44 billboardTransform = GetBillboardTransform( BillboardType::WORLD_UP_FACING, m_map->m_player->m_camera->GetCameraToWorldTransform(), m_position );
 
-	g_engine->m_render->RenderSetup( nullptr, BlendMode::ALPHA, billboardTransform );
-	g_engine->m_render->DrawVertexArray( m_vertexes, m_indexes, &vertexBuffer, &indexBuffer );
+	// Get UVs
+	Visuals visuals = m_definition->GetVisuals();
+	AnimationGroup animGroup = visuals.m_animationGroups[ 0 ];
+	Animation animation = animGroup.m_animations[ 0 ];
+	SpriteAnimDefinition spriteAnim = SpriteAnimDefinition( *visuals.m_spriteSheet, animation.m_startFrame, animation.m_endFrame, animGroup.m_secondsPerFrame, animGroup.m_playbackMode );
+	Texture* texture = nullptr;
+	AABB2 uvBox = AABB2( 0.f, 0.f, 1.f, 1.f );
+	if( visuals.m_spriteSheet != nullptr )
+	{
+		const SpriteDefinition& spriteDef = spriteAnim.GetSpriteDefAtTime( (float)g_game->m_gameClock->GetTotalSeconds() );
+		Vec2 uvMins, uvMaxs;
+		spriteDef.GetUVs( uvMins, uvMaxs );
+		uvBox = AABB2( uvMins, uvMaxs );
+		texture = &visuals.m_spriteSheet->GetTexture();
+	}
 
+	// Add Verts
+	VertexPCUTBNList verts;
+	IndexList indexes;
+	AddVertsForDoubleQuad3D( verts, indexes, Vec3( 0.f, -m_physicsRadius, 0.f ), Vec3( 0.f, m_physicsRadius, 0.f ), 
+		Vec3( 0.f, m_physicsRadius, m_physicsHeight ), Vec3( 0.f, -m_physicsRadius, m_physicsHeight ), m_color, uvBox );
+
+	// Draw Sprite
+	g_engine->m_render->RenderSetup( texture, BlendMode::ALPHA, billboardTransform );
+	g_engine->m_render->DrawVertexArray( verts, indexes, &vertexBuffer, &indexBuffer );
+
+	// Draw Wireframe
 	g_engine->m_render->SetRasterizerState( RasterizerMode::WIREFRAME_CULL_BACK );
 	g_engine->m_render->SetRasterizerStateIfChanged();
 
@@ -156,7 +184,7 @@ void Actor::RenderSetup()
 {
 	//AddVertsForCylinder3D( m_vertexes, Vec3(), Vec3( 0.f, 0.f, 0.f + m_cosmeticHeight), m_cosmeticRadius, 16, m_color);
 
-  	AddVertsForDoubleQuad3D( m_vertexes, m_indexes, Vec3( 0.f, -m_physicsRadius, 0.f ), Vec3( 0.f, m_physicsRadius, 0.f ), Vec3( 0.f, m_physicsRadius, m_physicsHeight ), Vec3( 0.f, -m_physicsRadius, m_physicsHeight ) );
+  	//AddVertsForDoubleQuad3D( m_vertexes, m_indexes, Vec3( 0.f, -m_physicsRadius, 0.f ), Vec3( 0.f, m_physicsRadius, 0.f ), Vec3( 0.f, m_physicsRadius, m_physicsHeight ), Vec3( 0.f, -m_physicsRadius, m_physicsHeight ) );
 
 	Vec3 arrowStart = Vec3( m_cosmeticRadius, 0.f, m_definition->GetCameraView().m_eyeHeight );
 	Vec3 arrowEnd =  Vec3( m_cosmeticRadius + 0.075f, 0.f, m_definition->GetCameraView().m_eyeHeight );
@@ -174,10 +202,12 @@ void Actor::RenderSetup()
 //-----------------------------------------------------------------------------------------------
 void Actor::SetColor( Rgba8 const& color )
 {
-	for( unsigned int vertIndex = 0; vertIndex < m_vertexes.size(); vertIndex++ )
+	/*for( unsigned int vertIndex = 0; vertIndex < m_vertexes.size(); vertIndex++ )
 	{
 		m_vertexes[ vertIndex ].m_color = color;
-	}
+	}*/
+
+	m_color = color;
 }
 
 //-----------------------------------------------------------------------------------------------

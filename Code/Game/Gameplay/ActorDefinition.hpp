@@ -69,6 +69,7 @@ struct Animation
 struct AnimationGroup
 {
 	std::vector<Animation> m_animations;
+	std::vector<SpriteAnimDefinition> m_spriteAnimDefs;
 	std::string m_name;
 	float m_secondsPerFrame = 1.f;
 	SpriteAnimPlaybackType m_playbackMode = SpriteAnimPlaybackType::ONCE;
@@ -79,7 +80,7 @@ struct Visuals
 {
 	std::vector<AnimationGroup> m_animationGroups;
 	std::string m_shader;
-	std::string m_spriteSheet;
+	SpriteSheet* m_spriteSheet = nullptr;
 	Vec2 m_size = Vec2( 1.f, 1.f );
 	Vec2 m_pivot = Vec2( 0.5f, 0.5f );
 	IntVec2 m_cellCount = IntVec2( 1, 1 );

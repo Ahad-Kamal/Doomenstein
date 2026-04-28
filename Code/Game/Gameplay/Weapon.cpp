@@ -89,7 +89,7 @@ void Weapon::Fire( Actor* owner )
 			Vec3 projectileSpawnPosition = Vec3( owner->m_position.x, owner->m_position.y, owner->m_position.z + owner->m_definition->GetCameraView().m_eyeHeight * 0.85f );
 			projectileSpawnPosition.x += owner->m_cosmeticRadius * CosDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
 			projectileSpawnPosition.y += owner->m_cosmeticRadius * SinDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
-			Actor* newProjectile = owner->m_map->SpawnActor( m_projectileDefinition->GetName(), projectileSpawnPosition, EulerAngles(), Rgba8(0, 0, 200));
+			Actor* newProjectile = owner->m_map->SpawnActor( m_projectileDefinition->GetName(), projectileSpawnPosition, EulerAngles() );
 			newProjectile->m_owner = owner;
 			newProjectile->AddImpulse( projectileDirection.GetForwardDir_IFwd_JLeft_KUp() * projectileDef.m_projectileSpeed );
 		}

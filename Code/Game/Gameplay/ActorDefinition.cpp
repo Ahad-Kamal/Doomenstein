@@ -2,6 +2,7 @@
 #include "Engine/Core/XmlUtils.hpp"
 #include "Engine/Core/NamedStrings.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Core/Engine.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -111,9 +112,17 @@ void ActorDefinition::InitializeActorDefs()
 				currentActorDef.m_visuals.m_pivot = actorDefChildBlackboard.GetValue( "pivot", Vec2( 0.5f, 0.5f ) );
 				currentActorDef.m_visuals.m_cellCount = actorDefChildBlackboard.GetValue( "cellCount", IntVec2( 1, 1 ) );
 				currentActorDef.m_visuals.m_shader = actorDefChildBlackboard.GetValue( "shader", "Default" );
-				currentActorDef.m_visuals.m_spriteSheet = actorDefChildBlackboard.GetValue( "spriteSheet", "Default" );
 				currentActorDef.m_visuals.m_renderLit = actorDefChildBlackboard.GetValue( "renderLit", false );
 				currentActorDef.m_visuals.m_renderRounded = actorDefChildBlackboard.GetValue( "renderRounded", false );
+
+				std::string spriteSheetString = actorDefChildBlackboard.GetValue( "spriteSheet", "Default" );
+				Texture* spriteTexture = nullptr;
+				if( spriteSheetString != "Default" )
+				{
+					spriteTexture = g_engine->m_render->CreateOrGetTextureFromFile( spriteSheetString.c_str() );
+					currentActorDef.m_visuals.m_spriteSheet = new SpriteSheet( *spriteTexture, currentActorDef.m_visuals.m_cellCount );
+				}
+
 				std::string billboardString = actorDefChildBlackboard.GetValue( "billboardType", "NONE" );
 				currentActorDef.m_visuals.m_billboardType = GetBillboardTypeFromString( billboardString );
 
@@ -133,6 +142,8 @@ void ActorDefinition::InitializeActorDefs()
 					while( animElement )
 					{
 						Animation newAnim;
+						
+
 						NamedStrings actorDefAnimBlackboard;
 						actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
 						newAnim.m_vector = actorDefAnimBlackboard.GetValue( "vector", Vec3( 1.f, 0.f, 0.f ) );
@@ -233,9 +244,17 @@ void ActorDefinition::InitializeProjectileActorDefs()
 				currentActorDef.m_visuals.m_pivot = actorDefChildBlackboard.GetValue( "pivot", Vec2( 0.5f, 0.5f ) );
 				currentActorDef.m_visuals.m_cellCount = actorDefChildBlackboard.GetValue( "cellCount", IntVec2( 1, 1 ) );
 				currentActorDef.m_visuals.m_shader = actorDefChildBlackboard.GetValue( "shader", "Default" );
-				currentActorDef.m_visuals.m_spriteSheet = actorDefChildBlackboard.GetValue( "spriteSheet", "Default" );
 				currentActorDef.m_visuals.m_renderLit = actorDefChildBlackboard.GetValue( "renderLit", false );
 				currentActorDef.m_visuals.m_renderRounded = actorDefChildBlackboard.GetValue( "renderRounded", false );
+
+				std::string spriteSheetString = actorDefChildBlackboard.GetValue( "spriteSheet", "Default" );
+				Texture* spriteTexture = nullptr;
+				if( spriteSheetString != "Default" )
+				{
+					spriteTexture = g_engine->m_render->CreateOrGetTextureFromFile( spriteSheetString.c_str() );
+					currentActorDef.m_visuals.m_spriteSheet = new SpriteSheet( *spriteTexture, currentActorDef.m_visuals.m_cellCount );
+				}
+
 				std::string billboardString = actorDefChildBlackboard.GetValue( "billboardType", "NONE" );
 				currentActorDef.m_visuals.m_billboardType = GetBillboardTypeFromString( billboardString );
 
