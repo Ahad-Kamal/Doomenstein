@@ -3,6 +3,7 @@
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/EulerAngles.hpp"
 #include "Engine/Core/Vertex.hpp"
+#include "Engine/Core/Vertex_PCUTBN.hpp"
 #include "Engine/Core/Rgba8.hpp"
 #include <vector>
 
@@ -21,6 +22,8 @@ class Timer;
 //-----------------------------------------------------------------------------------------------
 typedef NamedStrings EventArgs;
 typedef std::vector<Vertex> VertexList;
+typedef std::vector<Vertex_PCUTBN> VertexPCUTBNList;
+typedef std::vector<unsigned int> IndexList;
 typedef std::vector<Weapon*> Weapons;
 
 //-----------------------------------------------------------------------------------------------
@@ -56,8 +59,9 @@ public:
 	static bool Event_OnUnpossessed( EventArgs& args );
 
 public:
-	VertexList	m_vertexes;
+	VertexPCUTBNList m_vertexes;
 	VertexList	m_wireframeVertexes; // Note: delete this later
+	IndexList	m_indexes;
 
 	Weapons		m_weapons;
 	Weapon*		m_equippedWeapon = nullptr;

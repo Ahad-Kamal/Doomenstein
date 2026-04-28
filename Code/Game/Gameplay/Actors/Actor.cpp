@@ -128,19 +128,22 @@ void Actor::Render() const
 	transformMatrix.AppendTranslation3D( m_position );
 	transformMatrix.AppendZRotation( m_orientation.m_yawDegrees );
 
-	VertexList tempVerts = m_vertexes;
-	VertexList tempWireframeVerts = m_wireframeVertexes;
+	//VertexPCUTBNList tempVerts = m_vertexes;
+	
+	VertexBuffer vertexBuffer = VertexBuffer( g_engine->m_render->GetDevice(), 12, sizeof( Vertex_PCUTBN ) );
+	IndexBuffer indexBuffer = IndexBuffer( g_engine->m_render->GetDevice(), 12 );
+	vertexBuffer.Create();
+	indexBuffer.Create();
 
-	TransformVertexArray3D( tempVerts, transformMatrix );
-	TransformVertexArray3D( tempWireframeVerts, transformMatrix );
-
-	g_engine->m_render->RenderSetup();
-	g_engine->m_render->DrawVertexArray( tempVerts );
+	g_engine->m_render->RenderSetup( nullptr, BlendMode::ALPHA, transformMatrix );
+	g_engine->m_render->DrawVertexArray( m_vertexes, m_indexes, &vertexBuffer, &indexBuffer );
 
 	g_engine->m_render->SetRasterizerState( RasterizerMode::WIREFRAME_CULL_BACK );
 	g_engine->m_render->SetRasterizerStateIfChanged();
 
 	g_engine->m_render->RenderSetup();
+	VertexList tempWireframeVerts = m_wireframeVertexes;
+	TransformVertexArray3D( tempWireframeVerts, transformMatrix );
 	g_engine->m_render->DrawVertexArray( tempWireframeVerts );
 
 	g_engine->m_render->SetRasterizerState( RasterizerMode::SOLID_CULL_BACK );
@@ -150,7 +153,10 @@ void Actor::Render() const
 //-----------------------------------------------------------------------------------------------
 void Actor::RenderSetup()
 {
-	AddVertsForCylinder3D( m_vertexes, Vec3(), Vec3( 0.f, 0.f, 0.f + m_cosmeticHeight), m_cosmeticRadius, 16, m_color);
+	//AddVertsForCylinder3D( m_vertexes, Vec3(), Vec3( 0.f, 0.f, 0.f + m_cosmeticHeight), m_cosmeticRadius, 16, m_color);
+
+  	AddVertsForDoubleQuad3D( m_vertexes, m_indexes, Vec3( 0.f, -m_physicsRadius, 0.f ), Vec3( 0.f, m_physicsRadius, 0.f ), Vec3( 0.f, m_physicsRadius, m_physicsHeight ), Vec3( 0.f, -m_physicsRadius, m_physicsHeight ) );
+
 	Vec3 arrowStart = Vec3( m_cosmeticRadius, 0.f, m_definition->GetCameraView().m_eyeHeight );
 	Vec3 arrowEnd =  Vec3( m_cosmeticRadius + 0.075f, 0.f, m_definition->GetCameraView().m_eyeHeight );
 
@@ -159,7 +165,7 @@ void Actor::RenderSetup()
 
 	if( m_definition->GetName() != "PlasmaProjectile" )
 	{
-		AddVertsForArrow3D( m_vertexes, arrowStart, arrowStart, arrowEnd, m_cosmeticRadius * 0.33f, 16, m_color );
+		//AddVertsForArrow3D( m_vertexes, arrowStart, arrowStart, arrowEnd, m_cosmeticRadius * 0.33f, 16, m_color );
 		AddVertsForArrow3D( m_wireframeVertexes, arrowStart, arrowStart, arrowEnd, m_cosmeticRadius * 0.33f, 16, lighterColor );
 	}
 }
