@@ -144,7 +144,8 @@ void Actor::Render() const
 	Visuals visuals = m_definition->GetVisuals();
 	AnimationGroup animGroup = visuals.m_animationGroups[ 0 ];
 	Animation animation = animGroup.m_animations[ 0 ];
-	SpriteAnimDefinition spriteAnim = SpriteAnimDefinition( *visuals.m_spriteSheet, animation.m_startFrame, animation.m_endFrame, animGroup.m_secondsPerFrame, animGroup.m_playbackMode );
+	float framesPerSecond = 1.f / animGroup.m_secondsPerFrame;
+	SpriteAnimDefinition spriteAnim = SpriteAnimDefinition( *visuals.m_spriteSheet, animation.m_startFrame, animation.m_endFrame, framesPerSecond, animGroup.m_playbackMode );
 	Texture* texture = nullptr;
 	AABB2 uvBox = AABB2( 0.f, 0.f, 1.f, 1.f );
 	if( visuals.m_spriteSheet != nullptr )
