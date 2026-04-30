@@ -682,7 +682,10 @@ void Map::CollideActorWithMap( Actor* actor )
 //-----------------------------------------------------------------------------------------------
 void Map::Render()
 {
-	g_engine->m_render->RenderSetup( &g_terrainSpriteSheet->GetTexture() );
+	Vec3 normalizedLighting = g_game->m_sunDirection.GetNormalized();
+	LightSettings lightSettings = LightSettings( normalizedLighting, g_game->m_sunIntensity, g_game->m_ambientIntensity );
+
+	g_engine->m_render->RenderSetup( &g_terrainSpriteSheet->GetTexture(), BlendMode::OPAQUE, Mat44(), Rgba8::WHITE, lightSettings );
 	g_engine->m_render->DrawVertexArray( m_vertexes, m_indexes, m_vertexBuffer, m_indexBuffer );
 
 	g_engine->m_render->SetLightConstants( Vec3(), 0.f, 1.f );

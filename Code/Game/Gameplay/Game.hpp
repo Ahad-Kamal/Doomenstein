@@ -73,6 +73,9 @@ public:
 	GameState			m_currentState = GAME_STATE_INVALID;
 	GameState			m_nextState = GAME_STATE_ATTRACT;
 
+	Vec3 m_sunDirection = Vec3( 2.f, 1.f, -1.f );
+	float m_sunIntensity = 0.85f;
+	float m_ambientIntensity = 0.35f;
 
 private:
 	Vertex m_startVerts[ 3 ];
@@ -81,9 +84,6 @@ private:
 	Rgba8 m_clearColor = Rgba8( 0, 0, 0, 1 );
 	SoundPlaybackID m_music;
 
-	Vec3 m_sunDirection = Vec3( 2.f, 1.f, -1.f );
-	float m_sunIntensity = 0.85f;
-	float m_ambientIntensity = 0.35f;
 	float m_screenShakeAmount = 0.f;
 	bool m_isShaking = false;
 	bool m_debugDraw = false;

@@ -189,7 +189,14 @@ void Actor::Render() const
 		Vec3( 0.f, halfXSize, visuals.m_size.y ), Vec3( 0.f, -halfXSize, visuals.m_size.y ), m_color, uvBox );
 
 	// Draw Sprite
-	g_engine->m_render->RenderSetup( texture, BlendMode::ALPHA, billboardTransform );
+	LightSettings lightSettings = LightSettings();
+	if( m_definition->GetVisuals().m_renderLit )
+	{
+		Vec3 normalizedLighting = g_game->m_sunDirection.GetNormalized();
+		lightSettings = LightSettings( normalizedLighting, g_game->m_sunIntensity, g_game->m_ambientIntensity );
+	}
+
+	g_engine->m_render->RenderSetup( texture, BlendMode::ALPHA, billboardTransform, Rgba8::WHITE, lightSettings );
 	g_engine->m_render->DrawVertexArray( verts, indexes, &vertexBuffer, &indexBuffer );
 
 	// Draw Wireframe
