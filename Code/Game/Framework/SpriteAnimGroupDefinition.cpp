@@ -1,5 +1,5 @@
 #include "Game/Framework/SpriteAnimGroupDefinition.hpp"
-#include "Engine/Math/Vec3.hpp"
+#include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/XmlUtils.hpp"
 
 
@@ -28,7 +28,7 @@ bool SpriteAnimationGroupDefinition::LoadFromXmlElement( XmlElement const& eleme
 		NamedStrings actorDefAnimBlackboard;
 		actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
 		Vec3 direction = actorDefAnimBlackboard.GetValue( "vector", Vec3( 1.f, 0.f, 0.f ) );
-		m_directions.push_back( direction );
+		m_directions.push_back( direction.GetNormalized() );
 
 		const XmlElement* animChildElement = animElement->FirstChildElement();
 		NamedStrings actorDefAnimChildBlackboard;
@@ -42,5 +42,25 @@ bool SpriteAnimationGroupDefinition::LoadFromXmlElement( XmlElement const& eleme
 	}	
 
 	return true;
+}
+
+//-----------------------------------------------------------------------------------------------
+const SpriteAnimDefinition& SpriteAnimationGroupDefinition::GetAnimationForDirection( Vec3 const& direction ) const
+{
+	Vec3 dirNormalized = direction.GetNormalized();
+	float greatestDotProduct = -1.f;
+	int closestDirectionIndex = 0;
+
+	for( unsigned int dirIndex = 0; dirIndex < m_directions.size(); dirIndex++ )
+	{
+		float dotProd = DotProduct3D( m_directions[ dirIndex ], dirNormalized);
+		if( dotProd > greatestDotProduct )
+		{
+			greatestDotProduct = dotProd;
+			closestDirectionIndex = dirIndex;
+		}
+	}
+
+	return m_spriteAnimationDefinitions[ closestDirectionIndex ];
 }
 

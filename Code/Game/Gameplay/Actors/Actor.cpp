@@ -74,6 +74,7 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 //-----------------------------------------------------------------------------------------------
 Actor::~Actor()
 {
+	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 	if( m_controller != m_map->m_player )
 	{
 		delete m_controller;
@@ -97,12 +98,14 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 		{
 			m_isGarbage = true;
 
+			//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 			if( m_controller == m_map->m_player )
 			{
 				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
 				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation, Rgba8( 0, 200, 0 ) );				
 			}
 		}
+		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 		else if( m_controller == m_map->m_player )
 		{
 			float eyeHeight = m_definition->GetCameraView().m_eyeHeight;
@@ -122,6 +125,7 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Actor::Render() const
 {
+	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 	if( m_controller == m_map->m_player && m_map->m_player->m_cameraMode == CAMERA_MODE_FIRST_PERSON )
 	{
 		return;
@@ -141,30 +145,25 @@ void Actor::Render() const
 	// Create Anim Def
 	Visuals visuals = m_definition->GetVisuals();
 	SpriteAnimationGroupDefinition animGroupDef = *m_definition->GetAnimGroupByState( m_currentAnim );
-	SpriteAnimDefinition animDef = animGroupDef.m_spriteAnimationDefinitions[ 0 ];
+
+	// Get Billboard Transform
+	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
+	Mat44 cameraToWorldTransform = m_map->m_player->m_camera->GetCameraToWorldTransform();
+	Mat44 billboardTransform = GetBillboardTransform( visuals.m_billboardType, cameraToWorldTransform, m_position );
+
+	// Calculate Direction 
+	Vec3 cameraToActor = m_position - cameraToWorldTransform.GetTranslation3D();
+	Mat44 orthoInverse = GetModelToWorldTransform().GetOrthonormalInverse();
+	Vec3 facingVector = orthoInverse.TransformVectorQuantity3D( cameraToActor );
+	facingVector.Normalize();
+
+	SpriteAnimDefinition animDef = animGroupDef.GetAnimationForDirection( facingVector );
 	float framesPerSecond = 0.f;
 	if( m_currentAnim != AnimState::IDLE )
 	{
 		framesPerSecond = animGroupDef.m_framesPerSecond;
 	}
 	SpriteAnimDefinition spriteAnim = SpriteAnimDefinition( *visuals.m_spriteSheet, animDef.GetStartIndex(), animDef.GetEndIndex(), framesPerSecond, animGroupDef.m_playbackMode );
-
-	// Get Billboard Transform
-	Mat44 cameraToWorldTransform = m_map->m_player->m_camera->GetCameraToWorldTransform();
-	Mat44 billboardTransform = GetBillboardTransform( visuals.m_billboardType, cameraToWorldTransform, m_position );
-
-	// Debug
-	if( m_controller != m_map->m_player )
-	{
-		Vec3 cameraToActor = m_position - cameraToWorldTransform.GetTranslation3D();
-		Mat44 orthoInverse = GetModelToWorldTransform().GetOrthonormalInverse();
-		Vec3 facingVector = orthoInverse.TransformVectorQuantity3D( cameraToActor );
-		facingVector.Normalize();
-
-		AABB2 vecBox = AABB2( 1.f, 764.f, 800.f, 780.f );
-		std::string vecText = Stringf( "X: %.2f Y: %.2f Z %.2f", facingVector.x, facingVector.y, facingVector.z );
-		DebugAddScreenText( vecText, vecBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
-	}
 
 	// Get UVs
 	Texture* texture = nullptr;
@@ -409,6 +408,7 @@ bool Actor::Event_OnPossessed( EventArgs& args )
 	std::string controller = args.GetValue( "ControllerType", "" );
 	if( controller == "Player" )
 	{
+		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player->m_actorHandle )
 		{
 			targetActor->m_controller = g_game->m_currentMap->m_player;
@@ -418,6 +418,7 @@ bool Actor::Event_OnPossessed( EventArgs& args )
 	// AI possession
 	else
 	{
+		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player->m_actorHandle )
 		{
 
