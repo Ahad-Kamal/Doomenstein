@@ -4,12 +4,14 @@
 #include "Game/Gameplay/Map.hpp"
 #include "Game/Gameplay/Game.hpp"
 #include "Game/Gameplay/Actors/Actor.hpp"
+#include "Game/Gameplay/Actors/Player.hpp"
 #include "Engine/Core/DebugRender.hpp"
 #include "Engine/Core/Timer.hpp"
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/Mat44.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/EulerAngles.hpp"
+#include "Engine/Renderer/Camera.hpp"
 #include <cmath>
 
 
@@ -45,11 +47,25 @@ void Weapon::Fire( Actor* owner )
 	WeaponType weaponType = m_definition->GetType();
 	if( weaponType == WEAPON_TYPE_RAY )
 	{
-		Vec3 startPosition = owner->m_position;
-		startPosition.x += owner->m_cosmeticRadius * CosDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
-		startPosition.y += owner->m_cosmeticRadius * SinDegrees( owner->m_orientation.m_yawDegrees ) * 0.8f;
-		startPosition.z = owner->m_definition->GetCameraView().m_eyeHeight * 0.9f;
-		Vec3 direction = owner->GetModelToWorldTransform().GetIBasis3D();
+		Vec3 startPosition;
+		Vec3 direction;
+		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
+		if( owner->m_controller == owner->m_map->m_player )
+		{
+			Camera* camera = owner->m_map->m_player->m_camera;
+			direction = camera->GetOrientation().GetForwardDir_IFwd_JLeft_KUp();
+			Vec3 left = CrossProduct3D( Vec3( 0.f, 0.f, 1.f ), direction ).GetNormalized();
+			Vec3 up = CrossProduct3D( direction, left ).GetNormalized();
+			startPosition = camera->GetPosition() + direction * ( owner->m_cosmeticRadius * 0.7f ) - ( up * 0.1f );
+		}
+		else
+		{
+			startPosition = owner->m_position;
+			startPosition.x += owner->m_cosmeticRadius * CosDegrees( owner->m_orientation.m_yawDegrees ) * 0.5f;
+			startPosition.y += owner->m_cosmeticRadius * SinDegrees( owner->m_orientation.m_yawDegrees ) * 0.5f;
+			startPosition.z = owner->m_definition->GetCameraView().m_eyeHeight * 0.9f;
+			direction = owner->m_orientation.GetForwardDir_IFwd_JLeft_KUp();
+		}
 
 		ActorRaycastResult raycast = owner->m_map->ActorRaycastAll( startPosition, direction, m_definition->GetRayWeaponInfo().m_rayRange, owner );
 
@@ -58,7 +74,7 @@ void Weapon::Fire( Actor* owner )
 		{
 			if( raycast.m_didImpact )
 			{
-				DebugAddWorldCylinder( startPosition, raycast.m_impactPos, 0.01f, 1.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
+				//DebugAddWorldCylinder( startPosition, raycast.m_impactPos, 0.01f, 1.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
 
 				if( raycast.m_impactedActor )
 				{
@@ -66,6 +82,16 @@ void Weapon::Fire( Actor* owner )
 					float calculatedDamage = g_rng->RollRandomFloatInRange( damageRange.m_min, damageRange.m_max );
 
 					raycast.m_impactedActor->Damage( static_cast<int>( roundf( calculatedDamage ) ), owner->m_actorHandle );
+
+					Actor* hitEffect = owner->m_map->SpawnActor( "BloodSplatter", raycast.m_impactPos, EulerAngles(), AnimState::DEATH );
+					hitEffect->m_owner = owner;
+					hitEffect->Damage( 1, owner->m_actorHandle );
+				}
+				else
+				{
+					Actor* hitEffect = owner->m_map->SpawnActor( "BulletHit", raycast.m_impactPos, EulerAngles(), AnimState::DEATH );
+					hitEffect->m_owner = owner;
+					hitEffect->Damage( 1, owner->m_actorHandle );
 				}
 			}
 			else

@@ -26,7 +26,7 @@
 
 //-----------------------------------------------------------------------------------------------
 Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, 
-	ActorHandle actorHandle, Map* owningMap, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */ )
+	ActorHandle actorHandle, Map* owningMap, AnimState startingState /*= WALK*/, bool isStatic /*= true*/, Rgba8 color /*= Rgba8::WHITE */)
 	: m_position( startingPosition )
 	, m_orientation( orientation )
 	, m_isStatic( isStatic )
@@ -34,6 +34,7 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 	, m_definition( definition )
 	, m_actorHandle( actorHandle )
 	, m_map( owningMap )
+	, m_currentAnim( startingState )
 {
 	m_physicsHeight = definition->GetCollision().m_physicsHeight;
 	m_cosmeticHeight = definition->GetCollision().m_physicsHeight;
@@ -69,6 +70,9 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 	SubscribeEventCallbackFunction( "Unpossess", Event_OnUnpossessed );
 
 	RenderSetup();
+
+	m_animTimer = new Timer( static_cast<double>( m_definition->GetAnimGroupByState( m_currentAnim )->GetDuration() ), g_game->m_gameClock );
+	m_animTimer->Start();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -102,7 +106,7 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 			if( m_controller == m_map->m_player )
 			{
 				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
-				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation, Rgba8( 0, 200, 0 ) );				
+				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation );				
 			}
 		}
 		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
@@ -170,7 +174,7 @@ void Actor::Render() const
 	AABB2 uvBox = AABB2( 0.f, 0.f, 1.f, 1.f );
 	if( visuals.m_spriteSheet != nullptr )
 	{
-		const SpriteDefinition& spriteDef = spriteAnim.GetSpriteDefAtTime( (float)g_game->m_gameClock->GetTotalSeconds() );
+		const SpriteDefinition& spriteDef = spriteAnim.GetSpriteDefAtTime( static_cast<float>( m_animTimer->GetElaspedTime() ) );
 		Vec2 uvMins, uvMaxs;
 		spriteDef.GetUVs( uvMins, uvMaxs );
 		uvBox = AABB2( uvMins, uvMaxs );
@@ -303,6 +307,7 @@ void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 	if( m_health <= 0 )
 	{
 		m_isDead = true;
+		SwitchAnimState( AnimState::DEATH );
 		Rgba8 deadColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b - 100 ), 0.f, 255.f ) );
 		SetColor( deadColor );
 
@@ -372,6 +377,17 @@ bool Actor::IsAlive() const
 	}
 
 	return !m_isDead;
+}
+
+//-----------------------------------------------------------------------------------------------
+void Actor::SwitchAnimState( AnimState newState )
+{
+	m_currentAnim = newState;
+
+	m_animTimer->Stop();
+	delete m_animTimer;
+	m_animTimer = new Timer( static_cast<double>( m_definition->GetAnimGroupByState( m_currentAnim )->GetDuration() ), g_game->m_gameClock );
+	m_animTimer->Start();
 }
 
 //-----------------------------------------------------------------------------------------------

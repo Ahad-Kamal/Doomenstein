@@ -283,7 +283,7 @@ void Map::UpdateActors( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color /*= Rgba8::WHITE*/ )
+Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, AnimState startingState, Rgba8 color /*= Rgba8::WHITE*/ )
 {
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
@@ -293,7 +293,7 @@ Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngle
 		{
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
-			Actor* marine = new Actor( position, orientation, &actorDef, newActorHandle, this, false, color );
+			Actor* marine = new Actor( position, orientation, &actorDef, newActorHandle, this, startingState, false, color );
 			m_actors.push_back( marine );
 
 			if( !m_player )
@@ -313,7 +313,7 @@ Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngle
 }
 
 //-----------------------------------------------------------------------------------------------
-Actor* Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation, Rgba8 color /*= Rgba8::WHITE*/ )
+Actor* Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles const& orientation, AnimState startingState, Rgba8 color /*= Rgba8::WHITE*/ )
 {
 	if( m_currentUID >= ActorHandle::MAX_ACTOR_UID )
 	{
@@ -328,7 +328,7 @@ Actor* Map::SpawnActor( std::string actorName, Vec3 const& position, EulerAngles
 		{
 			ActorHandle newActorHandle = ActorHandle( m_currentUID, static_cast<unsigned int>( m_actors.size() ) );
 			m_currentUID++;
-			Actor* newActor = new Actor( position, orientation, &actorDef, newActorHandle, this, !actorDef.GetPhysics().m_isSimulated, color );
+			Actor* newActor = new Actor( position, orientation, &actorDef, newActorHandle, this, startingState, !actorDef.GetPhysics().m_isSimulated, color );
 
 			int slotToInsert = GetFirstNullActorSlot();
 			if( slotToInsert < 0 )
@@ -917,6 +917,7 @@ RaycastResult3D Map::RaycastWorldZ( Vec3 const& start, Vec3 const& direction, fl
 			raycast.m_impactPos = currentPos;
 			if( tileStepDirectionZ > 0 )
 			{
+				raycast.m_impactPos.z -= 0.1f;
 				raycast.m_impactNormal = Vec3( 0.f, 0.f, -1.f );
 			}
 			else

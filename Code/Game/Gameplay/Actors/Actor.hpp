@@ -41,7 +41,7 @@ enum class AnimState
 class Actor
 {
 public:
-	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle, Map* owningMap, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
+	Actor( Vec3 const& startingPosition, EulerAngles const& orientation, ActorDefinition* definition, ActorHandle actorHandle, Map* owningMap, AnimState startingAnim = AnimState::WALK, bool isStatic = true, Rgba8 color = Rgba8::WHITE );
 	~Actor();
 
 	virtual void Update( float deltaSeconds );
@@ -63,6 +63,8 @@ public:
 	void EquipWeapon( int weaponToSwitchTo );
 	bool IsAlive() const;
 
+	void SwitchAnimState( AnimState newState );
+
 	IntVec2 GetCoordsOfCurrentTile() const;
 	Mat44 GetModelToWorldTransform() const;
 
@@ -83,6 +85,7 @@ public:
 	Actor*		m_owner = nullptr;
 	
 	Timer*		m_deathTimer = nullptr;
+	Timer*		m_animTimer = nullptr;
 	ActorDefinition* m_definition;
 	Map*		m_map;
 

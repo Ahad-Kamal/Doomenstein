@@ -64,3 +64,11 @@ const SpriteAnimDefinition& SpriteAnimationGroupDefinition::GetAnimationForDirec
 	return m_spriteAnimationDefinitions[ closestDirectionIndex ];
 }
 
+//-----------------------------------------------------------------------------------------------
+float SpriteAnimationGroupDefinition::GetDuration() const
+{
+	SpriteAnimDefinition animDef = m_spriteAnimationDefinitions[ 0 ];
+	int numFrames = animDef.GetEndIndex() - animDef.GetStartIndex();
+	return ( 1.f / m_framesPerSecond ) * numFrames;
+}
+
