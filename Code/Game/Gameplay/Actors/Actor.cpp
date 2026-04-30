@@ -13,14 +13,15 @@
 #include "Engine/Core/EventSystem.hpp"
 #include "Engine/Core/Timer.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Core/Clock.hpp"
+#include "Engine/Core/DebugRender.hpp"
 #include "Engine/Math/Mat44.hpp"
 #include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/MathUtils.hpp"
+#include "Engine/Renderer/Camera.hpp"
 #include <vector>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include "Engine/Renderer/Camera.hpp"
-#include "Engine/Core/Clock.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -137,19 +138,35 @@ void Actor::Render() const
 	vertexBuffer.Create();
 	indexBuffer.Create();
 
-	// Get Billboard Transform
-	Mat44 billboardTransform = GetBillboardTransform( BillboardType::WORLD_UP_FACING, m_map->m_player->m_camera->GetCameraToWorldTransform(), m_position );
-
 	// Create Anim Def
 	Visuals visuals = m_definition->GetVisuals();
-	AnimationGroup animGroup = visuals.m_animationGroups[ 0 ];
-	Animation animation = animGroup.m_animations[ 0 ];
+	/*AnimationGroup animGroup = visuals.m_animationGroups[ 0 ];
+	Animation animation = animGroup.m_animations[ 0 ];*/
+	SpriteAnimationGroupDefinition animGroupDef = visuals.m_animGroupDefs[ 0 ];
+	SpriteAnimDefinition animDef = animGroupDef.m_spriteAnimationDefinitions[ 0 ];
 	float framesPerSecond = 0.f;
 	if( m_currentAnim != AnimState::IDLE )
 	{
-		framesPerSecond = 1.f / animGroup.m_secondsPerFrame;
+		framesPerSecond = animGroupDef.m_framesPerSecond;
 	}
-	SpriteAnimDefinition spriteAnim = SpriteAnimDefinition( *visuals.m_spriteSheet, animation.m_startFrame, animation.m_endFrame, framesPerSecond, animGroup.m_playbackMode );
+	SpriteAnimDefinition spriteAnim = SpriteAnimDefinition( *visuals.m_spriteSheet, animDef.GetStartIndex(), animDef.GetEndIndex(), framesPerSecond, animGroupDef.m_playbackMode );
+
+	// Get Billboard Transform
+	Mat44 cameraToWorldTransform = m_map->m_player->m_camera->GetCameraToWorldTransform();
+	Mat44 billboardTransform = GetBillboardTransform( visuals.m_billboardType, cameraToWorldTransform, m_position );
+
+	// Debug
+	if( m_controller != m_map->m_player )
+	{
+		Vec3 cameraToActor = m_position - cameraToWorldTransform.GetTranslation3D();
+		Mat44 orthoInverse = GetModelToWorldTransform().GetOrthonormalInverse();
+		Vec3 facingVector = orthoInverse.TransformVectorQuantity3D( cameraToActor );
+		facingVector.Normalize();
+
+		AABB2 vecBox = AABB2( 1.f, 764.f, 800.f, 780.f );
+		std::string vecText = Stringf( "X: %.2f Y: %.2f Z %.2f", facingVector.x, facingVector.y, facingVector.z );
+		DebugAddScreenText( vecText, vecBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
+	}
 
 	// Get UVs
 	Texture* texture = nullptr;

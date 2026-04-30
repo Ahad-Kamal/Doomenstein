@@ -1,4 +1,5 @@
 #pragma once
+#include "Game/Framework/SpriteAnimGroupDefinition.hpp"
 #include "Engine/Math/FloatRange.hpp"
 #include "Engine/Math/Vec2.hpp"
 #include "Engine/Math/IntVec2.hpp"
@@ -57,28 +58,29 @@ struct AIControl
 	bool m_aiEnabled = false;
 };
 
-//-----------------------------------------------------------------------------------------------
-struct Animation
-{
-	Vec3 m_vector = Vec3( 1.f, 0.f, 0.f );
-	int m_startFrame = 0;
-	int m_endFrame = 0;
-};
-
-//-----------------------------------------------------------------------------------------------
-struct AnimationGroup
-{
-	std::vector<Animation> m_animations;
-	std::vector<SpriteAnimDefinition> m_spriteAnimDefs;
-	std::string m_name;
-	float m_secondsPerFrame = 1.f;
-	SpriteAnimPlaybackType m_playbackMode = SpriteAnimPlaybackType::ONCE;
-};
+////-----------------------------------------------------------------------------------------------
+//struct Animation
+//{
+//	Vec3 m_vector = Vec3( 1.f, 0.f, 0.f );
+//	int m_startFrame = 0;
+//	int m_endFrame = 0;
+//};
+//
+////-----------------------------------------------------------------------------------------------
+//struct AnimationGroup
+//{
+//	std::vector<Animation> m_animations;
+//	std::vector<SpriteAnimDefinition> m_spriteAnimDefs;
+//	std::string m_name;
+//	float m_secondsPerFrame = 1.f;
+//	SpriteAnimPlaybackType m_playbackMode = SpriteAnimPlaybackType::ONCE;
+//};
 
 //-----------------------------------------------------------------------------------------------
 struct Visuals
 {
-	std::vector<AnimationGroup> m_animationGroups;
+	//std::vector<AnimationGroup> m_animationGroups;
+	std::vector<SpriteAnimationGroupDefinition> m_animGroupDefs;
 	std::string m_shader;
 	SpriteSheet* m_spriteSheet = nullptr;
 	Vec2 m_size = Vec2( 1.f, 1.f );

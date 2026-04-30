@@ -181,6 +181,7 @@
     <ClCompile Include="Framework\App.cpp" />
     <ClCompile Include="Framework\GameCommon.cpp" />
     <ClCompile Include="Framework\Main_Windows.cpp" />
+    <ClCompile Include="Framework\SpriteAnimGroupDefinition.cpp" />
     <ClCompile Include="Gameplay\ActorDefinition.cpp" />
     <ClCompile Include="Gameplay\Actors\Actor.cpp" />
     <ClCompile Include="Gameplay\Actors\AI.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Framework\App.hpp" />
     <ClInclude Include="Framework\EngineBuildPreferences.hpp" />
     <ClInclude Include="Framework\GameCommon.hpp" />
+    <ClInclude Include="Framework\SpriteAnimGroupDefinition.hpp" />
     <ClInclude Include="Gameplay\ActorDefinition.hpp" />
     <ClInclude Include="Gameplay\Actors\Actor.hpp" />
     <ClInclude Include="Gameplay\Actors\AI.hpp" />

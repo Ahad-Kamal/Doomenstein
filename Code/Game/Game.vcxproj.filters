@@ -64,6 +64,9 @@
     <ClCompile Include="Gameplay\Actors\AI.cpp">
       <Filter>Gameplay\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="Framework\SpriteAnimGroupDefinition.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\App.hpp">
@@ -113,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="Gameplay\Actors\AI.hpp">
       <Filter>Gameplay\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\SpriteAnimGroupDefinition.hpp">
+      <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -129,7 +129,10 @@ void ActorDefinition::InitializeActorDefs()
 				XmlElement* animGroupElement = childElement->FirstChildElement();
 				while( animGroupElement )
 				{
-					AnimationGroup newAnimGroup;
+					SpriteAnimationGroupDefinition newSpriteAnimGroupDef;
+					newSpriteAnimGroupDef.LoadFromXmlElement( *animGroupElement, *currentActorDef.m_visuals.m_spriteSheet );
+
+					/*AnimationGroup newAnimGroup;
 					NamedStrings actorDefAnimGroupBlackboard;
 					actorDefAnimGroupBlackboard.PopulateFromXmlElementAttributes( *animGroupElement );
 
@@ -142,7 +145,7 @@ void ActorDefinition::InitializeActorDefs()
 					while( animElement )
 					{
 						Animation newAnim;
-						
+
 
 						NamedStrings actorDefAnimBlackboard;
 						actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
@@ -156,9 +159,10 @@ void ActorDefinition::InitializeActorDefs()
 
 						newAnimGroup.m_animations.push_back( newAnim );
 						animElement = animElement->NextSiblingElement();
-					}
+					}*/
 
-					currentActorDef.m_visuals.m_animationGroups.push_back( newAnimGroup );
+					//currentActorDef.m_visuals.m_animationGroups.push_back( newAnimGroup );
+					currentActorDef.m_visuals.m_animGroupDefs.push_back( newSpriteAnimGroupDef );
 					animGroupElement = animGroupElement->NextSiblingElement();
 				}
 			}
@@ -261,7 +265,10 @@ void ActorDefinition::InitializeProjectileActorDefs()
 				XmlElement* animGroupElement = childElement->FirstChildElement();
 				while( animGroupElement )
 				{
-					AnimationGroup newAnimGroup;
+					SpriteAnimationGroupDefinition newSpriteAnimGroupDef;
+					newSpriteAnimGroupDef.LoadFromXmlElement( *animGroupElement, *currentActorDef.m_visuals.m_spriteSheet );
+
+					/*AnimationGroup newAnimGroup;
 					NamedStrings actorDefAnimGroupBlackboard;
 					actorDefAnimGroupBlackboard.PopulateFromXmlElementAttributes( *animGroupElement );
 
@@ -273,22 +280,25 @@ void ActorDefinition::InitializeProjectileActorDefs()
 					XmlElement* animElement = animGroupElement->FirstChildElement();
 					while( animElement )
 					{
-						Animation newAnim;
-						NamedStrings actorDefAnimBlackboard;
-						actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
-						newAnim.m_vector = actorDefAnimBlackboard.GetValue( "vector", Vec3( 1.f, 0.f, 0.f ) );
+					Animation newAnim;
 
-						XmlElement* animChildElement = animElement->FirstChildElement();
-						NamedStrings actorDefAnimChildBlackboard;
-						actorDefAnimChildBlackboard.PopulateFromXmlElementAttributes( *animChildElement );
-						newAnim.m_startFrame = actorDefAnimChildBlackboard.GetValue( "startFrame", 0 );
-						newAnim.m_endFrame = actorDefAnimChildBlackboard.GetValue( "endFrame", 0 );
 
-						newAnimGroup.m_animations.push_back( newAnim );
-						animElement = animElement->NextSiblingElement();
-					}
+					NamedStrings actorDefAnimBlackboard;
+					actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
+					newAnim.m_vector = actorDefAnimBlackboard.GetValue( "vector", Vec3( 1.f, 0.f, 0.f ) );
 
-					currentActorDef.m_visuals.m_animationGroups.push_back( newAnimGroup );
+					XmlElement* animChildElement = animElement->FirstChildElement();
+					NamedStrings actorDefAnimChildBlackboard;
+					actorDefAnimChildBlackboard.PopulateFromXmlElementAttributes( *animChildElement );
+					newAnim.m_startFrame = actorDefAnimChildBlackboard.GetValue( "startFrame", 0 );
+					newAnim.m_endFrame = actorDefAnimChildBlackboard.GetValue( "endFrame", 0 );
+
+					newAnimGroup.m_animations.push_back( newAnim );
+					animElement = animElement->NextSiblingElement();
+					}*/
+
+					//currentActorDef.m_visuals.m_animationGroups.push_back( newAnimGroup );
+					currentActorDef.m_visuals.m_animGroupDefs.push_back( newSpriteAnimGroupDef );
 					animGroupElement = animGroupElement->NextSiblingElement();
 				}
 			}
