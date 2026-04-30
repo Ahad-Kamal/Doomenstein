@@ -308,8 +308,12 @@ void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 	{
 		m_isDead = true;
 		SwitchAnimState( AnimState::DEATH );
-		Rgba8 deadColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b - 100 ), 0.f, 255.f ) );
-		SetColor( deadColor );
+
+		if( m_definition->GetName() != "PlasmaProjectile" )
+		{
+			Rgba8 deadColor = Rgba8( (unsigned int)GetClamped( (float)( m_color.r - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.g - 100 ), 0.f, 255.f ), (unsigned int)GetClamped( (float)( m_color.b - 100 ), 0.f, 255.f ) );
+			SetColor( deadColor );
+		}
 
 		m_deathTimer = new Timer( m_definition->GetCorpseLifetime(), g_game->m_gameClock );
 		m_deathTimer->Start();
@@ -321,8 +325,7 @@ void Actor::OnCollide( Actor* collidingActor )
 {
 	if( m_definition->GetCollision().m_dieOnCollide )
 	{
-		m_isDead = true;
-		m_isGarbage = true;
+		Damage( m_health, collidingActor->m_actorHandle );
 	}
 
 	ActorDefinition collidingActorDef = *collidingActor->m_definition;

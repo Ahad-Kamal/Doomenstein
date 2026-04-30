@@ -674,8 +674,7 @@ void Map::CollideActorWithMap( Actor* actor )
 	{
 		if( actor->m_definition->GetCollision().m_dieOnCollide )
 		{
-			actor->m_isDead = true;
-			actor->m_isGarbage = true;
+			actor->Damage( actor->m_health, actor->m_actorHandle );
 		}
 	}
 }
