@@ -333,6 +333,10 @@ void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 		m_deathTimer = new Timer( m_definition->GetCorpseLifetime(), g_game->m_gameClock );
 		m_deathTimer->Start();
 	}
+	else
+	{
+		SwitchAnimState( AnimState::HURT );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------

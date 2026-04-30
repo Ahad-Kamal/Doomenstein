@@ -69,6 +69,12 @@ float SpriteAnimationGroupDefinition::GetDuration() const
 {
 	SpriteAnimDefinition animDef = m_spriteAnimationDefinitions[ 0 ];
 	int numFrames = animDef.GetEndIndex() - animDef.GetStartIndex();
+
+	if( numFrames == 0 )
+	{
+		return ( 1.f / m_framesPerSecond );
+	}
+
 	return ( 1.f / m_framesPerSecond ) * numFrames;
 }
 
