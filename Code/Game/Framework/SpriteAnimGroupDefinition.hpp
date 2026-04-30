@@ -14,7 +14,7 @@ public:
 	bool LoadFromXmlElement( XmlElement const& element, SpriteSheet const& spriteSheet );
 
 	const SpriteAnimDefinition& GetAnimationForDirection( Vec3 const& direction ) const;
-	float GetDuration() const;
+	//float GetDuration() const;
 
 public:
 	std::string m_name;

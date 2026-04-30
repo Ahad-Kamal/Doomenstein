@@ -140,9 +140,7 @@ void Actor::Render() const
 
 	// Create Anim Def
 	Visuals visuals = m_definition->GetVisuals();
-	/*AnimationGroup animGroup = visuals.m_animationGroups[ 0 ];
-	Animation animation = animGroup.m_animations[ 0 ];*/
-	SpriteAnimationGroupDefinition animGroupDef = visuals.m_animGroupDefs[ 0 ];
+	SpriteAnimationGroupDefinition animGroupDef = *m_definition->GetAnimGroupByState( m_currentAnim );
 	SpriteAnimDefinition animDef = animGroupDef.m_spriteAnimationDefinitions[ 0 ];
 	float framesPerSecond = 0.f;
 	if( m_currentAnim != AnimState::IDLE )

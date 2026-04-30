@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/Framework/SpriteAnimGroupDefinition.hpp"
+#include "Game/Gameplay/Actors/Actor.hpp"
 #include "Engine/Math/FloatRange.hpp"
 #include "Engine/Math/Vec2.hpp"
 #include "Engine/Math/IntVec2.hpp"
@@ -58,24 +59,6 @@ struct AIControl
 	bool m_aiEnabled = false;
 };
 
-////-----------------------------------------------------------------------------------------------
-//struct Animation
-//{
-//	Vec3 m_vector = Vec3( 1.f, 0.f, 0.f );
-//	int m_startFrame = 0;
-//	int m_endFrame = 0;
-//};
-//
-////-----------------------------------------------------------------------------------------------
-//struct AnimationGroup
-//{
-//	std::vector<Animation> m_animations;
-//	std::vector<SpriteAnimDefinition> m_spriteAnimDefs;
-//	std::string m_name;
-//	float m_secondsPerFrame = 1.f;
-//	SpriteAnimPlaybackType m_playbackMode = SpriteAnimPlaybackType::ONCE;
-//};
-
 //-----------------------------------------------------------------------------------------------
 struct Visuals
 {
@@ -112,6 +95,8 @@ public:
 	bool GetCanBePossesed() const;
 	bool GetDieOnSpawn() const;
 	Faction GetFaction() const;
+	const SpriteAnimationGroupDefinition* GetAnimGroupByName( std::string const& animName );
+	const SpriteAnimationGroupDefinition* GetAnimGroupByState( AnimState animState );
 
 public:
 	static std::vector<ActorDefinition> s_actorDefs;

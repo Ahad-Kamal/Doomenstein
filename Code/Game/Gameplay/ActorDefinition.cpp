@@ -391,3 +391,41 @@ Faction ActorDefinition::GetFaction() const
 {
 	return m_faction;
 }
+
+//-----------------------------------------------------------------------------------------------
+const SpriteAnimationGroupDefinition* ActorDefinition::GetAnimGroupByName( std::string const& animName )
+{
+	for( unsigned int groupIndex = 0; groupIndex < m_visuals.m_animGroupDefs.size(); groupIndex++ )
+	{
+		if( m_visuals.m_animGroupDefs[ groupIndex ].m_name == animName )
+		{
+			return &m_visuals.m_animGroupDefs[ groupIndex ];
+		}
+	}
+
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+const SpriteAnimationGroupDefinition* ActorDefinition::GetAnimGroupByState( AnimState animState )
+{
+	switch( animState )
+	{
+		case AnimState::IDLE:
+			return GetAnimGroupByName( "Idle" );
+		
+		case AnimState::WALK:
+			return GetAnimGroupByName( "Walk" );
+
+		case AnimState::ATTACK:
+			return GetAnimGroupByName( "Attack" );
+
+		case AnimState::HURT:
+			return GetAnimGroupByName( "Hurt" );
+
+		case AnimState::DEATH:
+			return GetAnimGroupByName( "Death" );
+	}
+
+	return nullptr;
+}
