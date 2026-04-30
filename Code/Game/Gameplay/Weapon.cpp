@@ -45,8 +45,10 @@ void Weapon::Fire( Actor* owner )
 	}
 
 	WeaponType weaponType = m_definition->GetType();
+	bool didAttack = false;
 	if( weaponType == WEAPON_TYPE_RAY )
 	{
+		didAttack = true;
 		Vec3 startPosition;
 		Vec3 direction;
 		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
@@ -72,6 +74,7 @@ void Weapon::Fire( Actor* owner )
 		RayWeapon rayDef = m_definition->GetRayWeaponInfo();
 		for( int rayCount = 0; rayCount < rayDef.m_rayCount; rayCount++ )
 		{
+			didAttack = true;
 			if( raycast.m_didImpact )
 			{
 				//DebugAddWorldCylinder( startPosition, raycast.m_impactPos, 0.01f, 1.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
@@ -136,11 +139,17 @@ void Weapon::Fire( Actor* owner )
 		MeleeWeapon meleeDef = m_definition->GetMeleeWeaponInfo();
 		if( IsPointInsideOrientedSector2D( Vec2( targetActor->m_position ), Vec2( owner->m_position ), owner->m_orientation.m_yawDegrees, meleeDef.m_meleeArc, meleeDef.m_meleeRange ) )
 		{
+			didAttack = true;
 			FloatRange damageRange = meleeDef.m_meleeDamage;
 
 			float calculatedDamage = g_rng->RollRandomFloatInRange( damageRange.m_min, damageRange.m_max );
 			targetActor->Damage( static_cast<int>( roundf( calculatedDamage ) ), owner->m_actorHandle );
 		}
+	}
+
+	if( didAttack )
+	{
+		owner->SwitchAnimState( AnimState::ATTACK );
 	}
 }
 

@@ -124,6 +124,14 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 	{
 		m_ai->Update( deltaSeconds );
 	}
+
+	if( m_definition->GetAnimGroupByState( m_currentAnim )->m_playbackMode == SpriteAnimPlaybackType::ONCE && !m_isDead )
+	{
+		if( m_animTimer->HasPeriodElapsed() )
+		{
+			SwitchAnimState( AnimState::WALK );
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -392,12 +400,15 @@ bool Actor::IsAlive() const
 //-----------------------------------------------------------------------------------------------
 void Actor::SwitchAnimState( AnimState newState )
 {
-	m_currentAnim = newState;
+	if( m_currentAnim != newState )
+	{
+		m_currentAnim = newState;
 
-	m_animTimer->Stop();
-	delete m_animTimer;
-	m_animTimer = new Timer( static_cast<double>( m_definition->GetAnimGroupByState( m_currentAnim )->GetDuration() ), g_game->m_gameClock );
-	m_animTimer->Start();
+		m_animTimer->Stop();
+		delete m_animTimer;
+		m_animTimer = new Timer( static_cast<double>( m_definition->GetAnimGroupByState( m_currentAnim )->GetDuration() ), g_game->m_gameClock );
+		m_animTimer->Start();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
