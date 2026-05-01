@@ -71,7 +71,8 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 
 	RenderSetup();
 
-	m_animTimer = new Timer( static_cast<double>( m_definition->GetAnimGroupByState( m_currentAnim )->GetDuration() ), g_game->m_gameClock );
+	m_animClock = new Clock( *g_game->m_gameClock );
+	m_animTimer = new Timer( static_cast<double>( m_definition->GetAnimGroupByState( m_currentAnim )->GetDuration() ), m_animClock );
 	m_animTimer->Start();
 }
 
@@ -125,7 +126,17 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 		m_ai->Update( deltaSeconds );
 	}
 
-	if( m_definition->GetAnimGroupByState( m_currentAnim )->m_playbackMode == SpriteAnimPlaybackType::ONCE && !m_isDead )
+	SpriteAnimationGroupDefinition animGroupDef = *m_definition->GetAnimGroupByState( m_currentAnim );
+	if( animGroupDef.m_scaleBySpeed )
+	{
+		double timeScale = static_cast<double>( m_velocity.GetLength() / m_definition->GetPhysics().m_walkSpeed );
+		m_animClock->SetTimeScale( timeScale );
+	}
+	else
+	{
+		m_animClock->SetTimeScale( g_game->m_gameClock->GetTimeScale() );
+	}
+	if( animGroupDef.m_playbackMode == SpriteAnimPlaybackType::ONCE && !m_isDead )
 	{
 		if( m_animTimer->HasPeriodElapsed() )
 		{

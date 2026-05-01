@@ -19,6 +19,7 @@ class Map;
 class Weapon;
 class AI;
 class Timer;
+class Clock;
 
 //-----------------------------------------------------------------------------------------------
 typedef NamedStrings EventArgs;
@@ -84,6 +85,7 @@ public:
 	AI*			m_ai = nullptr;
 	Actor*		m_owner = nullptr;
 	
+	Clock*		m_animClock = nullptr;
 	Timer*		m_deathTimer = nullptr;
 	Timer*		m_animTimer = nullptr;
 	ActorDefinition* m_definition;
