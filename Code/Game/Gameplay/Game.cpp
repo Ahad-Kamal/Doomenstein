@@ -133,9 +133,11 @@ void Game::Render() const
 	g_engine->m_render->SetLightConstants( normalizedLighting, m_sunIntensity, m_ambientIntensity );
 	RenderMap();
 
+	g_engine->m_render->BeginCamera( *m_screenCamera );
+	RenderHud();
+
 	if( g_engine->m_devConsole->IsOpen() )
 	{
-		g_engine->m_render->BeginCamera( *m_screenCamera );
 		g_engine->m_render->RenderSetup( nullptr, BlendMode::ALPHA );
 		AABB2 screenBounds = AABB2( m_screenCamera->GetOrthoBottomLeft(), m_screenCamera->GetOrthoTopRight() );
 		g_engine->m_devConsole->Render( screenBounds );
@@ -262,6 +264,17 @@ void Game::RenderEntities() const
 void Game::RenderMap() const
 {
 	m_currentMap->Render();
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::RenderHud() const
+{
+	AABB2 hudBaseBox = AABB2( 0.f, m_screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCamera->GetOrthoBottomLeft().y + 117.4312f );
+	Texture* hudBaseTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Hud_Base.png" );
+	VertexList hudBaseVerts;
+	AddVertsForAABB2D( hudBaseVerts, hudBaseBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
+	g_engine->m_render->RenderSetup( hudBaseTexture );
+	g_engine->m_render->DrawVertexArray( hudBaseVerts );
 }
 
 //-----------------------------------------------------------------------------------------------

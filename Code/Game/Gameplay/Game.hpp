@@ -41,6 +41,7 @@ public:
 
 private:
 	void UpdateStates();
+
 	void UpdateAttractMode( float deltaSeconds );
 	void RenderAttractMode() const;
 
@@ -48,6 +49,8 @@ private:
 	void UpdateMap( float deltaSeconds );
 	void RenderEntities() const;
 	void RenderMap() const;
+
+	void RenderHud() const;
 
 	void UpdateKeyboardInput();
 	void UpdateControllerInput();
