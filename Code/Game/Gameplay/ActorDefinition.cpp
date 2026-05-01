@@ -132,36 +132,6 @@ void ActorDefinition::InitializeActorDefs()
 					SpriteAnimationGroupDefinition newSpriteAnimGroupDef;
 					newSpriteAnimGroupDef.LoadFromXmlElement( *animGroupElement, *currentActorDef.m_visuals.m_spriteSheet );
 
-					/*AnimationGroup newAnimGroup;
-					NamedStrings actorDefAnimGroupBlackboard;
-					actorDefAnimGroupBlackboard.PopulateFromXmlElementAttributes( *animGroupElement );
-
-					newAnimGroup.m_name = actorDefAnimGroupBlackboard.GetValue( "name", "" );
-					newAnimGroup.m_secondsPerFrame = actorDefAnimGroupBlackboard.GetValue( "secondsPerFrame", 1.f );
-					std::string playbackString = actorDefAnimGroupBlackboard.GetValue( "playbackMode", "ONCE" );
-					newAnimGroup.m_playbackMode = GetPlaybackTypeFromString( playbackString );
-
-					XmlElement* animElement = animGroupElement->FirstChildElement();
-					while( animElement )
-					{
-						Animation newAnim;
-
-
-						NamedStrings actorDefAnimBlackboard;
-						actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
-						newAnim.m_vector = actorDefAnimBlackboard.GetValue( "vector", Vec3( 1.f, 0.f, 0.f ) );
-
-						XmlElement* animChildElement = animElement->FirstChildElement();
-						NamedStrings actorDefAnimChildBlackboard;
-						actorDefAnimChildBlackboard.PopulateFromXmlElementAttributes( *animChildElement );
-						newAnim.m_startFrame = actorDefAnimChildBlackboard.GetValue( "startFrame", 0 );
-						newAnim.m_endFrame = actorDefAnimChildBlackboard.GetValue( "endFrame", 0 );
-
-						newAnimGroup.m_animations.push_back( newAnim );
-						animElement = animElement->NextSiblingElement();
-					}*/
-
-					//currentActorDef.m_visuals.m_animationGroups.push_back( newAnimGroup );
 					currentActorDef.m_visuals.m_animGroupDefs.push_back( newSpriteAnimGroupDef );
 					animGroupElement = animGroupElement->NextSiblingElement();
 				}
@@ -268,36 +238,6 @@ void ActorDefinition::InitializeProjectileActorDefs()
 					SpriteAnimationGroupDefinition newSpriteAnimGroupDef;
 					newSpriteAnimGroupDef.LoadFromXmlElement( *animGroupElement, *currentActorDef.m_visuals.m_spriteSheet );
 
-					/*AnimationGroup newAnimGroup;
-					NamedStrings actorDefAnimGroupBlackboard;
-					actorDefAnimGroupBlackboard.PopulateFromXmlElementAttributes( *animGroupElement );
-
-					newAnimGroup.m_name = actorDefAnimGroupBlackboard.GetValue( "name", "" );
-					newAnimGroup.m_secondsPerFrame = actorDefAnimGroupBlackboard.GetValue( "secondsPerFrame", 1.f );
-					std::string playbackString = actorDefAnimGroupBlackboard.GetValue( "playbackMode", "ONCE" );
-					newAnimGroup.m_playbackMode = GetPlaybackTypeFromString( playbackString );
-
-					XmlElement* animElement = animGroupElement->FirstChildElement();
-					while( animElement )
-					{
-					Animation newAnim;
-
-
-					NamedStrings actorDefAnimBlackboard;
-					actorDefAnimBlackboard.PopulateFromXmlElementAttributes( *animElement );
-					newAnim.m_vector = actorDefAnimBlackboard.GetValue( "vector", Vec3( 1.f, 0.f, 0.f ) );
-
-					XmlElement* animChildElement = animElement->FirstChildElement();
-					NamedStrings actorDefAnimChildBlackboard;
-					actorDefAnimChildBlackboard.PopulateFromXmlElementAttributes( *animChildElement );
-					newAnim.m_startFrame = actorDefAnimChildBlackboard.GetValue( "startFrame", 0 );
-					newAnim.m_endFrame = actorDefAnimChildBlackboard.GetValue( "endFrame", 0 );
-
-					newAnimGroup.m_animations.push_back( newAnim );
-					animElement = animElement->NextSiblingElement();
-					}*/
-
-					//currentActorDef.m_visuals.m_animationGroups.push_back( newAnimGroup );
 					currentActorDef.m_visuals.m_animGroupDefs.push_back( newSpriteAnimGroupDef );
 					animGroupElement = animGroupElement->NextSiblingElement();
 				}

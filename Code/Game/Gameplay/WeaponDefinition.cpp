@@ -1,7 +1,10 @@
 #include "Game/Gameplay/WeaponDefinition.hpp"
+#include "Engine/Core/Engine.hpp"
 #include "Engine/Core/XmlUtils.hpp"
 #include "Engine/Core/NamedStrings.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Renderer/Texture.hpp"
+#include "Engine/Renderer/SpriteSheet.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -57,6 +60,45 @@ void WeaponDefinition::InitializeWeaponDefs()
 			NamedStrings actorDefChildBlackboard;
 			actorDefChildBlackboard.PopulateFromXmlElementAttributes( *childElement );
 			std::string attributeName = childElement->Name();
+
+			// HUD
+			if( attributeName == "HUD" )
+			{
+				currentWeaponDef.m_hud.m_shader = actorDefChildBlackboard.GetValue( "shader", "Default" );
+				currentWeaponDef.m_hud.m_baseTexture = actorDefChildBlackboard.GetValue( "baseTexture", "Default" );
+				currentWeaponDef.m_hud.m_reticleTexture = actorDefChildBlackboard.GetValue( "reticleTexture", "Default" );
+				currentWeaponDef.m_hud.m_reticleSize = actorDefChildBlackboard.GetValue( "reticleSize", Vec2( 1.f, 1.f ) );
+				currentWeaponDef.m_hud.m_spriteSize = actorDefChildBlackboard.GetValue( "spriteSize", Vec2( 1.f, 1.f ) );
+				currentWeaponDef.m_hud.m_spritePivot = actorDefChildBlackboard.GetValue( "spritePivot", Vec2( 0.5f, 0.f ) );
+
+				XmlElement* animationElement = childElement->FirstChildElement();
+				while( animationElement )
+				{
+					NamedStrings animationBlackboard;
+					animationBlackboard.PopulateFromXmlElementAttributes( *animationElement );
+
+					Animation newAnim;
+					newAnim.m_name = animationBlackboard.GetValue( "name", "Idle" );
+					newAnim.m_shader = animationBlackboard.GetValue( "shader", "Default" );
+					newAnim.m_cellCount = animationBlackboard.GetValue( "cellCount", IntVec2( 1, 1 ) );
+					newAnim.m_startFrame = animationBlackboard.GetValue( "startFrame", 0 );
+					newAnim.m_endFrame = animationBlackboard.GetValue( "endFrame", 0 );
+
+					float secondsPerFrame = animationBlackboard.GetValue( "secondsPerFrame", 1.f );
+					newAnim.m_framesPerSecond = 1 / secondsPerFrame;
+
+					std::string spriteSheetString = animationBlackboard.GetValue( "spriteSheet", "Default" );
+					Texture* spriteTexture = nullptr;
+					if( spriteSheetString != "Default" )
+					{
+						spriteTexture = g_engine->m_render->CreateOrGetTextureFromFile( spriteSheetString.c_str() );
+						newAnim.m_spriteSheet = new SpriteSheet( *spriteTexture, newAnim.m_cellCount );
+					}
+
+					currentWeaponDef.m_animations.push_back( newAnim );
+					animationElement = animationElement->NextSiblingElement();
+				}
+			}
 
 			childElement = childElement->NextSiblingElement();
 		}
@@ -120,3 +162,22 @@ MeleeWeapon WeaponDefinition::GetMeleeWeaponInfo() const
 	return m_melee;
 }
 
+//-----------------------------------------------------------------------------------------------
+HUD WeaponDefinition::GetHud() const
+{
+	return m_hud;
+}
+
+//-----------------------------------------------------------------------------------------------
+Animation* WeaponDefinition::GetAnimationByName(  std::string const& animName  )
+{
+	for( unsigned int animIndex = 0; animIndex < m_animations.size(); animIndex++ )
+	{
+		if( m_animations[ animIndex ].m_name == animName )
+		{
+			return &m_animations[ animIndex ];
+		}
+	}
+
+	return nullptr;
+}

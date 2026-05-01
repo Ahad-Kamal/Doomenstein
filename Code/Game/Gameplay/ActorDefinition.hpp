@@ -62,7 +62,6 @@ struct AIControl
 //-----------------------------------------------------------------------------------------------
 struct Visuals
 {
-	//std::vector<AnimationGroup> m_animationGroups;
 	std::vector<SpriteAnimationGroupDefinition> m_animGroupDefs;
 	std::string m_shader;
 	SpriteSheet* m_spriteSheet = nullptr;

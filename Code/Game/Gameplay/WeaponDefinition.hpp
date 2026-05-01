@@ -1,8 +1,13 @@
 #pragma once
+#include "Engine/Math/Vec2.hpp"
+#include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/FloatRange.hpp"
 #include <string>
 #include <vector>
 
+
+//-----------------------------------------------------------------------------------------------
+class SpriteSheet;
 
 //-----------------------------------------------------------------------------------------------
 enum WeaponType
@@ -42,6 +47,29 @@ struct MeleeWeapon
 };
 
 //-----------------------------------------------------------------------------------------------
+struct HUD
+{
+	std::string m_shader;
+	std::string m_baseTexture;
+	std::string m_reticleTexture;
+	Vec2 m_reticleSize = Vec2( 1.f, 1.f );
+	Vec2 m_spriteSize = Vec2( 1.f, 1.f );
+	Vec2 m_spritePivot = Vec2( 0.5f, 0.f );
+};
+
+//-----------------------------------------------------------------------------------------------
+struct Animation
+{
+	std::string m_name;
+	std::string m_shader;
+	SpriteSheet* m_spriteSheet = nullptr;
+	IntVec2 m_cellCount = IntVec2( 1, 1 );
+	float m_framesPerSecond = 1.f;
+	int m_startFrame = 0;
+	int m_endFrame = 0;
+};
+
+//-----------------------------------------------------------------------------------------------
 class WeaponDefinition
 {
 public:
@@ -54,6 +82,8 @@ public:
 	RayWeapon GetRayWeaponInfo() const;
 	ProjectileWeapon GetProjectileWeaponInfo() const;
 	MeleeWeapon GetMeleeWeaponInfo() const;
+	HUD GetHud() const;
+	Animation* GetAnimationByName( std::string const& animName );
 
 public:
 	static std::vector<WeaponDefinition> s_weaponDefs;
@@ -65,4 +95,6 @@ private:
 	std::string m_name;
 	float m_refireTime = 0.f;
 	WeaponType m_type;
+	HUD m_hud;
+	std::vector<Animation> m_animations;
 };

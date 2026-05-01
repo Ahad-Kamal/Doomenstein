@@ -1,4 +1,6 @@
 #include "Game/Gameplay/Game.hpp"
+#include "Game/Gameplay/Weapon.hpp"
+#include "Game/Gameplay/WeaponDefinition.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
 #include "Game/Framework/App.hpp"
 #include "Engine/Core/Engine.hpp"
@@ -269,11 +271,14 @@ void Game::RenderMap() const
 //-----------------------------------------------------------------------------------------------
 void Game::RenderHud() const
 {
+	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
+	WeaponDefinition weaponDef = *m_currentMap->m_player->GetActor()->m_equippedWeapon->m_definition;
+
 	// Hud Base
 	AABB2 hudBaseBox = AABB2( 0.f, m_screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCamera->GetOrthoBottomLeft().y + 117.4312f );
 	VertexList hudBaseVerts;
 	AddVertsForAABB2D( hudBaseVerts, hudBaseBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
-	Texture* hudBaseTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Hud_Base.png" );
+	Texture* hudBaseTexture = g_engine->m_render->CreateOrGetTextureFromFile( weaponDef.GetHud().m_baseTexture.c_str() );
 	g_engine->m_render->RenderSetup( hudBaseTexture );
 	g_engine->m_render->DrawVertexArray( hudBaseVerts );
 
@@ -305,10 +310,10 @@ void Game::RenderHud() const
 	g_engine->m_render->DrawVertexArray( deathTextVerts );
 
 	// Reticle
-	AABB2 reticleBox = AABB2( m_screenCamera->GetCenter().x - 10.f, m_screenCamera->GetCenter().y - 10.f, m_screenCamera->GetCenter().x + 10.f, m_screenCamera->GetCenter().y + 10.f );
+	AABB2 reticleBox = AABB2( m_screenCamera->GetCenter().x - 8.f, m_screenCamera->GetCenter().y - 8.f, m_screenCamera->GetCenter().x + 8.f, m_screenCamera->GetCenter().y + 8.f );
 	VertexList reticleVerts;
 	AddVertsForAABB2D( reticleVerts, reticleBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
-	Texture* reticleTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Reticle.png" );
+	Texture* reticleTexture = g_engine->m_render->CreateOrGetTextureFromFile( weaponDef.GetHud().m_reticleTexture.c_str() );
 	g_engine->m_render->RenderSetup( reticleTexture );
 	g_engine->m_render->DrawVertexArray( reticleVerts );
 }
