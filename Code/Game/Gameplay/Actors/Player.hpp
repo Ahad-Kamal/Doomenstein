@@ -51,4 +51,7 @@ public:
 	Vec3	m_position;
 	EulerAngles m_orientation;
 	CameraMode m_cameraMode = CAMERA_MODE_FIRST_PERSON;
+
+	int m_kills = 0;
+	int m_deaths = 0;
 };

@@ -269,12 +269,40 @@ void Game::RenderMap() const
 //-----------------------------------------------------------------------------------------------
 void Game::RenderHud() const
 {
+	// Hud Base
 	AABB2 hudBaseBox = AABB2( 0.f, m_screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCamera->GetOrthoBottomLeft().y + 117.4312f );
 	Texture* hudBaseTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Hud_Base.png" );
 	VertexList hudBaseVerts;
 	AddVertsForAABB2D( hudBaseVerts, hudBaseBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
 	g_engine->m_render->RenderSetup( hudBaseTexture );
 	g_engine->m_render->DrawVertexArray( hudBaseVerts );
+
+	// Hud Stats
+	Player* player = m_currentMap->m_player;
+	// Health
+	VertexList healthTextVerts;
+	int health = player->GetActor()->m_health;
+	if( health >= 100 )
+	{
+		g_bitmapFont->AddVertsForText2D( healthTextVerts, Vec2( 430.f, 50.f ), 40.f, std::to_string( health ) );
+	}
+	else
+	{
+		g_bitmapFont->AddVertsForText2D( healthTextVerts, Vec2( 450.f, 50.f ), 40.f, std::to_string( health ) );
+	}
+
+	// Kills
+	VertexList killsTextVerts;
+	g_bitmapFont->AddVertsForText2D( killsTextVerts, Vec2( 90.f, 50.f ), 40.f, std::to_string( player->m_kills ) );
+
+	// Deaths
+	VertexList deathTextVerts;
+	g_bitmapFont->AddVertsForText2D( deathTextVerts, Vec2( 1480.f, 50.f ), 40.f, std::to_string( player->m_deaths ) );
+
+	g_engine->m_render->RenderSetup( &g_bitmapFont->GetTexture() );
+	g_engine->m_render->DrawVertexArray( healthTextVerts );
+	g_engine->m_render->DrawVertexArray( killsTextVerts );
+	g_engine->m_render->DrawVertexArray( deathTextVerts );
 }
 
 //-----------------------------------------------------------------------------------------------

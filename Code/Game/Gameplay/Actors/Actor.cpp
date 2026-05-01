@@ -332,6 +332,7 @@ void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 
 	if( m_health <= 0 )
 	{
+		m_health = 0;
 		m_isDead = true;
 		SwitchAnimState( AnimState::DEATH );
 
@@ -343,6 +344,21 @@ void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 
 		m_deathTimer = new Timer( m_definition->GetCorpseLifetime(), g_game->m_gameClock );
 		m_deathTimer->Start();
+
+		if( m_definition->GetFaction() == Faction::DEMON )
+		{
+			Actor* killer = m_map->GetActorByHandle( damagingActor );
+			//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
+			if( killer != nullptr && killer->m_controller == m_map->m_player )
+			{
+				m_map->m_player->m_kills++;
+			}
+		}
+		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
+		if( m_controller == m_map->m_player )
+		{
+			m_map->m_player->m_deaths++;
+		}
 	}
 	else
 	{
