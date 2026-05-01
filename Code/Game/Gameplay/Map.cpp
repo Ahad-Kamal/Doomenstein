@@ -919,7 +919,7 @@ RaycastResult3D Map::RaycastWorldZ( Vec3 const& start, Vec3 const& direction, fl
 			raycast.m_impactPos = currentPos;
 			if( tileStepDirectionZ > 0 )
 			{
-				raycast.m_impactPos.z -= 0.1f;
+				raycast.m_impactPos -= direction * 0.3f;
 				raycast.m_impactNormal = Vec3( 0.f, 0.f, -1.f );
 			}
 			else

@@ -271,9 +271,9 @@ void Game::RenderHud() const
 {
 	// Hud Base
 	AABB2 hudBaseBox = AABB2( 0.f, m_screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCamera->GetOrthoBottomLeft().y + 117.4312f );
-	Texture* hudBaseTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Hud_Base.png" );
 	VertexList hudBaseVerts;
 	AddVertsForAABB2D( hudBaseVerts, hudBaseBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
+	Texture* hudBaseTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Hud_Base.png" );
 	g_engine->m_render->RenderSetup( hudBaseTexture );
 	g_engine->m_render->DrawVertexArray( hudBaseVerts );
 
@@ -303,6 +303,14 @@ void Game::RenderHud() const
 	g_engine->m_render->DrawVertexArray( healthTextVerts );
 	g_engine->m_render->DrawVertexArray( killsTextVerts );
 	g_engine->m_render->DrawVertexArray( deathTextVerts );
+
+	// Reticle
+	AABB2 reticleBox = AABB2( m_screenCamera->GetCenter().x - 10.f, m_screenCamera->GetCenter().y - 10.f, m_screenCamera->GetCenter().x + 10.f, m_screenCamera->GetCenter().y + 10.f );
+	VertexList reticleVerts;
+	AddVertsForAABB2D( reticleVerts, reticleBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
+	Texture* reticleTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Reticle.png" );
+	g_engine->m_render->RenderSetup( reticleTexture );
+	g_engine->m_render->DrawVertexArray( reticleVerts );
 }
 
 //-----------------------------------------------------------------------------------------------
