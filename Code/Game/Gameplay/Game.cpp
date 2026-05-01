@@ -136,7 +136,7 @@ void Game::Render() const
 	if( g_engine->m_devConsole->IsOpen() )
 	{
 		g_engine->m_render->BeginCamera( *m_screenCamera );
-		g_engine->m_render->SetLightConstants( Vec3(), 0.f, 1.f );
+		g_engine->m_render->RenderSetup( nullptr, BlendMode::ALPHA );
 		AABB2 screenBounds = AABB2( m_screenCamera->GetOrthoBottomLeft(), m_screenCamera->GetOrthoTopRight() );
 		g_engine->m_devConsole->Render( screenBounds );
 	}
