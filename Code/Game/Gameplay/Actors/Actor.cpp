@@ -144,7 +144,7 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 		}
 	}
 
-	if( m_equippedWeapon != nullptr && m_equippedWeapon->m_currentAnim == AnimState::ATTACK )
+	if( m_equippedWeapon != nullptr && m_equippedWeapon->m_currentAnim == AnimState::ATTACK && m_equippedWeapon->m_definition->GetType() != WEAPON_TYPE_MELEE )
 	{
 		WeaponAnimation weaponAnim = *m_equippedWeapon->m_definition->GetAnimationByState( AnimState::ATTACK );
 		if( (float)m_equippedWeapon->m_animClock->GetTotalSeconds() >= m_equippedWeapon->m_definition->GetAnimationDuration( AnimState::ATTACK ) )
@@ -227,17 +227,17 @@ void Actor::Render() const
 	g_engine->m_render->RenderSetup( actorTexture, BlendMode::ALPHA, billboardTransform, Rgba8::WHITE, lightSettings );
 	g_engine->m_render->DrawVertexArray( verts, indexes, &vertexBuffer, &indexBuffer );
 
-	// Draw Wireframe
-	g_engine->m_render->SetRasterizerState( RasterizerMode::WIREFRAME_CULL_BACK );
-	g_engine->m_render->SetRasterizerStateIfChanged();
+	//// Draw Wireframe
+	//g_engine->m_render->SetRasterizerState( RasterizerMode::WIREFRAME_CULL_BACK );
+	//g_engine->m_render->SetRasterizerStateIfChanged();
 
-	g_engine->m_render->RenderSetup();
-	VertexList tempWireframeVerts = m_wireframeVertexes;
-	TransformVertexArray3D( tempWireframeVerts, transformMatrix );
-	g_engine->m_render->DrawVertexArray( tempWireframeVerts );
+	//g_engine->m_render->RenderSetup();
+	//VertexList tempWireframeVerts = m_wireframeVertexes;
+	//TransformVertexArray3D( tempWireframeVerts, transformMatrix );
+	//g_engine->m_render->DrawVertexArray( tempWireframeVerts );
 
-	g_engine->m_render->SetRasterizerState( RasterizerMode::SOLID_CULL_BACK );
-	g_engine->m_render->SetRasterizerStateIfChanged();
+	//g_engine->m_render->SetRasterizerState( RasterizerMode::SOLID_CULL_BACK );
+	//g_engine->m_render->SetRasterizerStateIfChanged();
 }
 
 //-----------------------------------------------------------------------------------------------
