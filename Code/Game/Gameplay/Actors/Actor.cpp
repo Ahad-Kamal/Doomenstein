@@ -103,15 +103,18 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 		{
 			m_isGarbage = true;
 
-			//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 			if( m_controller == m_map->m_player1 )
 			{
 				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
 				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation, m_map->m_player1->m_playerNum );				
 			}
+			else if( m_controller == m_map->m_player2 )
+			{
+				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
+				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation, m_map->m_player2->m_playerNum );
+			}
 		}
-		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-		else if( m_controller == m_map->m_player1 )
+		else if( m_controller == m_map->m_player1 || m_controller == m_map->m_player2 )
 		{
 			float eyeHeight = m_definition->GetCameraView().m_eyeHeight;
 			float deathTime = static_cast<float>( m_deathTimer->GetElaspedFraction() ) * 2.f;
@@ -160,7 +163,6 @@ void Actor::Render() const
 	PlayerRenderPass renderPass = g_game->m_renderPass;
 	Camera* worldCamera = nullptr;
 
-	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 	if( renderPass == PlayerRenderPass::PLAYER_ONE )
 	{
 		if( m_controller == m_map->m_player1 && m_map->m_player1->m_cameraMode == CAMERA_MODE_FIRST_PERSON )
@@ -179,6 +181,10 @@ void Actor::Render() const
 
 		worldCamera = m_map->m_player2->m_camera;
 	}
+	if( !worldCamera )
+	{
+		return;
+	}
 
 	// Create Transform Matrix
 	Mat44 transformMatrix;
@@ -196,7 +202,6 @@ void Actor::Render() const
 	SpriteAnimationGroupDefinition animGroupDef = *m_definition->GetAnimGroupByState( m_currentAnim );
 
 	// Get Billboard Transform
-	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 	Mat44 cameraToWorldTransform = worldCamera->GetCameraToWorldTransform();
 	Mat44 billboardTransform = GetBillboardTransform( visuals.m_billboardType, cameraToWorldTransform, m_position );
 
