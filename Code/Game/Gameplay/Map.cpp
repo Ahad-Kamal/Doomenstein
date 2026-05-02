@@ -366,8 +366,19 @@ SpawnInfo Map::GetRandomSpawnPoint( Faction faction )
 {
 	if( faction == Faction::MARINE )
 	{
-		int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_marineSpawnPoints.size() - 1 ) );
-		SpawnInfo startingSpawn = m_marineSpawnPoints[ randomSpawnIndex ];
+		SpawnInfo startingSpawn;
+		if( m_player1 == nullptr )
+		{
+			int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_marineSpawnPoints.size() - 1 ) );
+			startingSpawn = m_marineSpawnPoints[ randomSpawnIndex ];
+			return startingSpawn;
+		}
+
+		while( startingSpawn.m_position != m_player1->m_position )
+		{
+			int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_marineSpawnPoints.size() - 1 ) );
+			startingSpawn = m_marineSpawnPoints[ randomSpawnIndex ];
+		}
 		return startingSpawn;
 	}
 

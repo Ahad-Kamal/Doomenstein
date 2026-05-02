@@ -58,6 +58,8 @@ private:
 	void UpdateKeyboardInput();
 	void UpdateControllerInput();
 
+	bool IsTwoPlayer() const;
+
 	void InitializeStartTriangleVerts();
 
 	void DebugRenderEntities() const;
@@ -85,8 +87,6 @@ public:
 	float m_ambientIntensity = 0.35f;
 
 private:
-	Vertex m_startVerts[ 3 ];
-	float m_startAlpha = 255.f;
 	float m_time = 0.f;
 	Rgba8 m_clearColor = Rgba8( 0, 0, 0, 1 );
 	SoundPlaybackID m_music;
@@ -94,4 +94,8 @@ private:
 	float m_screenShakeAmount = 0.f;
 	bool m_isShaking = false;
 	bool m_debugDraw = false;
+	bool m_isTwoPlayer = false;
+
+	float m_startAlpha = 255.f;
+	Vertex m_startVerts[ 3 ];
 };

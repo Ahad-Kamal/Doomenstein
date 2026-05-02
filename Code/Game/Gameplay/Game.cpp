@@ -240,7 +240,10 @@ void Game::RenderAttractMode() const
 //-----------------------------------------------------------------------------------------------
 void Game::UpdateLobbyMode()
 {
-
+	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_ENTER ) && !m_isTwoPlayer )
+	{
+		m_isTwoPlayer = true;
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -462,6 +465,12 @@ void Game::UpdateControllerInput()
 	{
 		m_nextState = GAME_STATE_ATTRACT;
 	}
+}
+
+//-----------------------------------------------------------------------------------------------
+bool Game::IsTwoPlayer() const
+{
+	return m_isTwoPlayer;
 }
 
 //-----------------------------------------------------------------------------------------------
