@@ -6,6 +6,7 @@
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
 #include "Engine/Core/DebugRender.hpp"
+#include "Engine/Core/Clock.hpp"
 #include "Engine/Core/Timer.hpp"
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/Mat44.hpp"
@@ -34,6 +35,8 @@ Weapon::Weapon( WeaponDefinition* definition )
 	m_cooldownTimer = new Timer( m_definition->GetRefireTime(), g_game->m_gameClock );
 	m_cooldownTimer->Start();
 	m_cooldownTimer->ElaspePeriod();
+
+	m_animClock = new Clock( *g_game->m_gameClock );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -107,6 +110,7 @@ void Weapon::Fire( Actor* owner )
 
 	if( weaponType == WEAPON_TYPE_PROJECTILE )
 	{
+		didAttack = true;
 		EulerAngles projectileDirection = owner->m_orientation;
 		ProjectileWeapon projectileDef = m_definition->GetProjectileWeaponInfo();
 		float cone = projectileDef.m_projectileCone;
@@ -149,7 +153,19 @@ void Weapon::Fire( Actor* owner )
 
 	if( didAttack )
 	{
+		SwitchAnimState( AnimState::ATTACK );
 		owner->SwitchAnimState( AnimState::ATTACK );
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+void Weapon::SwitchAnimState( AnimState newState )
+{
+	if( m_currentAnim != newState )
+	{
+		m_currentAnim = newState;
+
+		m_animClock->Reset();
 	}
 }
 

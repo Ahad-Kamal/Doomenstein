@@ -143,6 +143,15 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 			SwitchAnimState( AnimState::WALK );
 		}
 	}
+
+	if( m_equippedWeapon != nullptr && m_equippedWeapon->m_currentAnim == AnimState::ATTACK )
+	{
+		WeaponAnimation weaponAnim = *m_equippedWeapon->m_definition->GetAnimationByState( AnimState::ATTACK );
+		if( (float)m_equippedWeapon->m_animClock->GetTotalSeconds() >= m_equippedWeapon->m_definition->GetAnimationDuration( AnimState::ATTACK ) )
+		{
+			m_equippedWeapon->SwitchAnimState( AnimState::IDLE );
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -189,15 +198,15 @@ void Actor::Render() const
 	SpriteAnimDefinition spriteAnim = SpriteAnimDefinition( *visuals.m_spriteSheet, animDef.GetStartIndex(), animDef.GetEndIndex(), framesPerSecond, animGroupDef.m_playbackMode );
 
 	// Get UVs
-	Texture* texture = nullptr;
-	AABB2 uvBox = AABB2( 0.f, 0.f, 1.f, 1.f );
+	Texture* actorTexture = nullptr;
+	AABB2 uvBox = AABB2::ZERO_TO_ONE;
 	if( visuals.m_spriteSheet != nullptr )
 	{
 		const SpriteDefinition& spriteDef = spriteAnim.GetSpriteDefAtTime( static_cast<float>( m_animTimer->GetElaspedTime() ) );
 		Vec2 uvMins, uvMaxs;
 		spriteDef.GetUVs( uvMins, uvMaxs );
 		uvBox = AABB2( uvMins, uvMaxs );
-		texture = &visuals.m_spriteSheet->GetTexture();
+		actorTexture = &visuals.m_spriteSheet->GetTexture();
 	}
 
 	// Add Verts
@@ -215,7 +224,7 @@ void Actor::Render() const
 		lightSettings = LightSettings( normalizedLighting, g_game->m_sunIntensity, g_game->m_ambientIntensity );
 	}
 
-	g_engine->m_render->RenderSetup( texture, BlendMode::ALPHA, billboardTransform, Rgba8::WHITE, lightSettings );
+	g_engine->m_render->RenderSetup( actorTexture, BlendMode::ALPHA, billboardTransform, Rgba8::WHITE, lightSettings );
 	g_engine->m_render->DrawVertexArray( verts, indexes, &vertexBuffer, &indexBuffer );
 
 	// Draw Wireframe

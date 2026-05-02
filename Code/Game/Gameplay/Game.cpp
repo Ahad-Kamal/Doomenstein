@@ -272,7 +272,8 @@ void Game::RenderMap() const
 void Game::RenderHud() const
 {
 	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	WeaponDefinition weaponDef = *m_currentMap->m_player->GetActor()->m_equippedWeapon->m_definition;
+	Weapon* currentWeapon = m_currentMap->m_player->GetActor()->m_equippedWeapon;
+	WeaponDefinition weaponDef = *currentWeapon->m_definition;
 
 	// Hud Base
 	AABB2 hudBaseBox = AABB2( 0.f, m_screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCamera->GetOrthoBottomLeft().y + 117.4312f );
@@ -316,6 +317,28 @@ void Game::RenderHud() const
 	Texture* reticleTexture = g_engine->m_render->CreateOrGetTextureFromFile( weaponDef.GetHud().m_reticleTexture.c_str() );
 	g_engine->m_render->RenderSetup( reticleTexture );
 	g_engine->m_render->DrawVertexArray( reticleVerts );
+
+	// Weapon
+	Vec2 weaponSpriteSize = weaponDef.GetHud().m_spriteSize;
+	Texture* weaponTexture = nullptr;
+	AABB2 uvBox = AABB2::ZERO_TO_ONE;
+	SpriteSheet* weaponSpriteSheet = weaponDef.GetAnimationByState( currentWeapon->m_currentAnim )->m_spriteSheet;
+	if( weaponSpriteSheet != nullptr )
+	{
+		WeaponAnimation weaponAnimation = *weaponDef.GetAnimationByState( currentWeapon->m_currentAnim );
+		const SpriteDefinition& spriteDef = weaponAnimation.m_animDef->GetSpriteDefAtTime( static_cast<float>( currentWeapon->m_animClock->GetTotalSeconds() ) );
+		Vec2 uvMins, uvMaxs;
+		spriteDef.GetUVs( uvMins, uvMaxs );
+		uvBox = AABB2( uvMins, uvMaxs );
+		weaponTexture = &weaponSpriteSheet->GetTexture();
+	}
+
+	AABB2 weaponBox = AABB2( m_screenCamera->GetCenter().x - weaponSpriteSize.x * 0.5f, hudBaseBox.m_maxs.y, m_screenCamera->GetCenter().x + weaponSpriteSize.x * 0.5f, hudBaseBox.m_maxs.y + weaponSpriteSize.y );
+	VertexList weaponVerts;
+	AddVertsForAABB2D( weaponVerts, weaponBox, Rgba8::WHITE, uvBox );
+
+	g_engine->m_render->RenderSetup( weaponTexture );
+	g_engine->m_render->DrawVertexArray( weaponVerts );
 }
 
 //-----------------------------------------------------------------------------------------------

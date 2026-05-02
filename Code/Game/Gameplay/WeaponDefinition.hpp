@@ -2,8 +2,10 @@
 #include "Engine/Math/Vec2.hpp"
 #include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/FloatRange.hpp"
+#include "Game/Gameplay/Actors/Actor.hpp"
 #include <string>
 #include <vector>
+#include "Engine/Renderer/SpriteAnimDefinition.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -58,8 +60,9 @@ struct HUD
 };
 
 //-----------------------------------------------------------------------------------------------
-struct Animation
+struct WeaponAnimation
 {
+	SpriteAnimDefinition* m_animDef = nullptr;
 	std::string m_name;
 	std::string m_shader;
 	SpriteSheet* m_spriteSheet = nullptr;
@@ -83,7 +86,9 @@ public:
 	ProjectileWeapon GetProjectileWeaponInfo() const;
 	MeleeWeapon GetMeleeWeaponInfo() const;
 	HUD GetHud() const;
-	Animation* GetAnimationByName( std::string const& animName );
+	WeaponAnimation* GetAnimationByName( std::string const& animName );
+	WeaponAnimation* GetAnimationByState( AnimState animState );
+	float GetAnimationDuration( AnimState animState );
 
 public:
 	static std::vector<WeaponDefinition> s_weaponDefs;
@@ -96,5 +101,5 @@ private:
 	float m_refireTime = 0.f;
 	WeaponType m_type;
 	HUD m_hud;
-	std::vector<Animation> m_animations;
+	std::vector<WeaponAnimation> m_animations;
 };

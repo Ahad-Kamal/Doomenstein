@@ -77,7 +77,7 @@ void WeaponDefinition::InitializeWeaponDefs()
 					NamedStrings animationBlackboard;
 					animationBlackboard.PopulateFromXmlElementAttributes( *animationElement );
 
-					Animation newAnim;
+					WeaponAnimation newAnim;
 					newAnim.m_name = animationBlackboard.GetValue( "name", "Idle" );
 					newAnim.m_shader = animationBlackboard.GetValue( "shader", "Default" );
 					newAnim.m_cellCount = animationBlackboard.GetValue( "cellCount", IntVec2( 1, 1 ) );
@@ -94,6 +94,8 @@ void WeaponDefinition::InitializeWeaponDefs()
 						spriteTexture = g_engine->m_render->CreateOrGetTextureFromFile( spriteSheetString.c_str() );
 						newAnim.m_spriteSheet = new SpriteSheet( *spriteTexture, newAnim.m_cellCount );
 					}
+
+					newAnim.m_animDef = new SpriteAnimDefinition( *newAnim.m_spriteSheet, newAnim.m_startFrame, newAnim.m_endFrame, newAnim.m_framesPerSecond, SpriteAnimPlaybackType::ONCE );
 
 					currentWeaponDef.m_animations.push_back( newAnim );
 					animationElement = animationElement->NextSiblingElement();
@@ -169,7 +171,7 @@ HUD WeaponDefinition::GetHud() const
 }
 
 //-----------------------------------------------------------------------------------------------
-Animation* WeaponDefinition::GetAnimationByName(  std::string const& animName  )
+WeaponAnimation* WeaponDefinition::GetAnimationByName(  std::string const& animName  )
 {
 	for( unsigned int animIndex = 0; animIndex < m_animations.size(); animIndex++ )
 	{
@@ -180,4 +182,27 @@ Animation* WeaponDefinition::GetAnimationByName(  std::string const& animName  )
 	}
 
 	return nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+WeaponAnimation* WeaponDefinition::GetAnimationByState( AnimState animState )
+{
+	switch( animState )
+	{
+		case AnimState::IDLE:
+			return GetAnimationByName( "Idle" );
+
+		case AnimState::ATTACK:
+			return GetAnimationByName( "Attack" );
+	}
+
+	return nullptr;
+}
+
+//-----------------------------------------------------------------------------------------------
+float WeaponDefinition::GetAnimationDuration( AnimState animState )
+{
+	WeaponAnimation weaponDef = *GetAnimationByState( animState );
+	int frameCount = weaponDef.m_endFrame - weaponDef.m_startFrame;
+	return frameCount * ( 1 / weaponDef.m_framesPerSecond );
 }

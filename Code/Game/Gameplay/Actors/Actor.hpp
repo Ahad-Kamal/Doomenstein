@@ -73,8 +73,6 @@ public:
 	static bool Event_OnUnpossessed( EventArgs& args );
 
 public:
-	//VertexPCUTBNList m_vertexes;
-	//IndexList	m_indexes;
 	VertexList	m_wireframeVertexes; // Note: delete this later
 
 	AnimState	m_currentAnim = AnimState::WALK;
