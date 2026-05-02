@@ -314,7 +314,7 @@ void Player::FirstPersonKeyboardControls( [[maybe_unused]] float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-void Player::FirstPersonControllerControls( float deltaSeconds )
+void Player::FirstPersonControllerControls( [[maybe_unused]] float deltaSeconds )
 {
 	Actor* possesedActor = GetActor();
 
@@ -357,26 +357,26 @@ void Player::FirstPersonControllerControls( float deltaSeconds )
 	// Left and Right
 	if( controller.GetLeftStick().GetPosition().x < 0.5f )
 	{
-		possesedActor->m_velocity.x += forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		possesedActor->m_velocity.y += forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		Vec3 direction = Vec3( forwardVector.GetRotated90DegreesAboutZ().x, forwardVector.GetRotated90DegreesAboutZ().y, 0.f );
+		possesedActor->MoveInDirection( direction, speedFactor );
 
 	}
 	if( controller.GetLeftStick().GetPosition().x > -0.5f )
 	{
-		possesedActor->m_velocity.x -= forwardVector.GetRotated90DegreesAboutZ().x * deltaSeconds * speedFactor;
-		possesedActor->m_velocity.y -= forwardVector.GetRotated90DegreesAboutZ().y * deltaSeconds * speedFactor;
+		Vec3 direction = Vec3( -forwardVector.GetRotated90DegreesAboutZ().x, -forwardVector.GetRotated90DegreesAboutZ().y, 0.f );
+		possesedActor->MoveInDirection( direction, speedFactor );
 	}
 
 	// Forward and Back
 	if( controller.GetLeftStick().GetPosition().y > 0.5f )
 	{
-		possesedActor->m_velocity.x += forwardVector.x * deltaSeconds * speedFactor;
-		possesedActor->m_velocity.y += forwardVector.y * deltaSeconds * speedFactor;
+		Vec3 direction = Vec3( forwardVector.x, forwardVector.y, 0.f );
+		possesedActor->MoveInDirection( direction, speedFactor );
 	}
 	if( controller.GetLeftStick().GetPosition().y < -0.5f ) 
 	{
-		possesedActor->m_velocity.x -= forwardVector.x * deltaSeconds * speedFactor;
-		possesedActor->m_velocity.y -= forwardVector.y * deltaSeconds * speedFactor;
+		Vec3 direction = Vec3( -forwardVector.x, -forwardVector.y, 0.f );
+		possesedActor->MoveInDirection( direction, speedFactor );
 	}
 }
 
