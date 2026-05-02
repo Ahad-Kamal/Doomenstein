@@ -80,6 +80,9 @@ void Game::Startup()
 	SpawnInfo startingSpawn = m_currentMap->GetRandomSpawnPoint( Faction::MARINE );
 	m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation );
 
+	m_screenCameraFull = new Camera();
+	m_screenCameraFull->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
+
 	m_worldCameraP1 = m_currentMap->m_player1->m_camera;
 	m_screenCameraP1 = new Camera();
 
@@ -150,7 +153,7 @@ void Game::Render() const
 	if( g_engine->m_devConsole->IsOpen() )
 	{
 		g_engine->m_render->RenderSetup( nullptr, BlendMode::ALPHA );
-		AABB2 screenBounds = AABB2( m_screenCameraP1->GetOrthoBottomLeft(), m_screenCameraP1->GetOrthoTopRight() );
+		AABB2 screenBounds = AABB2( m_screenCameraFull->GetOrthoBottomLeft(), m_screenCameraFull->GetOrthoTopRight() );
 		g_engine->m_devConsole->Render( screenBounds );
 	}
 }
@@ -209,7 +212,7 @@ void Game::UpdateAttractMode( [[maybe_unused]] float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Game::RenderAttractMode() const
 {
-	g_engine->m_render->BeginCamera( *m_screenCameraP1 );
+	g_engine->m_render->BeginCamera( *m_screenCameraFull );
 
 	// Draw Start Button
 	g_engine->m_render->SetModelConstants();
@@ -243,7 +246,7 @@ void Game::UpdateLobbyMode()
 //-----------------------------------------------------------------------------------------------
 void Game::RenderLobbyMode() const
 {
-	g_engine->m_render->BeginCamera( *m_screenCameraP1 );
+	g_engine->m_render->BeginCamera( *m_screenCameraFull );
 
 	// Draw Text
 	std::vector<Vertex> textStarshipDropShadowVerts;

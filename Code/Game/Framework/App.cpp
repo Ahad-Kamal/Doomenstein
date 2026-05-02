@@ -65,7 +65,7 @@ void App::RunFrame()
 	DebugRenderBeginFrame();
 	Render();		
 	DebugRenderWorld( *g_game->m_worldCameraP1 );
-	DebugRenderScreen( *g_game->m_screenCameraP1 );
+	DebugRenderScreen( *g_game->m_screenCameraFull );
 	DebugRenderEndFrame();
 	g_engine->EndFrame(); // Allow engine subsystems to do post-frame stuff
 }
