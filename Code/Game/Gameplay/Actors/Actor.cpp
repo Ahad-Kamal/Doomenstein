@@ -107,7 +107,7 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 			if( m_controller == m_map->m_player1 )
 			{
 				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
-				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation );				
+				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation, m_map->m_player1->m_playerNum );				
 			}
 		}
 		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------

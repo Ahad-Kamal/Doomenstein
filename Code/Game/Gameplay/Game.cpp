@@ -78,7 +78,7 @@ void Game::Startup()
 	m_currentMap = new Map( MapDefinition::GetMapDefFromName( mapName ) );
 
 	SpawnInfo startingSpawn = m_currentMap->GetRandomSpawnPoint( Faction::MARINE );
-	m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation );
+	m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation, 1 );
 
 	m_screenCameraFull = new Camera();
 	m_screenCameraFull->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
@@ -222,19 +222,19 @@ void Game::RenderAttractMode() const
 	g_engine->m_render->DrawVertexArray( 3, m_startVerts );
 
 	// Draw Text
-	std::vector<Vertex> textStarshipDropShadowVerts;
-	AddVertsForTextTriangles2D( textStarshipDropShadowVerts, "Attract", Vec2( 600.f, 700.f ), 40.f, Rgba8( 255, 0, 0 ) );
+	std::vector<Vertex> textAttractVerts;
+	AddVertsForTextTriangles2D( textAttractVerts, "Attract", Vec2( 600.f, 700.f ), 40.f, Rgba8( 255, 0, 0 ) );
 	g_engine->m_render->SetModelConstants();
 	g_engine->m_render->SetBlendStateIfChanged();
 	g_engine->m_render->BindTexture( nullptr );
-	g_engine->m_render->DrawVertexArray( (int)textStarshipDropShadowVerts.size(), textStarshipDropShadowVerts.data() );
+	g_engine->m_render->DrawVertexArray( (int)textAttractVerts.size(), textAttractVerts.data() );
 
-	std::vector<Vertex> textGoldDropShadowVerts;
-	AddVertsForTextTriangles2D( textGoldDropShadowVerts, "Screen", Vec2( 800.f, 700.f ), 40.f, Rgba8( 0, 0, 255 ) );
+	std::vector<Vertex> textScreenVerts;
+	AddVertsForTextTriangles2D( textScreenVerts, "Screen", Vec2( 800.f, 700.f ), 40.f, Rgba8( 0, 0, 255 ) );
 	g_engine->m_render->SetModelConstants();
 	g_engine->m_render->SetBlendStateIfChanged();
 	g_engine->m_render->BindTexture( nullptr );
-	g_engine->m_render->DrawVertexArray( (int)textGoldDropShadowVerts.size(), textGoldDropShadowVerts.data() );
+	g_engine->m_render->DrawVertexArray( (int)textScreenVerts.size(), textScreenVerts.data() );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -243,6 +243,9 @@ void Game::UpdateLobbyMode()
 	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_ENTER ) && !m_isTwoPlayer )
 	{
 		m_isTwoPlayer = true;
+
+		SpawnInfo startingSpawn = m_currentMap->GetRandomSpawnPoint( Faction::MARINE );
+		m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation, 2 );
 	}
 }
 
@@ -252,12 +255,24 @@ void Game::RenderLobbyMode() const
 	g_engine->m_render->BeginCamera( *m_screenCameraFull );
 
 	// Draw Text
-	std::vector<Vertex> textStarshipDropShadowVerts;
-	AddVertsForTextTriangles2D( textStarshipDropShadowVerts, "Lobby", Vec2( 680.f, 700.f ), 40.f, Rgba8( 255, 255, 255 ) );
+	std::vector<Vertex> textLobbyVerts;
+	AddVertsForTextTriangles2D( textLobbyVerts, "Lobby", Vec2( 680.f, 700.f ), 40.f, Rgba8( 255, 255, 255 ) );
 	g_engine->m_render->SetModelConstants();
 	g_engine->m_render->SetBlendStateIfChanged();
 	g_engine->m_render->BindTexture( nullptr );
-	g_engine->m_render->DrawVertexArray( (int)textStarshipDropShadowVerts.size(), textStarshipDropShadowVerts.data() );
+	g_engine->m_render->DrawVertexArray( (int)textLobbyVerts.size(), textLobbyVerts.data() );
+
+	// Draw Text
+	std::vector<Vertex> textPlayerNumVerts;
+	if( !m_isTwoPlayer )
+	{
+		AddVertsForTextTriangles2D( textPlayerNumVerts, "Single Player", Vec2( 600.f, 400.f ), 40.f, Rgba8( 255, 255, 255 ) );
+	}
+	else
+	{
+		AddVertsForTextTriangles2D( textPlayerNumVerts, "Two Player", Vec2( 620.f, 400.f ), 40.f, Rgba8( 255, 255, 255 ) );
+	}
+	g_engine->m_render->DrawVertexArray( (int)textPlayerNumVerts.size(), textPlayerNumVerts.data() );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -466,6 +481,11 @@ void Game::UpdateControllerInput()
 	}
 
 	if( m_currentState == GAME_STATE_PLAY && controller.WasButtonJustPressed( XboxButtonID::SELECT ) )
+	{
+		m_nextState = GAME_STATE_ATTRACT;
+	}
+
+	if( m_currentState == GAME_STATE_LOBBY && controller.WasButtonJustPressed( XboxButtonID::SELECT ) )
 	{
 		m_nextState = GAME_STATE_ATTRACT;
 	}

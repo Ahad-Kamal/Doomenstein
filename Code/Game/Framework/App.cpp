@@ -157,6 +157,11 @@ void App::UpdateKeyboardInput()
 		g_game->m_nextState = GAME_STATE_PLAY;
 	}
 
+	if( g_game->m_currentState == GAME_STATE_LOBBY && g_engine->m_input->WasKeyJustPressed( KEYCODE_ESC ) )
+	{
+		g_game->m_nextState = GAME_STATE_ATTRACT;
+	}
+
 	if( g_game->m_currentState == GAME_STATE_PLAY && g_engine->m_input->WasKeyJustPressed( KEYCODE_ESC ) )
 	{
 		RestartGame();

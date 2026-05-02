@@ -258,8 +258,18 @@ TileDefinitions* Map::GetTileDefinition( std::string name ) const
 //-----------------------------------------------------------------------------------------------
 void Map::Update( float deltaSeconds )
 {
-	DebugPossessNext();
+	bool IsSinglePlayer = !g_game->IsTwoPlayer();
+	if( IsSinglePlayer )
+	{
+		DebugPossessNext();
+	}
+
 	m_player1->Update( deltaSeconds );
+	if( !IsSinglePlayer )
+	{
+		m_player2->Update( deltaSeconds );
+	}
+
 	UpdateActors( deltaSeconds );
 
 	DebugRaycast();
@@ -283,7 +293,7 @@ void Map::UpdateActors( float deltaSeconds )
 }
 
 //-----------------------------------------------------------------------------------------------
-Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, AnimState startingState, Rgba8 color /*= Rgba8::WHITE*/ )
+Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngles const& orientation, int playerNum, AnimState startingState, Rgba8 color /*= Rgba8::WHITE*/ )
 {
 	for( unsigned int actorDefIndex = 0; actorDefIndex < ActorDefinition::s_actorDefs.size(); actorDefIndex++ )
 	{
@@ -296,15 +306,31 @@ Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngle
 			Actor* marine = new Actor( position, orientation, &actorDef, newActorHandle, this, startingState, false, color );
 			m_actors.push_back( marine );
 
-			if( !m_player1 )
+			if( playerNum == 1 )
 			{
-				m_player1 = new Player( this, newActorHandle );
-				m_player1->Possess( m_player1->m_actorHandle );
+				if( !m_player1 )
+				{
+					m_player1 = new Player( this, newActorHandle, playerNum );
+					m_player1->Possess( m_player1->m_actorHandle );
+				}
+				else
+				{
+					m_player1->Possess( newActorHandle );
+				}
 			}
 			else
 			{
-				m_player1->Possess( newActorHandle );
+				if( !m_player2 )
+				{
+					m_player2 = new Player( this, newActorHandle, playerNum );
+					m_player2->Possess( m_player2->m_actorHandle );
+				}
+				else
+				{
+					m_player2->Possess( newActorHandle );
+				}
 			}
+
 			return marine;
 		}
 	}
@@ -366,19 +392,10 @@ SpawnInfo Map::GetRandomSpawnPoint( Faction faction )
 {
 	if( faction == Faction::MARINE )
 	{
-		SpawnInfo startingSpawn;
-		if( m_player1 == nullptr )
-		{
-			int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_marineSpawnPoints.size() - 1 ) );
-			startingSpawn = m_marineSpawnPoints[ randomSpawnIndex ];
-			return startingSpawn;
-		}
-
-		while( startingSpawn.m_position != m_player1->m_position )
-		{
-			int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_marineSpawnPoints.size() - 1 ) );
-			startingSpawn = m_marineSpawnPoints[ randomSpawnIndex ];
-		}
+		int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_marineSpawnPoints.size() - 1 ) );
+		SpawnInfo startingSpawn = m_marineSpawnPoints[ randomSpawnIndex ];
+		return startingSpawn;
+		
 		return startingSpawn;
 	}
 

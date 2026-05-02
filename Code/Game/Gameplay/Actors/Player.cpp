@@ -69,11 +69,11 @@ void Player::UpdateInput( float deltaSeconds )
 		FirstPersonKeyboardControls( deltaSeconds );
 		FirstPersonControllerControls( deltaSeconds );
 	}
-	else if( m_playerNum == 0 )
+	else if( m_playerNum == 1 )
 	{
 		FirstPersonKeyboardControls( deltaSeconds );
 	}
-	else
+	else if( m_playerNum == 2 )
 	{
 		FirstPersonControllerControls( deltaSeconds );
 	}
@@ -90,11 +90,11 @@ void Player::UpdateInput( float deltaSeconds )
 		WeaponKeyboardControls();
 		WeaponControllerControls();
 	}
-	if( m_playerNum == 0 )
+	if( m_playerNum == 1 )
 	{
 		WeaponKeyboardControls();
 	}
-	else
+	else if( m_playerNum == 2 )
 	{
 		WeaponControllerControls();
 	}
