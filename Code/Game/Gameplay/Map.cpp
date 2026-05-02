@@ -451,7 +451,7 @@ ActorHandle Map::GetClosestVisibleEnemy( Actor* searchingActor )
 
 	for( unsigned int actorIndex = 0; actorIndex < m_actors.size(); actorIndex++ )
 	{
-		Actor*& enemyActor = m_actors[ actorIndex ];
+		Actor* enemyActor = GetActorByIndex( actorIndex );
 		if( enemyActor == nullptr )
 		{
 			continue;

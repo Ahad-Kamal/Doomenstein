@@ -33,6 +33,7 @@ public:
 	void UpdateCamera();
 
 	virtual void Possess( ActorHandle actorToPossess ) override;
+	void Unposses( ActorHandle actorToPossess );
 
 	void SwitchWeapon( int weaponToSwitchTo );
 	void WeaponKeyboardControls();

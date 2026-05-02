@@ -259,7 +259,8 @@ void Game::RenderAttractMode() const
 //-----------------------------------------------------------------------------------------------
 void Game::UpdateLobbyMode()
 {
-	if( g_engine->m_input->WasKeyJustPressed( KEYCODE_ENTER ) && !m_isTwoPlayer )
+	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
+	if( controller.WasButtonJustPressed( XboxButtonID::A ) && !m_isTwoPlayer )
 	{
 		m_isTwoPlayer = true;
 
@@ -282,6 +283,22 @@ void Game::UpdateLobbyMode()
 		m_worldCameraP2->SetPosition( m_currentMap->m_player2->m_position );
 		m_worldCameraP2->SetOrientation( m_currentMap->m_player2->m_orientation );
 	}
+	else if( controller.WasButtonJustPressed( XboxButtonID::A ) && m_isTwoPlayer )
+	{
+		m_isTwoPlayer = false;
+		
+		Player* player2 = m_currentMap->m_player2;
+		Actor* player2Actor = player2->GetActor();
+		player2Actor->m_isDead = true;
+		player2Actor->m_isGarbage = true;
+		player2->Unposses( player2Actor->m_actorHandle );
+
+		delete player2;
+		player2 = nullptr;
+
+		m_player1CameraBounds.m_mins.y = 0.f;
+		m_screenCameraP1->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -291,23 +308,26 @@ void Game::RenderLobbyMode() const
 
 	// Draw Text
 	std::vector<Vertex> textLobbyVerts;
-	AddVertsForTextTriangles2D( textLobbyVerts, "Lobby", Vec2( 680.f, 700.f ), 40.f, Rgba8( 255, 255, 255 ) );
+	AddVertsForTextTriangles2D( textLobbyVerts, "Lobby", Vec2( 700.f, 700.f ), 40.f, Rgba8( 255, 255, 255 ) );
+
+	// Draw Text
+	if( !m_isTwoPlayer )
+	{
+		AddVertsForTextTriangles2D( textLobbyVerts, "Mode: Single Player", Vec2( 550.f, 400.f ), 40.f, Rgba8( 255, 255, 255 ) );
+	}
+	else
+	{
+		AddVertsForTextTriangles2D( textLobbyVerts, "Mode: Two Player", Vec2( 570.f, 400.f ), 40.f, Rgba8( 255, 255, 255 ) );
+	}
+
+	AddVertsForTextTriangles2D( textLobbyVerts, "Press 'A' on a controller to join as Player 2", Vec2( 490.f, 200.f ), 20.f, Rgba8( 255, 255, 255 ) );
+	AddVertsForTextTriangles2D( textLobbyVerts, "Press 'A' again to disconnect Player 2", Vec2( 540.f, 175.f ), 20.f, Rgba8( 255, 255, 255 ) );
+	AddVertsForTextTriangles2D( textLobbyVerts, "Press 'Space' or 'Start' after joining to begin", Vec2( 490.f, 150.f ), 20.f, Rgba8( 255, 255, 255 ) );
+
 	g_engine->m_render->SetModelConstants();
 	g_engine->m_render->SetBlendStateIfChanged();
 	g_engine->m_render->BindTexture( nullptr );
 	g_engine->m_render->DrawVertexArray( (int)textLobbyVerts.size(), textLobbyVerts.data() );
-
-	// Draw Text
-	std::vector<Vertex> textPlayerNumVerts;
-	if( !m_isTwoPlayer )
-	{
-		AddVertsForTextTriangles2D( textPlayerNumVerts, "Single Player", Vec2( 600.f, 400.f ), 40.f, Rgba8( 255, 255, 255 ) );
-	}
-	else
-	{
-		AddVertsForTextTriangles2D( textPlayerNumVerts, "Two Player", Vec2( 620.f, 400.f ), 40.f, Rgba8( 255, 255, 255 ) );
-	}
-	g_engine->m_render->DrawVertexArray( (int)textPlayerNumVerts.size(), textPlayerNumVerts.data() );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -509,11 +529,11 @@ void Game::UpdateControllerInput()
 {
 	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
 
-	if( m_currentState == GAME_STATE_ATTRACT && ( controller.WasButtonJustPressed( XboxButtonID::START ) || controller.WasButtonJustPressed( XboxButtonID::A ) ) )
+	if( m_currentState == GAME_STATE_ATTRACT && ( controller.WasButtonJustPressed( XboxButtonID::START ) ) )
 	{
 		m_nextState = GAME_STATE_LOBBY;
 	}
-	if( m_currentState == GAME_STATE_LOBBY && ( controller.WasButtonJustPressed( XboxButtonID::START ) || controller.WasButtonJustPressed( XboxButtonID::A ) ) )
+	if( m_currentState == GAME_STATE_LOBBY && ( controller.WasButtonJustPressed( XboxButtonID::START ) ) )
 	{
 		m_nextState = GAME_STATE_PLAY;
 	}

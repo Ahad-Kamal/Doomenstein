@@ -80,7 +80,7 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 Actor::~Actor()
 {
 	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	if( m_controller != m_map->m_player1 )
+	if( m_controller != m_map->m_player1 && m_controller != m_map->m_player2 )
 	{
 		delete m_controller;
 	}
@@ -96,6 +96,10 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 	if( !m_isDead )
 	{
 		UpdatePhysics( deltaSeconds );
+	}
+	else if( m_isGarbage )
+	{
+		return;
 	}
 	else
 	{

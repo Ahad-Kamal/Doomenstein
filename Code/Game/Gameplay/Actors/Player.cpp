@@ -124,7 +124,6 @@ void Player::UpdateCamera()
 //-----------------------------------------------------------------------------------------------
 void Player::Possess( ActorHandle actorToPossess )
 {
-	// Note: add logic notifying actor that its been unpossessed
 	if( m_actorHandle != actorToPossess )
 	{
 		EventArgs args;
@@ -132,12 +131,22 @@ void Player::Possess( ActorHandle actorToPossess )
 		FireEvent( "Unpossess", args );
 	}
 
-	// Note: add logic notifying actor that its been possessed
 	m_actorHandle = actorToPossess;
 	EventArgs args;
 	args.SetValue( "ActorIndex", Stringf( "%u", m_actorHandle.GetIndex() ) );
 	args.SetValue( "ControllerType", "Player" );
 	FireEvent( "Possess", args );
+}
+
+//-----------------------------------------------------------------------------------------------
+void Player::Unposses( ActorHandle actorToPossess )
+{
+	if( m_actorHandle != actorToPossess )
+	{
+		EventArgs args;
+		args.SetValue( "ActorIndex", Stringf( "%u", m_actorHandle.GetIndex() ) );
+		FireEvent( "Unpossess", args );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
