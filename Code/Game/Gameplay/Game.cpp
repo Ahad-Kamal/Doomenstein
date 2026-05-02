@@ -292,6 +292,11 @@ void Game::RenderHud() const
 	Weapon* currentWeapon = m_currentMap->m_player->GetActor()->m_equippedWeapon;
 	WeaponDefinition weaponDef = *currentWeapon->m_definition;
 
+	if( weaponDef.GetType() == WEAPON_TYPE_MELEE )
+	{
+		return;
+	}
+
 	// Hud Base
 	AABB2 hudBaseBox = AABB2( 0.f, m_screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCamera->GetOrthoBottomLeft().y + 117.4312f );
 	VertexList hudBaseVerts;
@@ -338,8 +343,9 @@ void Game::RenderHud() const
 	// Weapon
 	Vec2 weaponSpriteSize = weaponDef.GetHud().m_spriteSize;
 	Texture* weaponTexture = nullptr;
-	AABB2 uvBox = AABB2::ZERO_TO_ONE;
 	SpriteSheet* weaponSpriteSheet = weaponDef.GetAnimationByState( currentWeapon->m_currentAnim )->m_spriteSheet;
+	
+	AABB2 uvBox = AABB2::ZERO_TO_ONE;
 	if( weaponSpriteSheet != nullptr )
 	{
 		WeaponAnimation weaponAnimation = *weaponDef.GetAnimationByState( currentWeapon->m_currentAnim );
