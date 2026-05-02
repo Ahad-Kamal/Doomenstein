@@ -8,6 +8,7 @@
 #include "Engine/Renderer/SpriteAnimDefinition.hpp"
 #include <string>
 #include <vector>
+#include <map>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -108,6 +109,7 @@ private:
 	CameraView m_cameraView;
 	AIControl m_ai;
 	Visuals m_visuals;
+	std::map< std::string, std::string > m_soundEffects;
 	Faction m_faction = Faction::NEUTRAL;
 	int m_health = 1;
 	double m_corpseLifetime = 0.0;

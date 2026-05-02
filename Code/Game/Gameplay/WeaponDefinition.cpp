@@ -101,6 +101,22 @@ void WeaponDefinition::InitializeWeaponDefs()
 					animationElement = animationElement->NextSiblingElement();
 				}
 			}
+			// Sounds
+			else if( attributeName == "Sounds" )
+			{
+				XmlElement* soundElement = childElement->FirstChildElement();
+				while( soundElement )
+				{
+					NamedStrings soundsBlackboard;
+					soundsBlackboard.PopulateFromXmlElementAttributes( *soundElement );
+
+					std::string sound = soundsBlackboard.GetValue( "sound", "" );
+					std::string name = soundsBlackboard.GetValue( "name", "" );
+
+					currentWeaponDef.m_soundEffects.emplace( sound, name );
+					soundElement = soundElement->NextSiblingElement();
+				}
+			}
 
 			childElement = childElement->NextSiblingElement();
 		}

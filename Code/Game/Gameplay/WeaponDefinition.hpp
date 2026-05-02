@@ -1,11 +1,12 @@
 #pragma once
+#include "Game/Gameplay/Actors/Actor.hpp"
 #include "Engine/Math/Vec2.hpp"
 #include "Engine/Math/IntVec2.hpp"
 #include "Engine/Math/FloatRange.hpp"
-#include "Game/Gameplay/Actors/Actor.hpp"
+#include "Engine/Renderer/SpriteAnimDefinition.hpp"
 #include <string>
 #include <vector>
-#include "Engine/Renderer/SpriteAnimDefinition.hpp"
+#include <map>
 
 
 //-----------------------------------------------------------------------------------------------
@@ -102,4 +103,5 @@ private:
 	WeaponType m_type;
 	HUD m_hud;
 	std::vector<WeaponAnimation> m_animations;
+	std::map< std::string, std::string > m_soundEffects;
 };
