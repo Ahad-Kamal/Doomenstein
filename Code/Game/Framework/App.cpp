@@ -116,13 +116,9 @@ void App::Update()
 //-----------------------------------------------------------------------------------------------
 void App::Render() const
 {
-	g_engine->m_render->BeginCamera( *g_game->m_worldCameraP1 );
-	
 	g_engine->m_render->ClearScreen( g_clearColor );
 
 	g_game->Render();
-
-	g_engine->m_render->EndCamera( *g_game->m_worldCameraP1 );
 }
 
 //-----------------------------------------------------------------------------------------------

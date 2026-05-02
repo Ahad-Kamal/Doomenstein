@@ -5,6 +5,7 @@
 #include "Engine/Math/EulerAngles.hpp"
 #include "Engine/Core/Vertex.hpp"
 #include "Engine/Math/Vec3.hpp"
+#include "Engine/Math/AABB2.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -50,8 +51,9 @@ private:
 	void RenderLobbyMode() const;
 
 	void UpdateEntities( float deltaSeconds );
-	void UpdateMap( float deltaSeconds );
 	void RenderEntities() const;
+
+	void UpdateMap( float deltaSeconds );
 	void RenderMap() const;
 
 	void RenderHud() const;
@@ -73,7 +75,9 @@ public:
 	Map*				m_currentMap;
 
 	Camera*				m_worldCameraP1 = nullptr;
+	Camera*				m_worldCameraP2 = nullptr;
 	Camera*				m_screenCameraP1 = nullptr;
+	Camera*				m_screenCameraP2 = nullptr;
 	Camera*				m_screenCameraFull = nullptr;
 
 	Clock*				m_gameClock;
@@ -89,6 +93,8 @@ private:
 	float m_time = 0.f;
 	Rgba8 m_clearColor = Rgba8( 0, 0, 0, 1 );
 	SoundPlaybackID m_music;
+
+	AABB2 m_player1CameraBounds = AABB2( 0.f, 0.f, SCREEN_SIZE_X, SCREEN_SIZE_Y );
 
 	float m_screenShakeAmount = 0.f;
 	bool m_isShaking = false;
