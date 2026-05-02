@@ -395,8 +395,6 @@ SpawnInfo Map::GetRandomSpawnPoint( Faction faction )
 		int randomSpawnIndex = g_rng->RollRandomIntInRange( 0, static_cast<int>( m_marineSpawnPoints.size() - 1 ) );
 		SpawnInfo startingSpawn = m_marineSpawnPoints[ randomSpawnIndex ];
 		return startingSpawn;
-		
-		return startingSpawn;
 	}
 
 	if( faction == Faction::DEMON )

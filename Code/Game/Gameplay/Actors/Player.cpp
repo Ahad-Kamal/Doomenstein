@@ -82,7 +82,7 @@ void Player::UpdateInput( float deltaSeconds )
 	{
 		float systemDeltaTime = static_cast<float>( Clock::GetSystemClock().GetDeltaSeconds() );
 		FreeFlyKeyboardControls( systemDeltaTime );
-		//FreeFlyControllerControls( systemDeltaTime );
+		FreeFlyControllerControls( systemDeltaTime );
 	}
 
 	if( isSinglePlayer )

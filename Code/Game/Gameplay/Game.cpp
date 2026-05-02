@@ -149,12 +149,23 @@ void Game::Render() const
 	float height = Camera::GetViewportHeight( m_player1CameraBounds, SCREEN_SIZE_Y );
 
 	g_engine->m_render->BeginCamera( *m_worldCameraP1, topLeft, width, height );
-	Vec3 normalizedLighting = m_sunDirection.GetNormalized();
-	g_engine->m_render->SetLightConstants( normalizedLighting, m_sunIntensity, m_ambientIntensity );
 	RenderMap();
 
 	g_engine->m_render->BeginCamera( *m_screenCameraP1, topLeft, width, height );
-	RenderHud();
+	RenderHud( m_currentMap->m_player1, m_screenCameraP1 );
+
+	if( IsTwoPlayer() )
+	{
+		topLeft = Camera::GetTopLeftInViewportSpace( m_player2CameraBounds, SCREEN_SIZE_X, SCREEN_SIZE_Y );
+		width = Camera::GetViewportWidth( m_player2CameraBounds, SCREEN_SIZE_X );
+		height = Camera::GetViewportHeight( m_player2CameraBounds, SCREEN_SIZE_Y );
+
+		g_engine->m_render->BeginCamera( *m_worldCameraP2, topLeft, width, height );
+		RenderMap();
+
+		g_engine->m_render->BeginCamera( *m_screenCameraP2, topLeft, width, height );
+		RenderHud( m_currentMap->m_player2, m_screenCameraP2 );
+	}
 
 	if( g_engine->m_devConsole->IsOpen() )
 	{
@@ -259,11 +270,12 @@ void Game::UpdateLobbyMode()
 		m_screenCameraP1->SetOrthoView( Vec2( 0.f, m_player1CameraBounds.m_mins.y ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
 
 		// Player 2 Camera Setup
-		m_worldCameraP2 = m_currentMap->m_player1->m_camera;
+		m_worldCameraP2 = m_currentMap->m_player2->m_camera;
 		m_screenCameraP2 = new Camera();
 
+		m_player2CameraBounds = AABB2( 0.f, 0.f, SCREEN_SIZE_X, SCREEN_SIZE_Y * 0.5f );
 		m_worldCameraP2->SetCameraToRenderTransform( Mat44::DirectXCameraToRenderMatrix );
-		m_screenCameraP2->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
+		m_screenCameraP2->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, m_player2CameraBounds.m_maxs.y ) );
 
 		m_worldCameraP2->SetPosition( m_currentMap->m_player2->m_position );
 		m_worldCameraP2->SetOrientation( m_currentMap->m_player2->m_orientation );
@@ -324,14 +336,16 @@ void Game::RenderEntities() const
 //-----------------------------------------------------------------------------------------------
 void Game::RenderMap() const
 {
+	Vec3 normalizedLighting = m_sunDirection.GetNormalized();
+	g_engine->m_render->SetLightConstants( normalizedLighting, m_sunIntensity, m_ambientIntensity );
+
 	m_currentMap->Render();
 }
 
 //-----------------------------------------------------------------------------------------------
-void Game::RenderHud() const
+void Game::RenderHud( Player* player, Camera* screenCamera ) const
 {
-	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	Weapon* currentWeapon = m_currentMap->m_player1->GetActor()->m_equippedWeapon;
+	Weapon* currentWeapon = player->GetActor()->m_equippedWeapon;
 	WeaponDefinition weaponDef = *currentWeapon->m_definition;
 
 	if( weaponDef.GetType() == WEAPON_TYPE_MELEE )
@@ -344,7 +358,7 @@ void Game::RenderHud() const
 	float heightOffset = ( m_isTwoPlayer ) ? 370.f : 0.f;
 
 	// Hud Base
-	AABB2 hudBaseBox = AABB2( 0.f, m_screenCameraP1->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCameraP1->GetOrthoBottomLeft().y + 117.4312f * scaleMultiplyer );
+	AABB2 hudBaseBox = AABB2( 0.f, screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, screenCamera->GetOrthoBottomLeft().y + 117.4312f * scaleMultiplyer );
 	VertexList hudBaseVerts;
 	AddVertsForAABB2D( hudBaseVerts, hudBaseBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
 	Texture* hudBaseTexture = g_engine->m_render->CreateOrGetTextureFromFile( weaponDef.GetHud().m_baseTexture.c_str() );
@@ -352,8 +366,6 @@ void Game::RenderHud() const
 	g_engine->m_render->DrawVertexArray( hudBaseVerts );
 
 	// Hud Stats
-	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	Player* player = m_currentMap->m_player1;
 	// Health
 	VertexList healthTextVerts;
 	int health = player->GetActor()->m_health;
@@ -380,8 +392,8 @@ void Game::RenderHud() const
 	g_engine->m_render->DrawVertexArray( deathTextVerts );
 
 	// Reticle
-	AABB2 reticleBox = AABB2( m_screenCameraP1->GetCenter().x - 8.f * scaleMultiplyer, m_screenCameraP1->GetCenter().y - 8.f * scaleMultiplyer,
-		m_screenCameraP1->GetCenter().x + 8.f * scaleMultiplyer, m_screenCameraP1->GetCenter().y + 8.f * scaleMultiplyer );
+	AABB2 reticleBox = AABB2( screenCamera->GetCenter().x - 8.f * scaleMultiplyer, screenCamera->GetCenter().y - 8.f * scaleMultiplyer,
+		screenCamera->GetCenter().x + 8.f * scaleMultiplyer, screenCamera->GetCenter().y + 8.f * scaleMultiplyer );
 	VertexList reticleVerts;
 	AddVertsForAABB2D( reticleVerts, reticleBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
 	Texture* reticleTexture = g_engine->m_render->CreateOrGetTextureFromFile( weaponDef.GetHud().m_reticleTexture.c_str() );
@@ -404,8 +416,8 @@ void Game::RenderHud() const
 		weaponTexture = &weaponSpriteSheet->GetTexture();
 	}
 
-	AABB2 weaponBox = AABB2( m_screenCameraP1->GetCenter().x - weaponSpriteSize.x * 0.5f * scaleMultiplyer, hudBaseBox.m_maxs.y, 
-		m_screenCameraP1->GetCenter().x + weaponSpriteSize.x * 0.5f * scaleMultiplyer, hudBaseBox.m_maxs.y + weaponSpriteSize.y * scaleMultiplyer );
+	AABB2 weaponBox = AABB2( screenCamera->GetCenter().x - weaponSpriteSize.x * 0.5f * scaleMultiplyer, hudBaseBox.m_maxs.y, 
+		screenCamera->GetCenter().x + weaponSpriteSize.x * 0.5f * scaleMultiplyer, hudBaseBox.m_maxs.y + weaponSpriteSize.y * scaleMultiplyer );
 	VertexList weaponVerts;
 	AddVertsForAABB2D( weaponVerts, weaponBox, Rgba8::WHITE, uvBox );
 

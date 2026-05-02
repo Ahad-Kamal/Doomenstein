@@ -56,7 +56,7 @@ private:
 	void UpdateMap( float deltaSeconds );
 	void RenderMap() const;
 
-	void RenderHud() const;
+	void RenderHud( Player* player, Camera* screenCamera ) const;
 
 	void UpdateKeyboardInput();
 	void UpdateControllerInput();
@@ -95,6 +95,7 @@ private:
 	SoundPlaybackID m_music;
 
 	AABB2 m_player1CameraBounds = AABB2( 0.f, 0.f, SCREEN_SIZE_X, SCREEN_SIZE_Y );
+	AABB2 m_player2CameraBounds = AABB2();
 
 	float m_screenShakeAmount = 0.f;
 	bool m_isShaking = false;
