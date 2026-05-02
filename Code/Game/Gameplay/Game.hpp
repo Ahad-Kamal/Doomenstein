@@ -26,6 +26,12 @@ extern SpriteSheet* g_terrainSpriteSheet;
 extern BitmapFont* g_bitmapFont;
 extern NamedStrings* g_blackboard;
 
+//-----------------------------------------------------------------------------------------------
+enum class PlayerRenderPass
+{
+	PLAYER_ONE,
+	PLAYER_TWO
+};
 
 //-----------------------------------------------------------------------------------------------
 class Game
@@ -35,7 +41,7 @@ public:
 	~Game();
 	void Startup();
 	void Update();
-	void Render() const;
+	void Render();
 	void Shutdown();
 
 	void SetGameMusicSpeed( float speed );
@@ -84,6 +90,7 @@ public:
 
 	GameState			m_currentState = GAME_STATE_INVALID;
 	GameState			m_nextState = GAME_STATE_ATTRACT;
+	PlayerRenderPass	m_renderPass = PlayerRenderPass::PLAYER_ONE;
 
 	Vec3 m_sunDirection = Vec3( 2.f, 1.f, -1.f );
 	float m_sunIntensity = 0.85f;
@@ -97,7 +104,6 @@ private:
 	AABB2 m_player1CameraBounds = AABB2( 0.f, 0.f, SCREEN_SIZE_X, SCREEN_SIZE_Y );
 	AABB2 m_player2CameraBounds = AABB2();
 
-	float m_screenShakeAmount = 0.f;
 	bool m_isShaking = false;
 	bool m_debugDraw = false;
 	bool m_isTwoPlayer = false;

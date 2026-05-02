@@ -157,10 +157,27 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Actor::Render() const
 {
+	PlayerRenderPass renderPass = g_game->m_renderPass;
+	Camera* worldCamera = nullptr;
+
 	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	if( m_controller == m_map->m_player1 && m_map->m_player1->m_cameraMode == CAMERA_MODE_FIRST_PERSON )
+	if( renderPass == PlayerRenderPass::PLAYER_ONE )
 	{
-		return;
+		if( m_controller == m_map->m_player1 && m_map->m_player1->m_cameraMode == CAMERA_MODE_FIRST_PERSON )
+		{
+			return;
+		}
+
+		worldCamera = m_map->m_player1->m_camera;
+	}
+	if( renderPass == PlayerRenderPass::PLAYER_TWO )
+	{
+		if( m_controller == m_map->m_player2 )
+		{
+			return;
+		}
+
+		worldCamera = m_map->m_player2->m_camera;
 	}
 
 	// Create Transform Matrix
@@ -180,7 +197,7 @@ void Actor::Render() const
 
 	// Get Billboard Transform
 	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	Mat44 cameraToWorldTransform = m_map->m_player1->m_camera->GetCameraToWorldTransform();
+	Mat44 cameraToWorldTransform = worldCamera->GetCameraToWorldTransform();
 	Mat44 billboardTransform = GetBillboardTransform( visuals.m_billboardType, cameraToWorldTransform, m_position );
 
 	// Calculate Direction 
@@ -491,14 +508,10 @@ bool Actor::Event_OnPossessed( EventArgs& args )
 			targetActor->m_controller = g_game->m_currentMap->m_player1;
 			return true;
 		}
-	}
-	// AI possession
-	else
-	{
-		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player1->m_actorHandle )
+		else if( targetActor->m_actorHandle == g_game->m_currentMap->m_player2->m_actorHandle )
 		{
-
+			targetActor->m_controller = g_game->m_currentMap->m_player2;
+			return true;
 		}
 	}
 

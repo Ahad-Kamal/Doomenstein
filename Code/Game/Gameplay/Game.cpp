@@ -129,7 +129,7 @@ void Game::Update()
 }
 
 //-----------------------------------------------------------------------------------------------
-void Game::Render() const
+void Game::Render()
 {
 	if( m_currentState == GAME_STATE_ATTRACT )
 	{
@@ -148,6 +148,7 @@ void Game::Render() const
 	float width = Camera::GetViewportWidth( m_player1CameraBounds, SCREEN_SIZE_X );
 	float height = Camera::GetViewportHeight( m_player1CameraBounds, SCREEN_SIZE_Y );
 
+	m_renderPass = PlayerRenderPass::PLAYER_ONE;
 	g_engine->m_render->BeginCamera( *m_worldCameraP1, topLeft, width, height );
 	RenderMap();
 
@@ -160,6 +161,7 @@ void Game::Render() const
 		width = Camera::GetViewportWidth( m_player2CameraBounds, SCREEN_SIZE_X );
 		height = Camera::GetViewportHeight( m_player2CameraBounds, SCREEN_SIZE_Y );
 
+		m_renderPass = PlayerRenderPass::PLAYER_TWO;
 		g_engine->m_render->BeginCamera( *m_worldCameraP2, topLeft, width, height );
 		RenderMap();
 
