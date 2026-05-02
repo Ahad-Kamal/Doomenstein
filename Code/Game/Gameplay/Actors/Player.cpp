@@ -58,20 +58,46 @@ void Player::UpdateInput( float deltaSeconds )
 		return;
 	}
 
-	if( g_engine->m_input->WasKeyJustPressed( 'F' ) )
+	bool isSinglePlayer = !g_game->IsTwoPlayer();
+	if( g_engine->m_input->WasKeyJustPressed( 'F' ) && isSinglePlayer )
 	{
 		SwitchCameraMode();
 	}
 
-	FirstPersonKeyboardControls( deltaSeconds );
-	FirstPersonControllerControls( deltaSeconds );
+	if( isSinglePlayer )
+	{
+		FirstPersonKeyboardControls( deltaSeconds );
+		FirstPersonControllerControls( deltaSeconds );
+	}
+	else if( m_playerNum == 0 )
+	{
+		FirstPersonKeyboardControls( deltaSeconds );
+	}
+	else
+	{
+		FirstPersonControllerControls( deltaSeconds );
+	}
 
-	float systemDeltaTime = static_cast<float>( Clock::GetSystemClock().GetDeltaSeconds() );
-	FreeFlyKeyboardControls( systemDeltaTime );
-	FreeFlyControllerControls( systemDeltaTime );
+	if( isSinglePlayer )
+	{
+		float systemDeltaTime = static_cast<float>( Clock::GetSystemClock().GetDeltaSeconds() );
+		FreeFlyKeyboardControls( systemDeltaTime );
+		//FreeFlyControllerControls( systemDeltaTime );
+	}
 
-	WeaponKeyboardControls();
-	WeaponControllerControls();
+	if( isSinglePlayer )
+	{
+		WeaponKeyboardControls();
+		WeaponControllerControls();
+	}
+	if( m_playerNum == 0 )
+	{
+		WeaponKeyboardControls();
+	}
+	else
+	{
+		WeaponControllerControls();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -88,7 +114,7 @@ void Player::UpdateCamera()
 		}
 
 		m_position = actorPosition;
-		m_orientation = possessedActor->m_orientation;
+		m_orientation.m_yawDegrees = possessedActor->m_orientation.m_yawDegrees;
 
 		m_camera->SetPosition( m_position );
 		m_camera->SetOrientation( m_orientation );
@@ -336,14 +362,14 @@ void Player::FirstPersonControllerControls( [[maybe_unused]] float deltaSeconds 
 	// Yaw
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		possesedActor->m_orientation.m_yawDegrees -= controller.GetRightStick().GetPosition().x * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f );
+		possesedActor->m_orientation.m_yawDegrees -= controller.GetRightStick().GetPosition().x * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f * 2.f );
 	}
 
 	// Pitch
 	if( g_engine->m_input->m_cursorState.m_cursorMode == CursorMode::FPS )
 	{
-		possesedActor->m_orientation.m_pitchDegrees -= controller.GetRightStick().GetPosition().y * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f );
-		possesedActor->m_orientation.m_pitchDegrees = GetClamped( m_orientation.m_pitchDegrees, -85.f, 85.f );
+		m_orientation.m_pitchDegrees -= controller.GetRightStick().GetPosition().y * 0.075f * ( definition.GetPhysics().m_turnSpeed * 0.016667f * 2.f );
+		m_orientation.m_pitchDegrees = GetClamped( m_orientation.m_pitchDegrees, -85.f, 85.f );
 	}
 
 	Vec3 forwardVector = m_orientation.GetForwardDir_IFwd_JLeft_KUp();

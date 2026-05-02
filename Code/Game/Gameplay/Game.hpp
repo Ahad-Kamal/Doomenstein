@@ -38,6 +38,7 @@ public:
 	void Shutdown();
 
 	void SetGameMusicSpeed( float speed );
+	bool IsTwoPlayer() const;
 
 private:
 	void UpdateStates();
@@ -57,8 +58,6 @@ private:
 
 	void UpdateKeyboardInput();
 	void UpdateControllerInput();
-
-	bool IsTwoPlayer() const;
 
 	void InitializeStartTriangleVerts();
 

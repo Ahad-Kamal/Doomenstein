@@ -453,6 +453,10 @@ void Game::UpdateControllerInput()
 
 	if( m_currentState == GAME_STATE_ATTRACT && ( controller.WasButtonJustPressed( XboxButtonID::START ) || controller.WasButtonJustPressed( XboxButtonID::A ) ) )
 	{
+		m_nextState = GAME_STATE_LOBBY;
+	}
+	if( m_currentState == GAME_STATE_LOBBY && ( controller.WasButtonJustPressed( XboxButtonID::START ) || controller.WasButtonJustPressed( XboxButtonID::A ) ) )
+	{
 		m_nextState = GAME_STATE_PLAY;
 	}
 
