@@ -147,7 +147,12 @@ bool App::EventQuit( [[maybe_unused]] EventArgs& args )
 //-----------------------------------------------------------------------------------------------
 void App::UpdateKeyboardInput()
 {
-	if(g_game->m_currentState == GAME_STATE_ATTRACT && g_engine->m_input->WasKeyJustPressed( ' ' ) || g_engine->m_input->WasKeyJustPressed( 'N' ) )
+	if(g_game->m_currentState == GAME_STATE_ATTRACT && g_engine->m_input->WasKeyJustPressed( ' ' ) )
+	{
+		g_game->m_nextState = GAME_STATE_LOBBY;
+	}
+
+	if( g_game->m_currentState == GAME_STATE_LOBBY && g_engine->m_input->WasKeyJustPressed( ' ' ) )
 	{
 		g_game->m_nextState = GAME_STATE_PLAY;
 	}

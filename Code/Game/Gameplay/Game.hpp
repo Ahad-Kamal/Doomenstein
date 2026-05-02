@@ -45,6 +45,9 @@ private:
 	void UpdateAttractMode( float deltaSeconds );
 	void RenderAttractMode() const;
 
+	void UpdateLobbyMode();
+	void RenderLobbyMode() const;
+
 	void UpdateEntities( float deltaSeconds );
 	void UpdateMap( float deltaSeconds );
 	void RenderEntities() const;

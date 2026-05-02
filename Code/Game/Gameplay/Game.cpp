@@ -60,7 +60,6 @@ void Game::Startup()
 	Texture* terrainTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Terrain_8x8.png" );
 	g_terrainSpriteSheet = new SpriteSheet( *terrainTexture, IntVec2( 8, 8 ) );
 
-
 	MapDefinition::InitializeMapDefs();
 	WeaponDefinition::InitializeWeaponDefs();
 	ActorDefinition::InitializeProjectileActorDefs();
@@ -116,6 +115,11 @@ void Game::Update()
 		UpdateAttractMode( deltaSeconds );
 		return;
 	}
+	if( m_currentState == GAME_STATE_LOBBY )
+	{
+		UpdateLobbyMode();
+		return;
+	}
 
 	UpdateEntities( deltaSeconds );
 	UpdateMap( deltaSeconds );
@@ -128,6 +132,11 @@ void Game::Render() const
 	{
 		g_engine->m_render->SetLightConstants( Vec3(), 0.f, 1.f );
 		RenderAttractMode();
+		return;
+	}
+	if( m_currentState == GAME_STATE_LOBBY )
+	{
+		RenderLobbyMode();
 		return;
 	}
 
@@ -223,18 +232,26 @@ void Game::RenderAttractMode() const
 	g_engine->m_render->SetBlendStateIfChanged();
 	g_engine->m_render->BindTexture( nullptr );
 	g_engine->m_render->DrawVertexArray( (int)textGoldDropShadowVerts.size(), textGoldDropShadowVerts.data() );
+}
 
-	// Draw Textured AABB2
-	Image image = Image( "Data/Maps/TestMap.png" );
-	/*std::vector<Vertex> textureVerts;
-	AABB2 textureBox = AABB2( 20.f, 100.f, 532.f, 612.f );
-	AddVertsForAABB2D( textureVerts, textureBox, Rgba8( 255, 255, 255 ) );
-	
-	Texture* testTexture = g_engine->m_render->CreateOrGetTextureFromFile( "Data/Images/Test_StbiFlippedAndOpenGL.png" );
-	g_engine->m_render->BindTexture( testTexture );
-	g_engine->m_render->DrawVertexArray( textureVerts );
-	
-	g_engine->m_render->BindTexture( nullptr );	*/
+//-----------------------------------------------------------------------------------------------
+void Game::UpdateLobbyMode()
+{
+
+}
+
+//-----------------------------------------------------------------------------------------------
+void Game::RenderLobbyMode() const
+{
+	g_engine->m_render->BeginCamera( *m_screenCamera );
+
+	// Draw Text
+	std::vector<Vertex> textStarshipDropShadowVerts;
+	AddVertsForTextTriangles2D( textStarshipDropShadowVerts, "Lobby", Vec2( 680.f, 700.f ), 40.f, Rgba8( 255, 255, 255 ) );
+	g_engine->m_render->SetModelConstants();
+	g_engine->m_render->SetBlendStateIfChanged();
+	g_engine->m_render->BindTexture( nullptr );
+	g_engine->m_render->DrawVertexArray( (int)textStarshipDropShadowVerts.size(), textStarshipDropShadowVerts.data() );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -348,43 +365,6 @@ void Game::UpdateKeyboardInput()
 	{
 		return;
 	}
-
-	/*if( g_engine->m_input->WasKeyJustPressed( '1' ) )
-	{
-		Vec3 endPosition = m_currentMap->m_player->m_position + ( m_currentMap->m_player->GetModelToWorldTransform().GetIBasis3D() * 20.f );
-		DebugAddWorldCylinder( Vec3( m_currentMap->m_player->m_position ), endPosition,
-			0.0625f, 10.f, Rgba8::YELLOW, Rgba8::YELLOW, DebugRenderMode::X_RAY );
-	}
-
-	if( g_engine->m_input->IsKeyDown( '2' ) )
-	{
-		DebugAddWorldSphere( Vec3( m_currentMap->m_player->m_position.x,m_currentMap-> m_player->m_position.y, 0.f ), 0.5f, 60.f, Rgba8( 150, 75, 0 ), Rgba8( 150, 75, 0 ) );
-	}
-
-	if( g_engine->m_input->WasKeyJustPressed( '3' ) )
-	{
-		Mat44 playerMat = m_currentMap->m_player->GetModelToWorldTransform();
-		playerMat.AppendTranslation2D( Vec2( 2.f, 0.f ) );
-		DebugAddWorldWireSphere( playerMat.GetTranslation3D(), 1.f, 5.f, Rgba8::GREEN, Rgba8::RED );
-	}
-
-	if( g_engine->m_input->WasKeyJustPressed( '4' ) )
-	{
-		DebugAddBasis( m_currentMap->m_player->GetModelToWorldTransform(), 20.f, 1.f, 0.125f );
-	}
-
-	if( g_engine->m_input->WasKeyJustPressed( '5' ) )
-	{
-		Vec3 position = m_currentMap->m_player->GetModelToWorldTransform().GetTranslation3D() + m_currentMap->m_player->GetModelToWorldTransform().GetIBasis3D() * 10.f;
-		std::string text = Stringf("Position: %.2f, %.2f, %.2f", m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z );
-		DebugAddWorldBillboardText( text, position, 1.f, Vec2( 0.5f, 0.5f ), 5.f, Rgba8::WHITE, Rgba8::RED );
-	}
-
-	if( g_engine->m_input->WasKeyJustPressed( '6' ) )
-	{
-		DebugAddWorldWireCylinder( Vec3( m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z - 0.5f ), 
-			Vec3( m_currentMap->m_player->m_position.x, m_currentMap->m_player->m_position.y, m_currentMap->m_player->m_position.z + 0.5f ), 0.5f, 10.f, Rgba8::WHITE, Rgba8::RED );
-	}*/
 
 	if( g_engine->m_input->WasKeyJustPressed( '7' ) )
 	{

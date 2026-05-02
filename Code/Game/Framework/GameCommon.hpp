@@ -12,7 +12,8 @@ enum GameState
 {
 	GAME_STATE_INVALID = -1,
 	GAME_STATE_ATTRACT,
-	GAME_STATE_PLAY
+	GAME_STATE_PLAY,
+	GAME_STATE_LOBBY
 };
 
 //-----------------------------------------------------------------------------------------------
