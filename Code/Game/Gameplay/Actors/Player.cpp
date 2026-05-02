@@ -12,8 +12,9 @@
 
 
 //-----------------------------------------------------------------------------------------------
-Player::Player( Map* currentMap, ActorHandle actorToPossess )
+Player::Player( Map* currentMap, ActorHandle actorToPossess, int playerNum /*= 0*/  )
 	: Controller( currentMap, actorToPossess )
+	, m_playerNum( playerNum )
 {
 	Actor* possessedActor = GetActor();
 	ActorDefinition actorDef = *possessedActor->m_definition;
@@ -392,7 +393,7 @@ void Player::FreeFlyKeyboardControls( float deltaSeconds )
 		return;
 	}
 
-	EulerAngles worldCameraOrientation = g_game->m_worldCamera->GetOrientation();
+	EulerAngles worldCameraOrientation = g_game->m_worldCameraP1->GetOrientation();
 	Vec3 forwardVector = worldCameraOrientation.GetForwardDir_IFwd_JLeft_KUp();
 	Vec3 velocity = Vec3();
 
@@ -472,7 +473,7 @@ void Player::FreeFlyControllerControls( float deltaSeconds )
 
 	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
 
-	EulerAngles worldCameraOrientation = g_game->m_worldCamera->GetOrientation();
+	EulerAngles worldCameraOrientation = g_game->m_worldCameraP1->GetOrientation();
 	Vec3 forwardVector = worldCameraOrientation.GetForwardDir_IFwd_JLeft_KUp();
 	Vec3 velocity = Vec3();
 

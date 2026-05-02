@@ -259,7 +259,7 @@ TileDefinitions* Map::GetTileDefinition( std::string name ) const
 void Map::Update( float deltaSeconds )
 {
 	DebugPossessNext();
-	m_player->Update( deltaSeconds );
+	m_player1->Update( deltaSeconds );
 	UpdateActors( deltaSeconds );
 
 	DebugRaycast();
@@ -296,14 +296,14 @@ Actor* Map::SpawnPlayer( std::string actorName, Vec3 const& position, EulerAngle
 			Actor* marine = new Actor( position, orientation, &actorDef, newActorHandle, this, startingState, false, color );
 			m_actors.push_back( marine );
 
-			if( !m_player )
+			if( !m_player1 )
 			{
-				m_player = new Player( this, newActorHandle );
-				m_player->Possess( m_player->m_actorHandle );
+				m_player1 = new Player( this, newActorHandle );
+				m_player1->Possess( m_player1->m_actorHandle );
 			}
 			else
 			{
-				m_player->Possess( newActorHandle );
+				m_player1->Possess( newActorHandle );
 			}
 			return marine;
 		}
@@ -1092,7 +1092,7 @@ void Map::DebugPossessNext()
 	if( g_engine->m_input->WasKeyJustPressed( 'N' ) )
 	{
 		bool validPossess = false;
-		unsigned int newIndex = m_player->m_actorHandle.GetIndex() + 1;
+		unsigned int newIndex = m_player1->m_actorHandle.GetIndex() + 1;
 
 		while( !validPossess )
 		{
@@ -1112,7 +1112,7 @@ void Map::DebugPossessNext()
 		}
 
 		ActorHandle handle = m_actors[ newIndex ]->m_actorHandle;
-		m_player->Possess( handle );
+		m_player1->Possess( handle );
 	}
 }
 

@@ -71,8 +71,9 @@ public:
 	std::vector<Map>	m_maps;
 	Map*				m_currentMap;
 
-	Camera*				m_worldCamera;
-	Camera*				m_screenCamera;
+	Camera*				m_worldCameraP1 = nullptr;
+	Camera*				m_screenCameraP1 = nullptr;
+	Camera*				m_screenCameraFull = nullptr;
 
 	Clock*				m_gameClock;
 

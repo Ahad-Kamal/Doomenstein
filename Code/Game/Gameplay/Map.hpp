@@ -92,7 +92,8 @@ public:
 	void DebugRaycast();
 
 public:
-	Player*	m_player = nullptr;
+	Player*	m_player1 = nullptr;
+	Player* m_player2 = nullptr;
 
 protected:
 	std::vector<SpawnInfo> m_marineSpawnPoints;

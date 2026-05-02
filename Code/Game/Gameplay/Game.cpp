@@ -80,11 +80,11 @@ void Game::Startup()
 	SpawnInfo startingSpawn = m_currentMap->GetRandomSpawnPoint( Faction::MARINE );
 	m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation );
 
-	m_worldCamera = m_currentMap->m_player->m_camera;
-	m_screenCamera = new Camera();
+	m_worldCameraP1 = m_currentMap->m_player1->m_camera;
+	m_screenCameraP1 = new Camera();
 
-	m_worldCamera->SetCameraToRenderTransform( Mat44::DirectXCameraToRenderMatrix );
-	m_screenCamera->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
+	m_worldCameraP1->SetCameraToRenderTransform( Mat44::DirectXCameraToRenderMatrix );
+	m_screenCameraP1->SetOrthoView( Vec2( 0.f, 0.f ), Vec2( SCREEN_SIZE_X, SCREEN_SIZE_Y ) );
 
 	g_bitmapFont = g_engine->m_render->CreateOrGetBitmapFont( "Data/Fonts/SquirrelFixedFont" );
 
@@ -97,8 +97,8 @@ void Game::Startup()
 
 	Vec2 worldCenter( WORLD_SIZE_X * 0.5f, WORLD_SIZE_Y * 0.5f );
 
-	m_worldCamera->SetPosition( m_currentMap->m_player->m_position );
-	m_worldCamera->SetOrientation( m_currentMap->m_player->m_orientation );
+	m_worldCameraP1->SetPosition( m_currentMap->m_player1->m_position );
+	m_worldCameraP1->SetOrientation( m_currentMap->m_player1->m_orientation );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -144,13 +144,13 @@ void Game::Render() const
 	g_engine->m_render->SetLightConstants( normalizedLighting, m_sunIntensity, m_ambientIntensity );
 	RenderMap();
 
-	g_engine->m_render->BeginCamera( *m_screenCamera );
+	g_engine->m_render->BeginCamera( *m_screenCameraP1 );
 	RenderHud();
 
 	if( g_engine->m_devConsole->IsOpen() )
 	{
 		g_engine->m_render->RenderSetup( nullptr, BlendMode::ALPHA );
-		AABB2 screenBounds = AABB2( m_screenCamera->GetOrthoBottomLeft(), m_screenCamera->GetOrthoTopRight() );
+		AABB2 screenBounds = AABB2( m_screenCameraP1->GetOrthoBottomLeft(), m_screenCameraP1->GetOrthoTopRight() );
 		g_engine->m_devConsole->Render( screenBounds );
 	}
 }
@@ -209,7 +209,7 @@ void Game::UpdateAttractMode( [[maybe_unused]] float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Game::RenderAttractMode() const
 {
-	g_engine->m_render->BeginCamera( *m_screenCamera );
+	g_engine->m_render->BeginCamera( *m_screenCameraP1 );
 
 	// Draw Start Button
 	g_engine->m_render->SetModelConstants();
@@ -243,7 +243,7 @@ void Game::UpdateLobbyMode()
 //-----------------------------------------------------------------------------------------------
 void Game::RenderLobbyMode() const
 {
-	g_engine->m_render->BeginCamera( *m_screenCamera );
+	g_engine->m_render->BeginCamera( *m_screenCameraP1 );
 
 	// Draw Text
 	std::vector<Vertex> textStarshipDropShadowVerts;
@@ -272,11 +272,11 @@ void Game::UpdateMap( float deltaSeconds )
 //-----------------------------------------------------------------------------------------------
 void Game::RenderEntities() const
 {
-	g_engine->m_render->BeginCamera( *m_worldCamera );
+	g_engine->m_render->BeginCamera( *m_worldCameraP1 );
 
 	g_engine->m_render->BindTexture( nullptr );
 
-	g_engine->m_render->EndCamera( *m_worldCamera );
+	g_engine->m_render->EndCamera( *m_worldCameraP1 );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -289,7 +289,7 @@ void Game::RenderMap() const
 void Game::RenderHud() const
 {
 	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	Weapon* currentWeapon = m_currentMap->m_player->GetActor()->m_equippedWeapon;
+	Weapon* currentWeapon = m_currentMap->m_player1->GetActor()->m_equippedWeapon;
 	WeaponDefinition weaponDef = *currentWeapon->m_definition;
 
 	if( weaponDef.GetType() == WEAPON_TYPE_MELEE )
@@ -298,7 +298,7 @@ void Game::RenderHud() const
 	}
 
 	// Hud Base
-	AABB2 hudBaseBox = AABB2( 0.f, m_screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCamera->GetOrthoBottomLeft().y + 117.4312f );
+	AABB2 hudBaseBox = AABB2( 0.f, m_screenCameraP1->GetOrthoBottomLeft().y, SCREEN_SIZE_X, m_screenCameraP1->GetOrthoBottomLeft().y + 117.4312f );
 	VertexList hudBaseVerts;
 	AddVertsForAABB2D( hudBaseVerts, hudBaseBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
 	Texture* hudBaseTexture = g_engine->m_render->CreateOrGetTextureFromFile( weaponDef.GetHud().m_baseTexture.c_str() );
@@ -306,7 +306,7 @@ void Game::RenderHud() const
 	g_engine->m_render->DrawVertexArray( hudBaseVerts );
 
 	// Hud Stats
-	Player* player = m_currentMap->m_player;
+	Player* player = m_currentMap->m_player1;
 	// Health
 	VertexList healthTextVerts;
 	int health = player->GetActor()->m_health;
@@ -333,7 +333,7 @@ void Game::RenderHud() const
 	g_engine->m_render->DrawVertexArray( deathTextVerts );
 
 	// Reticle
-	AABB2 reticleBox = AABB2( m_screenCamera->GetCenter().x - 8.f, m_screenCamera->GetCenter().y - 8.f, m_screenCamera->GetCenter().x + 8.f, m_screenCamera->GetCenter().y + 8.f );
+	AABB2 reticleBox = AABB2( m_screenCameraP1->GetCenter().x - 8.f, m_screenCameraP1->GetCenter().y - 8.f, m_screenCameraP1->GetCenter().x + 8.f, m_screenCameraP1->GetCenter().y + 8.f );
 	VertexList reticleVerts;
 	AddVertsForAABB2D( reticleVerts, reticleBox, Rgba8::WHITE, AABB2::ZERO_TO_ONE );
 	Texture* reticleTexture = g_engine->m_render->CreateOrGetTextureFromFile( weaponDef.GetHud().m_reticleTexture.c_str() );
@@ -356,7 +356,7 @@ void Game::RenderHud() const
 		weaponTexture = &weaponSpriteSheet->GetTexture();
 	}
 
-	AABB2 weaponBox = AABB2( m_screenCamera->GetCenter().x - weaponSpriteSize.x * 0.5f, hudBaseBox.m_maxs.y, m_screenCamera->GetCenter().x + weaponSpriteSize.x * 0.5f, hudBaseBox.m_maxs.y + weaponSpriteSize.y );
+	AABB2 weaponBox = AABB2( m_screenCameraP1->GetCenter().x - weaponSpriteSize.x * 0.5f, hudBaseBox.m_maxs.y, m_screenCameraP1->GetCenter().x + weaponSpriteSize.x * 0.5f, hudBaseBox.m_maxs.y + weaponSpriteSize.y );
 	VertexList weaponVerts;
 	AddVertsForAABB2D( weaponVerts, weaponBox, Rgba8::WHITE, uvBox );
 
@@ -375,7 +375,7 @@ void Game::UpdateKeyboardInput()
 	if( g_engine->m_input->WasKeyJustPressed( '7' ) )
 	{
 		AABB2 textBox = AABB2( 1.f, 770.f, 800.f, 785.f );
-		std::string text = Stringf( "Camera Orientation: %.2f, %.2f, %.2f", m_worldCamera->GetOrientation().m_yawDegrees, m_worldCamera->GetOrientation().m_pitchDegrees, m_worldCamera->GetOrientation().m_rollDegrees );
+		std::string text = Stringf( "Camera Orientation: %.2f, %.2f, %.2f", m_worldCameraP1->GetOrientation().m_yawDegrees, m_worldCameraP1->GetOrientation().m_pitchDegrees, m_worldCameraP1->GetOrientation().m_rollDegrees );
 		DebugAddScreenText( text, textBox, 15.f, Vec2( 0.f, 1.f ), 5.f );
 	}
 
@@ -499,7 +499,7 @@ void Game::DebugAddDebugText() const
 	DebugAddScreenText( positionText, positionBox, 15.f, Vec2( 0.f, 1.f ), 0.f );*/
 
 	AABB2 healthBox = AABB2( 1.f, 784.f, 800.f, 799.f );
-	std::string healthText = Stringf( "Health: %d", m_currentMap->GetActorByHandle( m_currentMap->m_player->m_actorHandle )->m_health );
+	std::string healthText = Stringf( "Health: %d", m_currentMap->GetActorByHandle( m_currentMap->m_player1->m_actorHandle )->m_health );
 	DebugAddScreenText( healthText, healthBox, 15.f, Vec2( 0.f, 1.f ), 0.f );
 
 	AABB2 timeBox = AABB2( 800.f, 784.f, 1599.f, 799.f );

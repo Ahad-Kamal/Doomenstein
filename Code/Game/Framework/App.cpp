@@ -64,8 +64,8 @@ void App::RunFrame()
 	Update();		
 	DebugRenderBeginFrame();
 	Render();		
-	DebugRenderWorld( *g_game->m_worldCamera );
-	DebugRenderScreen( *g_game->m_screenCamera );
+	DebugRenderWorld( *g_game->m_worldCameraP1 );
+	DebugRenderScreen( *g_game->m_screenCameraP1 );
 	DebugRenderEndFrame();
 	g_engine->EndFrame(); // Allow engine subsystems to do post-frame stuff
 }
@@ -116,13 +116,13 @@ void App::Update()
 //-----------------------------------------------------------------------------------------------
 void App::Render() const
 {
-	g_engine->m_render->BeginCamera( *g_game->m_worldCamera );
+	g_engine->m_render->BeginCamera( *g_game->m_worldCameraP1 );
 	
 	g_engine->m_render->ClearScreen( g_clearColor );
 
 	g_game->Render();
 
-	g_engine->m_render->EndCamera( *g_game->m_worldCamera );
+	g_engine->m_render->EndCamera( *g_game->m_worldCameraP1 );
 }
 
 //-----------------------------------------------------------------------------------------------

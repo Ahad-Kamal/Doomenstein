@@ -23,7 +23,7 @@ class Camera;
 class Player : public Controller
 {
 public:
-	Player( Map* currentMap, ActorHandle actorToPossess );
+	Player( Map* currentMap, ActorHandle actorToPossess, int playerNum = 0 );
 	~Player();
 
 	void Update( float deltaSeconds );
@@ -54,4 +54,5 @@ public:
 
 	int m_kills = 0;
 	int m_deaths = 0;
+	int m_playerNum;
 };

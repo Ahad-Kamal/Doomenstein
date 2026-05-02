@@ -55,9 +55,9 @@ void Weapon::Fire( Actor* owner )
 		Vec3 startPosition;
 		Vec3 direction;
 		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-		if( owner->m_controller == owner->m_map->m_player )
+		if( owner->m_controller == owner->m_map->m_player1 )
 		{
-			Camera* camera = owner->m_map->m_player->m_camera;
+			Camera* camera = owner->m_map->m_player1->m_camera;
 			direction = camera->GetOrientation().GetForwardDir_IFwd_JLeft_KUp();
 			Vec3 left = CrossProduct3D( Vec3( 0.f, 0.f, 1.f ), direction ).GetNormalized();
 			Vec3 up = CrossProduct3D( direction, left ).GetNormalized();

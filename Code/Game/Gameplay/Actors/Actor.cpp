@@ -80,7 +80,7 @@ Actor::Actor( Vec3 const& startingPosition, EulerAngles const& orientation, Acto
 Actor::~Actor()
 {
 	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	if( m_controller != m_map->m_player )
+	if( m_controller != m_map->m_player1 )
 	{
 		delete m_controller;
 	}
@@ -104,14 +104,14 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 			m_isGarbage = true;
 
 			//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-			if( m_controller == m_map->m_player )
+			if( m_controller == m_map->m_player1 )
 			{
 				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
 				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation );				
 			}
 		}
 		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-		else if( m_controller == m_map->m_player )
+		else if( m_controller == m_map->m_player1 )
 		{
 			float eyeHeight = m_definition->GetCameraView().m_eyeHeight;
 			float deathTime = static_cast<float>( m_deathTimer->GetElaspedFraction() ) * 2.f;
@@ -158,7 +158,7 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 void Actor::Render() const
 {
 	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	if( m_controller == m_map->m_player && m_map->m_player->m_cameraMode == CAMERA_MODE_FIRST_PERSON )
+	if( m_controller == m_map->m_player1 && m_map->m_player1->m_cameraMode == CAMERA_MODE_FIRST_PERSON )
 	{
 		return;
 	}
@@ -180,7 +180,7 @@ void Actor::Render() const
 
 	// Get Billboard Transform
 	//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-	Mat44 cameraToWorldTransform = m_map->m_player->m_camera->GetCameraToWorldTransform();
+	Mat44 cameraToWorldTransform = m_map->m_player1->m_camera->GetCameraToWorldTransform();
 	Mat44 billboardTransform = GetBillboardTransform( visuals.m_billboardType, cameraToWorldTransform, m_position );
 
 	// Calculate Direction 
@@ -358,15 +358,15 @@ void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 		{
 			Actor* killer = m_map->GetActorByHandle( damagingActor );
 			//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-			if( killer != nullptr && killer->m_controller == m_map->m_player )
+			if( killer != nullptr && killer->m_controller == m_map->m_player1 )
 			{
-				m_map->m_player->m_kills++;
+				m_map->m_player1->m_kills++;
 			}
 		}
 		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-		if( m_controller == m_map->m_player )
+		if( m_controller == m_map->m_player1 )
 		{
-			m_map->m_player->m_deaths++;
+			m_map->m_player1->m_deaths++;
 		}
 	}
 	else
@@ -486,9 +486,9 @@ bool Actor::Event_OnPossessed( EventArgs& args )
 	if( controller == "Player" )
 	{
 		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player->m_actorHandle )
+		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player1->m_actorHandle )
 		{
-			targetActor->m_controller = g_game->m_currentMap->m_player;
+			targetActor->m_controller = g_game->m_currentMap->m_player1;
 			return true;
 		}
 	}
@@ -496,7 +496,7 @@ bool Actor::Event_OnPossessed( EventArgs& args )
 	else
 	{
 		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player->m_actorHandle )
+		if( targetActor->m_actorHandle == g_game->m_currentMap->m_player1->m_actorHandle )
 		{
 
 		}
