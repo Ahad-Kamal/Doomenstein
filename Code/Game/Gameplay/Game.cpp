@@ -357,7 +357,8 @@ void Game::RenderHud( Player* player, Camera* screenCamera ) const
 
 	float scaleMultiplyer = ( m_isTwoPlayer ) ? 0.5f : 1.f;
 	float textScaleMultiplyer = ( m_isTwoPlayer ) ? 0.75f : 1.f;
-	float heightOffset = ( m_isTwoPlayer ) ? 370.f : 0.f;
+	float heightOffset = ( player == m_currentMap->m_player1 ) ? 420.f : 20.f;
+	heightOffset = ( m_isTwoPlayer ) ? heightOffset : 50.f;
 
 	// Hud Base
 	AABB2 hudBaseBox = AABB2( 0.f, screenCamera->GetOrthoBottomLeft().y, SCREEN_SIZE_X, screenCamera->GetOrthoBottomLeft().y + 117.4312f * scaleMultiplyer );
@@ -373,20 +374,20 @@ void Game::RenderHud( Player* player, Camera* screenCamera ) const
 	int health = player->GetActor()->m_health;
 	if( health >= 100 )
 	{
-		g_bitmapFont->AddVertsForText2D( healthTextVerts, Vec2( 430.f, 50.f + heightOffset ), 40.f * textScaleMultiplyer, std::to_string( health ) );
+		g_bitmapFont->AddVertsForText2D( healthTextVerts, Vec2( 430.f, heightOffset ), 40.f * textScaleMultiplyer, std::to_string( health ) );
 	}
 	else
 	{
-		g_bitmapFont->AddVertsForText2D( healthTextVerts, Vec2( 450.f, 50.f + heightOffset ), 40.f * textScaleMultiplyer, std::to_string( health ) );
+		g_bitmapFont->AddVertsForText2D( healthTextVerts, Vec2( 450.f, heightOffset ), 40.f * textScaleMultiplyer, std::to_string( health ) );
 	}
 
 	// Kills
 	VertexList killsTextVerts;
-	g_bitmapFont->AddVertsForText2D( killsTextVerts, Vec2( 90.f, 50.f + heightOffset ), 40.f * textScaleMultiplyer, std::to_string( player->m_kills ) );
+	g_bitmapFont->AddVertsForText2D( killsTextVerts, Vec2( 90.f, heightOffset ), 40.f * textScaleMultiplyer, std::to_string( player->m_kills ) );
 
 	// Deaths
 	VertexList deathTextVerts;
-	g_bitmapFont->AddVertsForText2D( deathTextVerts, Vec2( 1480.f, 50.f + heightOffset ), 40.f * textScaleMultiplyer, std::to_string( player->m_deaths ) );
+	g_bitmapFont->AddVertsForText2D( deathTextVerts, Vec2( 1480.f, heightOffset ), 40.f * textScaleMultiplyer, std::to_string( player->m_deaths ) );
 
 	g_engine->m_render->RenderSetup( &g_bitmapFont->GetTexture() );
 	g_engine->m_render->DrawVertexArray( healthTextVerts );
