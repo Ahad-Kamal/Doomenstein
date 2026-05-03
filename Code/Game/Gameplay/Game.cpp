@@ -211,8 +211,13 @@ void Game::UpdateStates()
 		{
 			//g_engine->m_audio->StartSound( audio_testSound );
 		}
-		bool isMenuMusicPlaying;
 
+		bool isMenuMusicPlaying;
+		bool isGameMusicPlaying;
+		std::string menuSongName;
+		std::string gameSongName;
+		SoundID menuMusic;
+		SoundID gameMusic;
 		switch( m_nextState )
 		{
 			case GAME_STATE_PLAY:
@@ -221,6 +226,9 @@ void Game::UpdateStates()
 				{
 					g_engine->m_audio->StopSound( m_menuMusic );
 				}
+				gameSongName = g_blackboard->GetValue( "gameMusic", "" );
+				gameMusic = g_engine->m_audio->CreateOrGetSound( gameSongName );
+				m_gameMusic = g_engine->m_audio->StartSound( gameMusic, true, m_musicVolume );
 				break;
 			
 			case GAME_STATE_ATTRACT:
@@ -229,11 +237,16 @@ void Game::UpdateStates()
 				{
 					g_engine->m_audio->StopSound( m_menuMusic );
 				}
+				isGameMusicPlaying = g_engine->m_audio->IsPlaying( m_gameMusic );
+				if( isGameMusicPlaying )
+				{
+					g_engine->m_audio->StopSound( m_gameMusic );
+				}
 				break;
 
 			case GAME_STATE_LOBBY:
-				std::string menuSongName = g_blackboard->GetValue( "mainMenuMusic", "" );
-				SoundID menuMusic = g_engine->m_audio->CreateOrGetSound( menuSongName );
+				menuSongName = g_blackboard->GetValue( "mainMenuMusic", "" );
+				menuMusic = g_engine->m_audio->CreateOrGetSound( menuSongName );
 				m_menuMusic = g_engine->m_audio->StartSound( menuMusic, true, m_musicVolume );
 				break;
 		}

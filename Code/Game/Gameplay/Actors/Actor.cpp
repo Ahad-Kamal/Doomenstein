@@ -112,13 +112,13 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
 				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation, m_map->m_player1->m_playerNum );				
 			}
-			else if( m_controller == m_map->m_player2 )
+			else if( m_controller == m_map->m_player2 && m_controller != nullptr )
 			{
 				SpawnInfo newSpawnPoint = m_map->GetRandomSpawnPoint( Faction::MARINE );
 				m_map->SpawnPlayer( "Marine", newSpawnPoint.m_position, newSpawnPoint.m_orientation, m_map->m_player2->m_playerNum );
 			}
 		}
-		else if( m_controller == m_map->m_player1 || m_controller == m_map->m_player2 )
+		else if( m_controller != nullptr && ( m_controller == m_map->m_player1 || m_controller == m_map->m_player2 ) )
 		{
 			float eyeHeight = m_definition->GetCameraView().m_eyeHeight;
 			float deathTime = static_cast<float>( m_deathTimer->GetElaspedFraction() ) * 2.f;
