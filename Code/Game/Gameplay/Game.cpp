@@ -77,6 +77,13 @@ void Game::Startup()
 	std::string mapName = g_blackboard->GetValue( "defaultMap", "TestMap" );
 	m_currentMap = new Map( MapDefinition::GetMapDefFromName( mapName ) );
 
+	m_musicVolume = g_blackboard->GetValue( "musicVolume", 0.1f );
+	// Create sounds so that they can load faster later
+	std::string menuSongName = g_blackboard->GetValue( "mainMenuMusic", "" );
+	g_engine->m_audio->CreateOrGetSound( menuSongName );
+	std::string gameSongName = g_blackboard->GetValue( "gameMusic", "" );
+	g_engine->m_audio->CreateOrGetSound( gameSongName );
+
 	SpawnInfo startingSpawn = m_currentMap->GetRandomSpawnPoint( Faction::MARINE );
 	m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation, 1 );
 
@@ -183,8 +190,8 @@ void Game::Shutdown()
 	delete m_gameClock;
 	m_gameClock = nullptr;
 
-	/*g_engine->m_audio->StopSound( m_gameMusic );
-	g_engine->m_audio->StopSound( m_menuMusic );*/
+	g_engine->m_audio->StopSound( m_gameMusic );
+	g_engine->m_audio->StopSound( m_menuMusic );
 
 	g_engine->m_devConsole->ClearLog();
 }
@@ -192,24 +199,43 @@ void Game::Shutdown()
 //-----------------------------------------------------------------------------------------------
 void Game::SetGameMusicSpeed( float speed )
 {
-	g_engine->m_audio->SetSoundPlaybackSpeed( m_music, speed );
+	g_engine->m_audio->SetSoundPlaybackSpeed( m_gameMusic, speed );
 }
 
+//-----------------------------------------------------------------------------------------------
 void Game::UpdateStates()
 {
 	if( m_currentState != m_nextState )
 	{
 		if( m_currentState != GAME_STATE_INVALID )
 		{
-			g_engine->m_audio->StartSound( audio_testSound );
+			//g_engine->m_audio->StartSound( audio_testSound );
 		}
-		if( m_nextState == GAME_STATE_PLAY )
+		bool isMenuMusicPlaying;
+
+		switch( m_nextState )
 		{
+			case GAME_STATE_PLAY:
+				isMenuMusicPlaying = g_engine->m_audio->IsPlaying( m_menuMusic );
+				if( isMenuMusicPlaying )
+				{
+					g_engine->m_audio->StopSound( m_menuMusic );
+				}
+				break;
 			
-		}
-		if( m_nextState == GAME_STATE_ATTRACT )
-		{
-			
+			case GAME_STATE_ATTRACT:
+				isMenuMusicPlaying = g_engine->m_audio->IsPlaying( m_menuMusic );
+				if( isMenuMusicPlaying )
+				{
+					g_engine->m_audio->StopSound( m_menuMusic );
+				}
+				break;
+
+			case GAME_STATE_LOBBY:
+				std::string menuSongName = g_blackboard->GetValue( "mainMenuMusic", "" );
+				SoundID menuMusic = g_engine->m_audio->CreateOrGetSound( menuSongName );
+				m_menuMusic = g_engine->m_audio->StartSound( menuMusic, true, m_musicVolume );
+				break;
 		}
 
 		m_currentState = m_nextState;
@@ -219,8 +245,8 @@ void Game::UpdateStates()
 //-----------------------------------------------------------------------------------------------
 void Game::UpdateAttractMode( [[maybe_unused]] float deltaSeconds )
 {
-	m_time += deltaSeconds * 1.25f;
-	m_startAlpha = 127.5f * cosf( m_time * 2.0f ) + 127.5f;
+	m_startArrowTime += deltaSeconds * 1.25f;
+	m_startAlpha = 127.5f * cosf( m_startArrowTime * 2.0f ) + 127.5f;
 
 	for( int startIndex = 0; startIndex < 3; startIndex++ )
 	{
@@ -333,8 +359,8 @@ void Game::RenderLobbyMode() const
 //-----------------------------------------------------------------------------------------------
 void Game::UpdateEntities( float deltaSeconds )
 {
-	m_time += deltaSeconds;
-	m_startAlpha = 127.5f * cosf( m_time * 2.0f ) + 127.5f;
+	m_startArrowTime += deltaSeconds;
+	m_startAlpha = 127.5f * cosf( m_startArrowTime * 2.0f ) + 127.5f;
 
 	DebugAddDebugText();
 }

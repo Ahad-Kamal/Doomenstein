@@ -97,9 +97,11 @@ public:
 	float m_ambientIntensity = 0.35f;
 
 private:
-	float m_time = 0.f;
 	Rgba8 m_clearColor = Rgba8( 0, 0, 0, 1 );
-	SoundPlaybackID m_music;
+
+	float m_musicVolume = 0.f;
+	SoundPlaybackID m_menuMusic;
+	SoundPlaybackID m_gameMusic;
 
 	AABB2 m_player1CameraBounds = AABB2( 0.f, 0.f, SCREEN_SIZE_X, SCREEN_SIZE_Y );
 	AABB2 m_player2CameraBounds = AABB2();
@@ -108,6 +110,7 @@ private:
 	bool m_debugDraw = false;
 	bool m_isTwoPlayer = false;
 
+	float m_startArrowTime = 0.f;
 	float m_startAlpha = 255.f;
 	Vertex m_startVerts[ 3 ];
 };
