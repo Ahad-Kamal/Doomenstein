@@ -84,6 +84,8 @@ void Game::Startup()
 	std::string gameSongName = g_blackboard->GetValue( "gameMusic", "" );
 	g_engine->m_audio->CreateOrGetSound( gameSongName );
 
+	g_engine->m_audio->SetNumListeners( 1 );
+
 	SpawnInfo startingSpawn = m_currentMap->GetRandomSpawnPoint( Faction::MARINE );
 	m_currentMap->SpawnPlayer( "Marine", startingSpawn.m_position, startingSpawn.m_orientation, 1 );
 
@@ -129,6 +131,15 @@ void Game::Update()
 	{
 		UpdateLobbyMode();
 		return;
+	}
+
+	// Listener Update
+	Mat44 cameraMat = m_worldCameraP1->GetOrientation().GetAsMatrix_IFwd_JLeft_KUp();
+	g_engine->m_audio->UpdateListener( 0, m_worldCameraP1->GetPosition(), cameraMat.GetIBasis3D(), cameraMat.GetKBasis3D() );
+	if( m_isTwoPlayer )
+	{
+		cameraMat = m_worldCameraP2->GetOrientation().GetAsMatrix_IFwd_JLeft_KUp();
+		g_engine->m_audio->UpdateListener( 0, m_worldCameraP2->GetPosition(), cameraMat.GetIBasis3D(), cameraMat.GetKBasis3D() );
 	}
 
 	UpdateEntities( deltaSeconds );
@@ -302,6 +313,7 @@ void Game::UpdateLobbyMode()
 	if( controller.WasButtonJustPressed( XboxButtonID::A ) && !m_isTwoPlayer )
 	{
 		m_isTwoPlayer = true;
+		g_engine->m_audio->SetNumListeners( 2 );
 
 		// Spawn Player 2
 		SpawnInfo startingSpawn = m_currentMap->GetRandomSpawnPoint( Faction::MARINE );
@@ -325,6 +337,7 @@ void Game::UpdateLobbyMode()
 	else if( controller.WasButtonJustPressed( XboxButtonID::A ) && m_isTwoPlayer )
 	{
 		m_isTwoPlayer = false;
+		g_engine->m_audio->SetNumListeners( 1 );
 		
 		Player* player2 = m_currentMap->m_player2;
 		Actor* player2Actor = player2->GetActor();
