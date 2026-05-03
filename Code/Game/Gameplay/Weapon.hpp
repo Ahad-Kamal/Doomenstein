@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/Gameplay/Actors/Actor.hpp"
+#include "Engine/Audio/AudioSystem.hpp"
 
 
 //-----------------------------------------------------------------------------------------------
@@ -26,4 +27,5 @@ public:
 	Timer* m_cooldownTimer;
 	Clock* m_animClock;
 	AnimState m_currentAnim = AnimState::IDLE;
+	SoundPlaybackID m_soundEffect;
 };

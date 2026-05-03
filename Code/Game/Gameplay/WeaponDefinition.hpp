@@ -13,6 +13,9 @@
 class SpriteSheet;
 
 //-----------------------------------------------------------------------------------------------
+typedef std::map< std::string, std::string > SoundMap;
+
+//-----------------------------------------------------------------------------------------------
 enum WeaponType
 {
 	WEAPON_TYPE_RAY,
@@ -90,6 +93,7 @@ public:
 	WeaponAnimation* GetAnimationByName( std::string const& animName );
 	WeaponAnimation* GetAnimationByState( AnimState animState );
 	float GetAnimationDuration( AnimState animState );
+	SoundMap GetSoundEffects() const;
 
 public:
 	static std::vector<WeaponDefinition> s_weaponDefs;
@@ -103,5 +107,5 @@ private:
 	WeaponType m_type;
 	HUD m_hud;
 	std::vector<WeaponAnimation> m_animations;
-	std::map< std::string, std::string > m_soundEffects;
+	SoundMap m_soundEffects;
 };

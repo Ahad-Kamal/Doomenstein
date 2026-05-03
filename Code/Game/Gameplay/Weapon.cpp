@@ -6,6 +6,7 @@
 #include "Game/Gameplay/Actors/Actor.hpp"
 #include "Game/Gameplay/Actors/Player.hpp"
 #include "Engine/Core/DebugRender.hpp"
+#include "Engine/Core/Engine.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Core/Timer.hpp"
 #include "Engine/Math/Vec3.hpp"
@@ -84,7 +85,6 @@ void Weapon::Fire( Actor* owner )
 		RayWeapon rayDef = m_definition->GetRayWeaponInfo();
 		for( int rayCount = 0; rayCount < rayDef.m_rayCount; rayCount++ )
 		{
-			didAttack = true;
 			if( raycast.m_didImpact )
 			{
 				//DebugAddWorldCylinder( startPosition, raycast.m_impactPos, 0.01f, 1.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
@@ -113,6 +113,10 @@ void Weapon::Fire( Actor* owner )
 				DebugAddWorldCylinder( startPosition, endPosition, 0.01f, 10.f, Rgba8( 0, 0, 150 ), Rgba8( 0, 0, 150 ), DebugRenderMode::X_RAY );
 			}
 		}
+
+		std::string sfxName = m_definition->GetSoundEffects().at( "Fire" );
+		SoundID sfx = g_engine->m_audio->CreateOrGetSound( sfxName );
+		m_soundEffect = g_engine->m_audio->StartSoundAt( sfx, owner->m_position, false, 0.5f );
 	}
 
 	if( weaponType == WEAPON_TYPE_PROJECTILE )
@@ -133,6 +137,10 @@ void Weapon::Fire( Actor* owner )
 			newProjectile->m_owner = owner;
 			newProjectile->AddImpulse( projectileDirection.GetForwardDir_IFwd_JLeft_KUp() * projectileDef.m_projectileSpeed );
 		}
+
+		std::string sfxName = m_definition->GetSoundEffects().at( "Fire" );
+		SoundID sfx = g_engine->m_audio->CreateOrGetSound( sfxName );
+		g_engine->m_audio->StartSound( sfx, false, 0.8f );
 	}
 
 	if( weaponType == WEAPON_TYPE_MELEE )

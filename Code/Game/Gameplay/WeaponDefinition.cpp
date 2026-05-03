@@ -222,3 +222,9 @@ float WeaponDefinition::GetAnimationDuration( AnimState animState )
 	int frameCount = weaponDef.m_endFrame - weaponDef.m_startFrame;
 	return frameCount * ( 1 / weaponDef.m_framesPerSecond );
 }
+
+//-----------------------------------------------------------------------------------------------
+SoundMap WeaponDefinition::GetSoundEffects() const
+{
+	return m_soundEffects;
+}
