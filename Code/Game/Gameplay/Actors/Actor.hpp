@@ -74,7 +74,7 @@ public:
 	static bool Event_OnUnpossessed( EventArgs& args );
 
 public:
-	VertexList	m_wireframeVertexes; // Note: delete this later
+	//VertexList	m_wireframeVertexes; // Note: delete this later
 
 	AnimState	m_currentAnim = AnimState::WALK;
 
