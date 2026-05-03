@@ -351,6 +351,12 @@ Faction ActorDefinition::GetFaction() const
 }
 
 //-----------------------------------------------------------------------------------------------
+SoundMap ActorDefinition::GetSoundEffects() const
+{
+	return m_soundEffects;
+}
+
+//-----------------------------------------------------------------------------------------------
 const SpriteAnimationGroupDefinition* ActorDefinition::GetAnimGroupByName( std::string const& animName )
 {
 	for( unsigned int groupIndex = 0; groupIndex < m_visuals.m_animGroupDefs.size(); groupIndex++ )

@@ -13,6 +13,7 @@
 
 //-----------------------------------------------------------------------------------------------
 typedef std::vector<std::string> Strings;
+typedef std::map< std::string, std::string > SoundMap;
 
 //-----------------------------------------------------------------------------------------------
 enum class Faction
@@ -95,6 +96,7 @@ public:
 	bool GetCanBePossesed() const;
 	bool GetDieOnSpawn() const;
 	Faction GetFaction() const;
+	SoundMap GetSoundEffects() const;
 	const SpriteAnimationGroupDefinition* GetAnimGroupByName( std::string const& animName );
 	const SpriteAnimationGroupDefinition* GetAnimGroupByState( AnimState animState );
 
@@ -109,7 +111,7 @@ private:
 	CameraView m_cameraView;
 	AIControl m_ai;
 	Visuals m_visuals;
-	std::map< std::string, std::string > m_soundEffects;
+	SoundMap m_soundEffects;
 	Faction m_faction = Faction::NEUTRAL;
 	int m_health = 1;
 	double m_corpseLifetime = 0.0;

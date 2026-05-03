@@ -133,6 +133,7 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 		m_ai->Update( deltaSeconds );
 	}
 
+	// Update Animations
 	SpriteAnimationGroupDefinition animGroupDef = *m_definition->GetAnimGroupByState( m_currentAnim );
 	if( animGroupDef.m_scaleBySpeed )
 	{
@@ -159,6 +160,9 @@ void Actor::Update( [[maybe_unused]] float deltaSeconds )
 			m_equippedWeapon->SwitchAnimState( AnimState::IDLE );
 		}
 	}
+
+	// Update Sounds
+	g_engine->m_audio->SetSoundPosition( m_soundEffect, m_position );
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -383,21 +387,61 @@ void Actor::Damage( int incomingDamage, ActorHandle damagingActor )
 		if( m_definition->GetFaction() == Faction::DEMON )
 		{
 			Actor* killer = m_map->GetActorByHandle( damagingActor );
-			//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
 			if( killer != nullptr && killer->m_controller == m_map->m_player1 )
 			{
 				m_map->m_player1->m_kills++;
 			}
+			else if( killer != nullptr && killer->m_controller == m_map->m_player2 )
+			{
+				m_map->m_player2->m_kills++;
+			}
 		}
-		//NOTE: Change this check for multiplayer//-----------------------------------------------------------------------------------------------
-		if( m_controller == m_map->m_player1 )
+		if( m_controller != nullptr && m_controller == m_map->m_player1 )
 		{
 			m_map->m_player1->m_deaths++;
+		}
+		else if( m_controller != nullptr && m_controller == m_map->m_player2 )
+		{
+			m_map->m_player2->m_deaths++;
+		}
+
+		// Death SFX
+		if( m_controller != nullptr && ( m_controller == m_map->m_player1 || m_controller == m_map->m_player2 ) )
+		{
+			std::string sfxName = m_definition->GetSoundEffects().at( "Death" );
+			SoundID sfx = g_engine->m_audio->CreateOrGetSound( sfxName );
+			m_soundEffect = g_engine->m_audio->StartSound( sfx, false, 0.3f );
+		}
+		else if( m_controller != nullptr )
+		{
+			std::string sfxName = m_definition->GetSoundEffects().at( "Death" );
+			SoundID sfx = g_engine->m_audio->CreateOrGetSound( sfxName, true );
+			m_soundEffect = g_engine->m_audio->StartSoundAt( sfx, m_position, false, 0.6f );
 		}
 	}
 	else
 	{
 		SwitchAnimState( AnimState::HURT );
+
+		// Hurt SFX
+		if( m_controller != nullptr && ( m_controller == m_map->m_player1 || m_controller == m_map->m_player2 ) )
+		{
+			if( !g_engine->m_audio->IsPlaying( m_soundEffect ) )
+			{
+				std::string sfxName = m_definition->GetSoundEffects().at( "Hurt" );
+				SoundID sfx = g_engine->m_audio->CreateOrGetSound( sfxName );
+				m_soundEffect = g_engine->m_audio->StartSound( sfx, false, 0.3f );
+			}
+		}
+		else if( m_controller != nullptr )
+		{
+			if( !g_engine->m_audio->IsPlaying( m_soundEffect ) )
+			{
+				std::string sfxName = m_definition->GetSoundEffects().at( "Hurt" );
+				SoundID sfx = g_engine->m_audio->CreateOrGetSound( sfxName, true );
+				m_soundEffect = g_engine->m_audio->StartSoundAt( sfx, m_position, false, 0.6f );
+			}
+		}
 	}
 }
 

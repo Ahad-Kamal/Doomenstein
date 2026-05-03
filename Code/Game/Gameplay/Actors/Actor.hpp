@@ -5,6 +5,7 @@
 #include "Engine/Core/Vertex.hpp"
 #include "Engine/Core/Vertex_PCUTBN.hpp"
 #include "Engine/Core/Rgba8.hpp"
+#include "Engine/Audio/AudioSystem.hpp"
 #include <vector>
 #include <string>
 
@@ -95,6 +96,7 @@ public:
 	Vec3		m_acceleration;
 	EulerAngles m_orientation;
 	Rgba8		m_color = Rgba8::WHITE;
+	SoundPlaybackID m_soundEffect;
 
 	int			m_health;
 
