@@ -116,7 +116,7 @@ void Weapon::Fire( Actor* owner )
 
 		std::string sfxName = m_definition->GetSoundEffects().at( "Fire" );
 		SoundID sfx = g_engine->m_audio->CreateOrGetSound( sfxName );
-		m_soundEffect = g_engine->m_audio->StartSoundAt( sfx, owner->m_position, false, 0.5f );
+		m_soundEffect = g_engine->m_audio->StartSound( sfx, false, 0.6f );
 	}
 
 	if( weaponType == WEAPON_TYPE_PROJECTILE )
@@ -140,7 +140,7 @@ void Weapon::Fire( Actor* owner )
 
 		std::string sfxName = m_definition->GetSoundEffects().at( "Fire" );
 		SoundID sfx = g_engine->m_audio->CreateOrGetSound( sfxName );
-		g_engine->m_audio->StartSound( sfx, false, 0.8f );
+		g_engine->m_audio->StartSound( sfx, false, 0.4f );
 	}
 
 	if( weaponType == WEAPON_TYPE_MELEE )
