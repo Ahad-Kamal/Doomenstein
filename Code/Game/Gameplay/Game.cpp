@@ -227,11 +227,15 @@ void Game::UpdateStates()
 		bool isGameMusicPlaying;
 		std::string menuSongName;
 		std::string gameSongName;
+		std::string buttonSoundName = g_blackboard->GetValue( "buttonClickSound", "" );
 		SoundID menuMusic;
 		SoundID gameMusic;
+		SoundID buttonSound = g_engine->m_audio->CreateOrGetSound( buttonSoundName );
+
 		switch( m_nextState )
 		{
 			case GAME_STATE_PLAY:
+				g_engine->m_audio->StartSound( buttonSound );
 				isMenuMusicPlaying = g_engine->m_audio->IsPlaying( m_menuMusic );
 				if( isMenuMusicPlaying )
 				{
@@ -243,6 +247,10 @@ void Game::UpdateStates()
 				break;
 			
 			case GAME_STATE_ATTRACT:
+				if( m_currentState != GAME_STATE_INVALID )
+				{
+					g_engine->m_audio->StartSound( buttonSound );
+				}
 				isMenuMusicPlaying = g_engine->m_audio->IsPlaying( m_menuMusic );
 				if( isMenuMusicPlaying )
 				{
@@ -256,6 +264,7 @@ void Game::UpdateStates()
 				break;
 
 			case GAME_STATE_LOBBY:
+				g_engine->m_audio->StartSound( buttonSound );
 				menuSongName = g_blackboard->GetValue( "mainMenuMusic", "" );
 				menuMusic = g_engine->m_audio->CreateOrGetSound( menuSongName );
 				m_menuMusic = g_engine->m_audio->StartSound( menuMusic, true, m_musicVolume );
@@ -312,6 +321,10 @@ void Game::UpdateLobbyMode()
 	XboxController const& controller = g_engine->m_input->m_controllers[ 0 ];
 	if( controller.WasButtonJustPressed( XboxButtonID::A ) && !m_isTwoPlayer )
 	{
+		std::string buttonSoundName = g_blackboard->GetValue( "buttonClickSound", "" );
+		SoundID buttonSound = g_engine->m_audio->CreateOrGetSound( buttonSoundName );
+		g_engine->m_audio->StartSound( buttonSound );
+
 		m_isTwoPlayer = true;
 		g_engine->m_audio->SetNumListeners( 2 );
 
@@ -336,6 +349,10 @@ void Game::UpdateLobbyMode()
 	}
 	else if( controller.WasButtonJustPressed( XboxButtonID::A ) && m_isTwoPlayer )
 	{
+		std::string buttonSoundName = g_blackboard->GetValue( "buttonClickSound", "" );
+		SoundID buttonSound = g_engine->m_audio->CreateOrGetSound( buttonSoundName );
+		g_engine->m_audio->StartSound( buttonSound );
+
 		m_isTwoPlayer = false;
 		g_engine->m_audio->SetNumListeners( 1 );
 		
