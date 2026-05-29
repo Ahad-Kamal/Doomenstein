@@ -48,17 +48,17 @@ void DebugDrawRing(Vec2 const& center, float radius, float thickness, Rgba8 cons
 		int vertIndexE = (6 * sideNum) + 4;
 		int vertIndexF = (6 * sideNum) + 5;
 
-		verts[ vertIndexA ].m_pos = innerEndPos;
-		verts[ vertIndexB ].m_pos = innerStartPos;
-		verts[ vertIndexC ].m_pos = outerStartPos;
+		verts[ vertIndexA ].m_position = innerEndPos;
+		verts[ vertIndexB ].m_position = innerStartPos;
+		verts[ vertIndexC ].m_position = outerStartPos;
 
 		verts[ vertIndexA ].m_color = color;
 		verts[ vertIndexB ].m_color = color;
 		verts[ vertIndexC ].m_color = color;
 
-		verts[ vertIndexD ].m_pos = innerEndPos;
-		verts[ vertIndexE ].m_pos = outerStartPos;
-		verts[ vertIndexF ].m_pos = outerEndPos;
+		verts[ vertIndexD ].m_position = innerEndPos;
+		verts[ vertIndexE ].m_position = outerStartPos;
+		verts[ vertIndexF ].m_position = outerEndPos;
 
 		verts[ vertIndexD ].m_color = color;
 		verts[ vertIndexE ].m_color = color;
@@ -94,13 +94,13 @@ void DebugDrawLine( Vec2 const& startPos, Vec2 const& endPos, float thickness, R
 
 	// Create vertexes
 	Vertex verts[ NUM_VERTS ];
-	verts[ 0 ].m_pos = startLeft3D;
-	verts[ 1 ].m_pos = startRight3D;
-	verts[ 2 ].m_pos = endLeft3D;
+	verts[ 0 ].m_position = startLeft3D;
+	verts[ 1 ].m_position = startRight3D;
+	verts[ 2 ].m_position = endLeft3D;
 	
-	verts[ 3 ].m_pos = startRight3D;
-	verts[ 4 ].m_pos = endRight3D;
-	verts[ 5 ].m_pos = endLeft3D;
+	verts[ 3 ].m_position = startRight3D;
+	verts[ 4 ].m_position = endRight3D;
+	verts[ 5 ].m_position = endLeft3D;
 
 	for( int vertIndex = 0; vertIndex < NUM_VERTS; vertIndex++ )
 	{
@@ -147,17 +147,17 @@ void DrawFadedRing( Vec2 center, float innerRadius, float outerRadius, Rgba8 inn
 		int vertIndexE = ( 6 * sideNum ) + 4;
 		int vertIndexF = ( 6 * sideNum ) + 5;
 
-		verts[ vertIndexA ].m_pos = innerEndPos;
-		verts[ vertIndexB ].m_pos = innerStartPos;
-		verts[ vertIndexC ].m_pos = outerStartPos;
+		verts[ vertIndexA ].m_position = innerEndPos;
+		verts[ vertIndexB ].m_position = innerStartPos;
+		verts[ vertIndexC ].m_position = outerStartPos;
 
 		verts[ vertIndexA ].m_color = innerColor;
 		verts[ vertIndexB ].m_color = innerColor;
 		verts[ vertIndexC ].m_color = outerColor;
 
-		verts[ vertIndexD ].m_pos = innerEndPos;
-		verts[ vertIndexE ].m_pos = outerStartPos;
-		verts[ vertIndexF ].m_pos = outerEndPos;
+		verts[ vertIndexD ].m_position = innerEndPos;
+		verts[ vertIndexE ].m_position = outerStartPos;
+		verts[ vertIndexF ].m_position = outerEndPos;
 
 		verts[ vertIndexD ].m_color = innerColor;
 		verts[ vertIndexE ].m_color = outerColor;

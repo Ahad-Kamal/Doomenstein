@@ -632,9 +632,9 @@ bool Game::IsTwoPlayer() const
 //-----------------------------------------------------------------------------------------------
 void Game::InitializeStartTriangleVerts()
 {
-	m_startVerts[ 0 ].m_pos = Vec3( -200.f, 200.f, 0.f );
-	m_startVerts[ 1 ].m_pos = Vec3( -200.f, -200.f, 0.f );
-	m_startVerts[ 2 ].m_pos = Vec3( 200.f, 0.f, 0.f );
+	m_startVerts[ 0 ].m_position = Vec3( -200.f, 200.f, 0.f );
+	m_startVerts[ 1 ].m_position = Vec3( -200.f, -200.f, 0.f );
+	m_startVerts[ 2 ].m_position = Vec3( 200.f, 0.f, 0.f );
 
 	for( int vertIndex = 0; vertIndex < 3; vertIndex++ )
 	{
