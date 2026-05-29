@@ -153,7 +153,7 @@ void Map::AddGeometryForCeiling( AABB3 const& bounds, AABB2 const& UVs )
 //-----------------------------------------------------------------------------------------------
 void Map::CreateBuffer()
 {
-	m_vertexBuffer = new VertexBuffer( g_engine->m_render->GetDevice(), 1, sizeof( Vertex_PCUTBN ) );
+	m_vertexBuffer = new VertexBuffer( g_engine->m_render->GetDevice(), 1, sizeof( Vertex ) );
 	m_indexBuffer = new IndexBuffer( g_engine->m_render->GetDevice(), 1 );
 
 	m_vertexBuffer->Create();

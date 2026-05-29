@@ -3,7 +3,7 @@
 #include "Engine/Math/Vec3.hpp"
 #include "Engine/Math/EulerAngles.hpp"
 #include "Engine/Core/Vertex.hpp"
-#include "Engine/Core/Vertex_PCUTBN.hpp"
+#include "Engine/Core/Vertex.hpp"
 #include "Engine/Core/Rgba8.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
 #include <vector>
@@ -25,7 +25,7 @@ class Clock;
 //-----------------------------------------------------------------------------------------------
 typedef NamedStrings EventArgs;
 typedef std::vector<Vertex> VertexList;
-typedef std::vector<Vertex_PCUTBN> VertexPCUTBNList;
+typedef std::vector<Vertex> VertexList;
 typedef std::vector<unsigned int> IndexList;
 typedef std::vector<Weapon*> Weapons;
 

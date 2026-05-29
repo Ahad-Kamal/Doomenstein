@@ -2,7 +2,7 @@
 #include "Game/Gameplay/Controller.hpp"
 #include "Game/Gameplay/MapDefinition.hpp"
 #include "Game/Gameplay/ActorDefinition.hpp"
-#include "Engine/Core/Vertex_PCUTBN.hpp"
+#include "Engine/Core/Vertex.hpp"
 #include "Engine/Math/RaycastUtils.hpp"
 #include <vector>
 #include <string>
@@ -102,7 +102,7 @@ protected:
 	std::vector<Actor*> m_actors;
 	std::vector<Tile> m_tiles;
 
-	std::vector<Vertex_PCUTBN> m_vertexes;
+	std::vector<Vertex> m_vertexes;
 	std::vector<unsigned int> m_indexes;
 	Texture const* m_texture;
 	Shader* m_shader = nullptr;

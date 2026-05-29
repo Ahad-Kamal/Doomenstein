@@ -200,7 +200,7 @@ void Actor::Render() const
 	transformMatrix.AppendZRotation( m_orientation.m_yawDegrees );
 	
 	// Create Vertex and Index Buffers
-	VertexBuffer vertexBuffer = VertexBuffer( g_engine->m_render->GetDevice(), 12, sizeof( Vertex_PCUTBN ) );
+	VertexBuffer vertexBuffer = VertexBuffer( g_engine->m_render->GetDevice(), 12, sizeof( Vertex ) );
 	IndexBuffer indexBuffer = IndexBuffer( g_engine->m_render->GetDevice(), 12 );
 	vertexBuffer.Create();
 	indexBuffer.Create();
@@ -240,7 +240,7 @@ void Actor::Render() const
 	}
 
 	// Add Verts
-	VertexPCUTBNList verts;
+	VertexList verts;
 	IndexList indexes;
 	float halfXSize = visuals.m_size.x * 0.5f;
 	AddVertsForDoubleQuad3D( verts, indexes, Vec3( 0.f, -halfXSize, 0.f ), Vec3( 0.f, halfXSize, 0.f ), 
