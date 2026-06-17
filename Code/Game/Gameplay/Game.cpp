@@ -39,6 +39,8 @@ Game::Game()
 //-----------------------------------------------------------------------------------------------
 Game::~Game()
 {
+	DeleteLightCBO();
+
 	delete m_currentMap;
 	m_currentMap = nullptr;
 
@@ -53,6 +55,9 @@ void Game::Startup()
 	g_game = this;
 
 	m_gameClock = new Clock( Clock::GetSystemClock() );
+
+	CreateLightCBO();
+	SetLightConstants( Vec3(), 0.f, 1.f );
 
 	Shader* diffuseShader = g_engine->m_render->CreateOrGetShader( "Data/Shaders/Diffuse", VertexType::VERTEX_PCUTBN );
 	g_engine->m_render->BindShader( diffuseShader );
@@ -151,7 +156,7 @@ void Game::Render()
 {
 	if( m_currentState == GAME_STATE_ATTRACT )
 	{
-		g_engine->m_render->SetLightConstants( Vec3(), 0.f, 1.f );
+		SetLightConstants( Vec3(), 0.f, 1.f );
 		RenderAttractMode();
 		return;
 	}
@@ -160,6 +165,9 @@ void Game::Render()
 		RenderLobbyMode();
 		return;
 	}
+
+	Shader* diffuseShader = g_engine->m_render->CreateOrGetShader( "Data/Shaders/Diffuse", VertexType::VERTEX_PCUTBN );
+	g_engine->m_render->BindShader( diffuseShader );
 
 	// Get Camera Area
 	Vec2 topLeft = Camera::GetTopLeftInViewportSpace( m_player1CameraBounds, SCREEN_SIZE_X, SCREEN_SIZE_Y );
@@ -428,7 +436,7 @@ void Game::RenderEntities() const
 void Game::RenderMap() const
 {
 	Vec3 normalizedLighting = m_sunDirection.GetNormalized();
-	g_engine->m_render->SetLightConstants( normalizedLighting, m_sunIntensity, m_ambientIntensity );
+	SetLightConstants( normalizedLighting, m_sunIntensity, m_ambientIntensity );
 
 	m_currentMap->Render();
 }
@@ -436,6 +444,8 @@ void Game::RenderMap() const
 //-----------------------------------------------------------------------------------------------
 void Game::RenderHud( Player* player, Camera* screenCamera ) const
 {
+	SetLightConstants( Vec3(), 0.f, 1.f );
+
 	Weapon* currentWeapon = player->GetActor()->m_equippedWeapon;
 	WeaponDefinition weaponDef = *currentWeapon->m_definition;
 

@@ -14,6 +14,9 @@
     <Filter Include="Data">
       <UniqueIdentifier>{c04bcb45-0fcd-45a3-9b4f-0df0dc2aea78}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{c31a873d-15cb-40c5-afab-31c51f2a8366}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\App.cpp">
@@ -140,5 +143,10 @@
     <Xml Include="..\..\Run\Data\GameConfig.xml">
       <Filter>Data</Filter>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Run\Data\Shaders\Diffuse.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

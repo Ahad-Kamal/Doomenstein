@@ -247,27 +247,28 @@ void Actor::Render() const
 		Vec3( 0.f, halfXSize, visuals.m_size.y ), Vec3( 0.f, -halfXSize, visuals.m_size.y ), m_color, uvBox );
 
 	// Draw Sprite
-	LightSettings lightSettings = LightSettings();
 	if( m_definition->GetVisuals().m_renderLit )
 	{
 		Vec3 normalizedLighting = g_game->m_sunDirection.GetNormalized();
-		lightSettings = LightSettings( normalizedLighting, g_game->m_sunIntensity, g_game->m_ambientIntensity );
+		SetLightConstants( normalizedLighting, g_game->m_sunIntensity, g_game->m_ambientIntensity );
 	}
 
-	g_engine->m_render->RenderSetup( actorTexture, BlendMode::ALPHA, billboardTransform, Rgba8::WHITE, lightSettings );
+	g_engine->m_render->RenderSetup( actorTexture, BlendMode::ALPHA, billboardTransform, Rgba8::WHITE );
 	g_engine->m_render->DrawVertexArray( verts, indexes, &vertexBuffer, &indexBuffer );
 
 	//// Draw Wireframe
-	//g_engine->m_render->SetRasterizerState( RasterizerMode::WIREFRAME_CULL_BACK );
-	//g_engine->m_render->SetRasterizerStateIfChanged();
+	g_engine->m_render->SetRasterizerState( RasterizerMode::WIREFRAME_CULL_BACK );
+	g_engine->m_render->SetRasterizerStateIfChanged();
 
-	//g_engine->m_render->RenderSetup();
-	//VertexList tempWireframeVerts = m_wireframeVertexes;
-	//TransformVertexArray3D( tempWireframeVerts, transformMatrix );
-	//g_engine->m_render->DrawVertexArray( tempWireframeVerts );
+	g_engine->m_render->RenderSetup();
+	
+	VertexList tempWireframeVerts;
+	AddVertsForCylinder3D( tempWireframeVerts, Vec3(), Vec3( 0.f, 0.f, 0.f + m_cosmeticHeight), m_cosmeticRadius, 16, m_color);
+	TransformVertexArray3D( tempWireframeVerts, transformMatrix );
+	g_engine->m_render->DrawVertexArray( tempWireframeVerts );
 
-	//g_engine->m_render->SetRasterizerState( RasterizerMode::SOLID_CULL_BACK );
-	//g_engine->m_render->SetRasterizerStateIfChanged();
+	g_engine->m_render->SetRasterizerState( RasterizerMode::SOLID_CULL_BACK );
+	g_engine->m_render->SetRasterizerStateIfChanged();
 }
 
 //-----------------------------------------------------------------------------------------------

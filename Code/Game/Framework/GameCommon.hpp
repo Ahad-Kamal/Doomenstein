@@ -6,6 +6,18 @@
 //-----------------------------------------------------------------------------------------------
 struct Vec2;
 struct Rgba8;
+class ConstantBuffer;
+
+//-----------------------------------------------------------------------------------------------
+struct LightConstants
+{
+	float SunDirection[ 3 ];
+	float SunIntensity;
+	float AmbientIntensity;
+	float EMPTY_PADDING[ 3 ];
+};
+static const int k_lightConstantSlot = 8;
+extern ConstantBuffer* g_lightCBO;
 
 //-----------------------------------------------------------------------------------------------
 enum GameState
@@ -43,6 +55,11 @@ const IntVec2 WEST = IntVec2( -1, 0 );
 extern SoundID audio_music;
 extern SoundID audio_selectSound;
 extern SoundID audio_testSound;
+
+//-----------------------------------------------------------------------------------------------
+void SetLightConstants( const Vec3& sunDirection, float sunIntensity, float ambientIntensity );
+void CreateLightCBO();
+void DeleteLightCBO();
 
 //-----------------------------------------------------------------------------------------------
 void DebugDrawRing( Vec2 const& center, float radius, float thickness, Rgba8 const& color);
